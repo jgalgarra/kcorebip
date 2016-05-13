@@ -8,13 +8,18 @@ get_bipartite(g, str_guild_a = "Plant", str_guild_b = "Pollinator",
   plot_graphs = FALSE)
 }
 \arguments{
-\item{love}{Do you love cats? Defaults to TRUE.}
+\item{g}{is the newtork in \code{igraph::graph} format}
+
+\item{plot_graphs}{set to FALSE, deprecated, kept for backwards compatibility}
+
+\item{strg_guild_a}{is a the label of the class of guild a nodes}
+
+\item{strg_guild_b}{is a the label of the class of guild b nodes}
 }
 \description{
-Get bipartite plot
+Add guild labels to a bipartite network
 }
 \examples{
-get_bipartite()
+get_bipartite(result_analysis$graph, str_guild_a = "Plant", str_guild_b = "Fungus")
 }
-\keyword{cats}
 
