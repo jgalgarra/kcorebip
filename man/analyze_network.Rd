@@ -8,13 +8,44 @@ analyze_network(namenetwork, directory = "", guild_a = "pl",
   guild_b = "pol", plot_graphs = FALSE, only_NODF = FALSE)
 }
 \arguments{
-\item{love}{Do you love cats? Defaults to TRUE.}
+\item{namenetwork}{is the file name that contains the interaction matrix}
+
+\item{directory}{where the network file is stored}
+
+\item{guild_a}{prefix for the guild of nodes stored in rows}
+
+\item{guild_b}{prefix for the guild of nodes stored in columns}
+
+\item{plot_graphs}{plot kshell histogram and kamada kawai plots}
+
+\item{only_NODF}{just compute the NODF measurement of nestedness}
+}
+\value{
+\code{calc_values} a list containing the following objects
+\itemize{
+ \item{\code{"graph"}}{ an \code{igraph::graph} object}
+ \item{\code{"max_xore"}}{ maximum k shell index}
+ \item{\code{"nested_values"}}{ a list containing all the values provided by the \code{bipartite::nested} function, unless \code{only_NODF} set \code{TRUE}}
+ \item{\code{"num_guild_a"}}{ number of nodes of guild a}
+ \item{\code{"num_guild_b"}}{ number of nodes of guild b}
+ \item{\code{"links"}}{ number of network links}
+ \item{\code{"meandist"}}{ network average kradius}
+ \item{\code{"meankdegree"}}{ network average kdegree}
+ \item{\code{"spaths_mat"}}{ matrix with node to node shortest distance paths}
+ \item{\code{"matrix"}}{ adyacency matrix with nodes of guild a by columns and guild b by rows}
+ \item{\code{"g_cores"}}{ list with the value of kshell for each node}
+ \item{\code{"modularity_measure"}}{ value of \code{igraph::modularity} function}
+ }
 }
 \description{
-Network analysis using k core decomposition
+This function performs the kcore decomposition of a bipartite network. The input is
+the interaction matrix in a .csv file, with the format of  \url{www.web-of-life.es/}
+Species of guild a are distributed colums, and those of guild b by rows. First
+colum contains the labels of guilb b nodes, and first row the labels of guild a.
+If the interaction matrix is binary, the cell of species_a_m,species_b_n will be set to 1.
+If it is weighted, a real number different of 0.
 }
 \examples{
-analyze_network()
+result_analysis <- analyze_network("M_PL_007.csv", directory = "data/", guild_a = "Plant", guild_b = "Pollinator")
 }
-\keyword{cats}
 

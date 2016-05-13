@@ -1,9 +1,13 @@
 Package: kcorebip
-Type: Package
-Title: What the Package Does (Title Case)
-Version: 0.1.0
-Author: Who wrote it
-Maintainer: Who to complain to <yourfault@somewhere.net>
-Description: More about what it does (maybe more than one line)
-License: What license is it under?
-LazyData: TRUE
+Title: Bipartite networks kcore decomposition and visualization
+Version: 0.1
+Date: 2015-05-13
+Author: Javier Garcia-Algarra
+Maintainer: Javier Garcia-Algarra <jgalgarra@coit.es>
+Description: Functions for k-core decomposing a bipartite graph and visualizing it with two original kind of plots, polar and ziggurat. This package is specially suited for ecological networks.
+Depends:
+    fields, gridExtra, scales, ggplot2, igraph, bipartite, stringr, R (>= 3.2.3)
+License: MIT
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 5.0.1

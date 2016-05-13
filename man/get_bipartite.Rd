@@ -14,7 +14,7 @@ get_bipartite(g, str_guild_a = "Plant", str_guild_b = "Pollinator",
 Get bipartite plot
 }
 \examples{
-get_bipartitr()
+get_bipartite()
 }
 \keyword{cats}
 
