@@ -2,7 +2,7 @@
 % Please edit documentation in R/network-kanalysis.R
 \name{get_bipartite}
 \alias{get_bipartite}
-\title{Get bipartite plot}
+\title{Get bipartite labels}
 \usage{
 get_bipartite(g, str_guild_a = "Plant", str_guild_b = "Pollinator",
   plot_graphs = FALSE)

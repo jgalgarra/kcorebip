@@ -53,7 +53,7 @@ read_network <- function(namenetwork, guild_astr = "pl", guild_bstr = "pol", dir
 #' Network analysis using k core decomposition
 #'
 #' This function performs the kcore decomposition of a bipartite network. The input is
-#' the interaction matrix in a .csv file, with the format of  \url{www.web-of-life.es}
+#' the interaction matrix in a .csv file, with the format of  www.web-of-life.es
 #' Species of guild a are distributed by colums, and those of guild b by rows. First
 #' colum contains the labels of guild b nodes, and first row, the labels of guild a.
 #' If the interaction matrix is binary, the cell of species_a_m,species_b_n will be set to 1.
@@ -234,7 +234,7 @@ analyze_network <- function(namenetwork, directory="", guild_a = "pl", guild_b =
 }
 
 
-#' Get bipartite plot
+#' Get bipartite labels
 #'
 #' Add guild labels to a bipartite network
 #'
@@ -243,8 +243,7 @@ analyze_network <- function(namenetwork, directory="", guild_a = "pl", guild_b =
 #' @param strg_guild_b is a the label of the class of guild b nodes
 #' @param plot_graphs set to FALSE, deprecated, kept for backwards compatibility
 #' @export
-#' @examples
-#' get_bipartite(result_analysis$graph, str_guild_a = "Plant", str_guild_b = "Fungus")
+#' @examples get_bipartite(result_analysis$graph, str_guild_a = "Plant", str_guild_b = "Fungus")
 
 get_bipartite <- function(g, str_guild_a = "Plant", str_guild_b = "Pollinator", plot_graphs = FALSE)
 {

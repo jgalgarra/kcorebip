@@ -39,7 +39,7 @@ analyze_network(namenetwork, directory = "", guild_a = "pl",
 }
 \description{
 This function performs the kcore decomposition of a bipartite network. The input is
-the interaction matrix in a .csv file, with the format of  \url{www.web-of-life.es}
+the interaction matrix in a .csv file, with the format of  www.web-of-life.es
 Species of guild a are distributed by colums, and those of guild b by rows. First
 colum contains the labels of guild b nodes, and first row, the labels of guild a.
 If the interaction matrix is binary, the cell of species_a_m,species_b_n will be set to 1.

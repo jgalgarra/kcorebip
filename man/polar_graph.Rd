@@ -2,9 +2,9 @@
 % Please edit documentation in R/polar_graph.R
 \name{polar_graph}
 \alias{polar_graph}
-\title{Plotting a polar plot}
+\title{Plotting a polar graph}
 \usage{
-polar_graph(red, directorystr = "data/", plotsdir = "plot_results/polar/",
+polar_graph(nname, directorystr = "data/", plotsdir = "plot_results/polar/",
   print_to_file = FALSE, pshowtext = FALSE, show_histograms = TRUE,
   glabels = c("Plant", "Pollinator"), gshortened = c("pl", "pol"),
   lsize_title = 22, lsize_axis = 12, lsize_legend = 13,
@@ -12,13 +12,41 @@ polar_graph(red, directorystr = "data/", plotsdir = "plot_results/polar/",
   printable_labels = 0)
 }
 \arguments{
-\item{love}{Do you love cats? Defaults to TRUE.}
+\item{nname}{the name of the file of the interaction matrix}
+
+\item{directorystr}{the directory where the \code{nname} file is stored}
+
+\item{plotsdir}{the directory where the plot is stored}
+
+\item{print_to_file}{if set to FALSE the plot is displayed in the R session window}
+
+\item{pshowtext}{auxiliar for interactive apps, do not modify}
+
+\item{show_histograms}{display the histograms if set TRUE}
+
+\item{glabels}{guild labels}
+
+\item{gshortened}{guild shortened labels}
+
+\item{lsize_title}{title label size}
+
+\item{lsize_axis}{axis label size}
+
+\item{lsize_legend}{legend label size}
+
+\item{lsize_axis_title}{axis title size}
+
+\item{lsize_legend_title}{legend label size}
+
+\item{printable_labels}{range of labeled species}
+
+\item{auxiliar}{for interactive apps, do not modify}
 }
 \description{
-Plotting a polar plot
+This function plots the polar graph of a bipartite network and the histograms of kshell
+kradius and kdegree
 }
 \examples{
-polar_graph()
+polar_graph("M_PL_007.csv","data/",plotsdir="grafresults/",print_to_file = TRUE)
 }
-\keyword{cats}
 

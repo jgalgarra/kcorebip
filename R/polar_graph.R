@@ -3,15 +3,13 @@ library(scales)
 library(grid)
 library(gridExtra)
 library(igraph)
-#source("network-kanalysis.R")
 
-
-paint_kdegree_kradius <- function(graph, num_guild_a, num_guild_b, 
-                                  lsize_title , lsize_axis, lsize_legend, lsize_axis_title , 
+paint_kdegree_kradius <- function(graph, num_guild_a, num_guild_b,
+                                  lsize_title , lsize_axis, lsize_legend, lsize_axis_title ,
                                   lsize_legend_title,
                                   showtext = "no",
-                                  network_name = "", 
-                                  NODF = 0, Modularity = 0, MeanKradius = 0, MeanKdegree = 0, 
+                                  network_name = "",
+                                  NODF = 0, Modularity = 0, MeanKradius = 0, MeanKdegree = 0,
                                   printable_range = printable_labels,
                                   progress
                                   )
@@ -89,9 +87,9 @@ paint_kdegree_kradius <- function(graph, num_guild_a, num_guild_b,
   }
   dfaux$fillcol <- 1 + maxcore - dfaux$kcorenum
   polar_plot <- ggplot(dfaux, aes(x=posx,y=posy),legendTextFont=c(15, "bold.italic", "red")) +
-    scale_size_area(max_size=scale_factor,name="k-degree") +  
+    scale_size_area(max_size=scale_factor,name="k-degree") +
     scale_colour_manual(values = vcols,name="k-shell") +
-    guides(col = guide_legend(override.aes = list(shape = 15, size = 8)), 
+    guides(col = guide_legend(override.aes = list(shape = 15, size = 8)),
            shape = guide_legend(override.aes = list(size = 8, colour = "slategray1")),
            kdegree = guide_legend(override.aes = list(shape = 15, size = 8, colour = "slategray1")))
   if (showtext == "yes"){
@@ -103,7 +101,7 @@ paint_kdegree_kradius <- function(graph, num_guild_a, num_guild_b,
       scale_shape_manual(values=c(16,15),name="Guild",labels=slabels ) +
       annotate(geom="text", x=dfaux$posx, y=dfaux$posy, label=dfaux$name, colour = factor(dfaux$kcol_label), size=2*(3+4*dfaux$normdegree), hjust = 1, alpha = 1)
   }
-  polar_plot <- polar_plot + coord_polar(start = -pi/2) + labs(x = '', y = '')# + theme(axis.text.x = element_blank()) 
+  polar_plot <- polar_plot + coord_polar(start = -pi/2) + labs(x = '', y = '')# + theme(axis.text.x = element_blank())
   polar_plot <- polar_plot + scale_y_continuous(breaks=seq(min_radius,extreme), lim=c(min_radius, extreme),labels=seq(min_radius,extreme) )
   polar_plot <- polar_plot + scale_x_continuous(breaks=seq(0, 2*pi, by=pi/2), lim=c(0,2*pi))
   polar_plot <- polar_plot+ theme_bw() + theme(panel.border = element_blank(),
@@ -131,7 +129,7 @@ paint_kdegree_kradius <- function(graph, num_guild_a, num_guild_b,
   polar_plot <- polar_plot + annotate(geom="text",x=xlab,y=pylab,label=ylab,size=5, color="gray20", lineheight=.8)
   polar_plot <- polar_plot + ggtitle(sprintf("Network %s NODF: %.02f Modularity: %.04f\n\n Avg k-radius: %.02f Avg k-degree: %.02f", network_name, NODF, Modularity, MeanKradius, MeanKdegree)) +
     guides(row = guide_legend(nrow = 1))
-  histo_dist <- ggplot(dfaux, aes(kradius)) + geom_histogram(alpha = alpha_level,binwidth=extreme/15, 
+  histo_dist <- ggplot(dfaux, aes(kradius)) + geom_histogram(alpha = alpha_level,binwidth=extreme/15,
                                                              color="white",fill = "forestgreen") +
     xlim(0,extreme) +
     theme_bw() +
@@ -142,7 +140,7 @@ paint_kdegree_kradius <- function(graph, num_guild_a, num_guild_b,
           panel.grid.major.y = element_line(linetype = 2, color="gray90"),
           panel.grid.major.x = element_line(linetype = 2, color="gray90"),
           panel.border = element_blank(),
-          axis.line = element_line(colour = "black", 
+          axis.line = element_line(colour = "black",
                                    size = 0.5, linetype = "solid"),
           legend.text = element_text(size=lsize_legend),
           plot.title = element_text(size=lsize_title,lineheight=.8, face="bold"),
@@ -164,7 +162,7 @@ paint_kdegree_kradius <- function(graph, num_guild_a, num_guild_b,
           panel.grid.minor.y = element_blank(),
           panel.grid.major.y = element_line(linetype = 2, color="gray90"),
           panel.grid.major.x = element_line(linetype = 2, color="gray90"),
-          axis.line = element_line(colour = "black", 
+          axis.line = element_line(colour = "black",
                                    size = 0.5, linetype = "solid"),
           panel.border = element_blank(),
           legend.text = element_text(size=lsize_legend),
@@ -186,7 +184,7 @@ paint_kdegree_kradius <- function(graph, num_guild_a, num_guild_b,
           panel.grid.minor.y = element_blank(),
           panel.grid.major.y = element_line(linetype = 2, color="gray90"),
           panel.grid.major.x = element_line(linetype = 2, color="gray90"),
-          axis.line = element_line(colour = "black", 
+          axis.line = element_line(colour = "black",
                                    size = 0.5, linetype = "solid"),
           panel.border = element_blank(),
           legend.text = element_text(size=lsize_legend),
@@ -201,48 +199,62 @@ paint_kdegree_kradius <- function(graph, num_guild_a, num_guild_b,
   return(calc_grafs)
 }
 
-#' Plotting a polar plot
+#' Plotting a polar graph
 #'
-#' 
-#' @param love Do you love cats? Defaults to TRUE.
-#' @keywords cats
+#' This function plots the polar graph of a bipartite network and the histograms of kshell
+#' kradius and kdegree
+#'
+#' @param nname the name of the file of the interaction matrix
+#' @param directorystr the directory where the \code{nname} file is stored
+#' @param plotsdir the directory where the plot is stored
+#' @param print_to_file if set to FALSE the plot is displayed in the R session window
+#' @param pshowtext auxiliar for interactive apps, do not modify
+#' @param show_histograms display the histograms if set TRUE
+#' @param glabels guild labels
+#' @param gshortened guild shortened labels
+#' @param lsize_title title label size
+#' @param lsize_axis axis label size
+#' @param lsize_legend legend label size
+#' @param lsize_axis_title axis title size
+#' @param lsize_legend_title legend label size
+#' @param auxiliar for interactive apps, do not modify
+#' @param printable_labels range of labeled species
 #' @export
-#' @examples
-#' polar_graph()
+#' @examples polar_graph("M_PL_007.csv","data/",plotsdir="grafresults/",print_to_file = TRUE)
 
-polar_graph <- function( red, directorystr = "data/", plotsdir = "plot_results/polar/", print_to_file = FALSE, pshowtext = FALSE,
-                         show_histograms = TRUE, glabels = c("Plant", "Pollinator"), 
+polar_graph <- function( nname, directorystr = "data/", plotsdir = "plot_results/polar/", print_to_file = FALSE, pshowtext = FALSE,
+                         show_histograms = TRUE, glabels = c("Plant", "Pollinator"),
                          gshortened = c("pl","pol"),
-                         lsize_title = 22, lsize_axis = 12, lsize_legend = 13, 
+                         lsize_title = 22, lsize_axis = 12, lsize_legend = 13,
                          lsize_axis_title = 14, lsize_legend_title = 15, progress=NULL, printable_labels = 0)
 {
-  red_name <- strsplit(red,".csv")[[1]][1]
+  nname_name <- strsplit(nname,".csv")[[1]][1]
   sguild_a <<- gshortened[1]
   sguild_b <<- gshortened[2]
   slabels <<- glabels
-  if (grepl("_SD_",red)){
+  if (grepl("_SD_",nname)){
     sguild_b = "disp"
     slabels <<- c("Plant", "Disperser")
   }
 
   if (!is.null(progress)) progress$inc(1/4, detail=strings$value("MESSAGE_POLAR_PROGRESS_ANALYZING_NETWORK"))
-  result_analysis <- analyze_network(red, directory = directorystr, guild_a = sguild_a, guild_b = sguild_b, plot_graphs = FALSE)
+  result_analysis <- analyze_network(nname, directory = directorystr, guild_a = sguild_a, guild_b = sguild_b, plot_graphs = FALSE)
   numlinks <- result_analysis$links
-  
+
   if (print_to_file){
     dir.create(plotsdir, showWarnings = FALSE)
     ppi <- 600
     if (show_histograms)
-      png(paste0(plotsdir,red_name,"_polar.png"), width=12*ppi, height=12*ppi, res=ppi)
+      png(paste0(plotsdir,nname_name,"_polar.png"), width=12*ppi, height=12*ppi, res=ppi)
     else
-      png(paste0(plotsdir,red_name,"_polar.png"), width=9*ppi, height=9*ppi, res=ppi)
+      png(paste0(plotsdir,nname_name,"_polar.png"), width=9*ppi, height=9*ppi, res=ppi)
   }
 
-  r <- paint_kdegree_kradius(result_analysis$graph, result_analysis$num_guild_a,result_analysis$num_guild_b, 
+  r <- paint_kdegree_kradius(result_analysis$graph, result_analysis$num_guild_a,result_analysis$num_guild_b,
                              lsize_title , lsize_axis, lsize_legend, lsize_axis_title , lsize_legend_title,
-                               network_name = red_name, NODF = result_analysis$nested_values["NODF"],
+                               network_name = nname_name, NODF = result_analysis$nested_values["NODF"],
                                Modularity =  result_analysis$modularity_measure,
-                               MeanKradius = result_analysis$meandist, MeanKdegree = result_analysis$meankdegree, 
+                               MeanKradius = result_analysis$meandist, MeanKdegree = result_analysis$meankdegree,
                                showtext = pshowtext, printable_range = printable_labels, progress
                               )
   if (is.null(progress))
