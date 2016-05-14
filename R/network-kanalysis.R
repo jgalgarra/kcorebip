@@ -7,7 +7,7 @@ library(ggplot2)
 #'
 #' Args:
 #'   namenetwork: CSV file that contains the interaction matrix
-#'   guild_a, guild_b: Identifier of the guild of speciea of each class. Default "pl" (plant)
+#'   guild_a, guild_b: Identifier of the guild of species of each class. Default "pl" (plant)
 #'                     "pol" (pollinator)
 #'   directory: directory where newtork CSVs are located
 #'
@@ -55,9 +55,9 @@ read_network <- function(namenetwork, guild_astr = "pl", guild_bstr = "pol", dir
 #' This function performs the kcore decomposition of a bipartite network. The input is
 #' the interaction matrix in a .csv file, with the format of  \url{www.web-of-life.es}
 #' Species of guild a are distributed by colums, and those of guild b by rows. First
-#' colum contains the labels of guilb b nodes, and first row the labels of guild a.
+#' colum contains the labels of guild b nodes, and first row, the labels of guild a.
 #' If the interaction matrix is binary, the cell of species_a_m,species_b_n will be set to 1.
-#' If it is weighted, a real number different of 0.
+#' If it is weighted, to a real number different of 0.
 #'
 #' @param namenetwork is the file name that contains the interaction matrix
 #' @param directory where the network file is stored
