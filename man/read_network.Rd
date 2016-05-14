@@ -11,7 +11,7 @@ read_network(namenetwork, guild_astr = "pl", guild_bstr = "pol",
 \description{
 Args:
   namenetwork: CSV file that contains the interaction matrix
-  guild_a, guild_b: Identifier of the guild of speciea of each class. Default "pl" (plant)
+  guild_a, guild_b: Identifier of the guild of species of each class. Default "pl" (plant)
                     "pol" (pollinator)
   directory: directory where newtork CSVs are located
 }

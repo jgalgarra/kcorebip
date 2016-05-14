@@ -41,9 +41,9 @@ analyze_network(namenetwork, directory = "", guild_a = "pl",
 This function performs the kcore decomposition of a bipartite network. The input is
 the interaction matrix in a .csv file, with the format of  \url{www.web-of-life.es}
 Species of guild a are distributed by colums, and those of guild b by rows. First
-colum contains the labels of guilb b nodes, and first row the labels of guild a.
+colum contains the labels of guild b nodes, and first row, the labels of guild a.
 If the interaction matrix is binary, the cell of species_a_m,species_b_n will be set to 1.
-If it is weighted, a real number different of 0.
+If it is weighted, to a real number different of 0.
 }
 \examples{
 result_analysis <- analyze_network("M_PL_007.csv", directory = "data/", guild_a = "Plant", guild_b = "Pollinator")
