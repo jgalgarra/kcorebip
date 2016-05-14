@@ -39,7 +39,7 @@ ziggurat_graph(datadir, filename, paintlinks = TRUE,
 Plotting a ziggurat plot
 }
 \examples{
-ziggurat_graph()
+ ziggurat_graph("data/","M_PL_006.csv",print_to_file = FALSE)
 }
 \keyword{cats}
 

@@ -7,7 +7,7 @@ library(bipartite)
 library(igraph)
 library(ggplot2)
 
- 
+
 #source("network-kanalysis.R", encoding="UTF-8")
 #source("svg.R", encoding="UTF-8")
 
@@ -117,7 +117,7 @@ draw_rectangle<- function(idPrefix,basex,basey,widthx,widthy,grafo,svg,bordercol
                    colour = fillcolor, size=sizelabel, hjust = 0)
   svg$rect(idPrefix=idPrefix, data=ds, mapping=aes(xmin=x1, xmax=x2, ymin=y1, ymax=y2), fill=fillcolor, alpha=palpha, color=bordercolor, size=bordersize, linetype=3)
   svg$text(idPrefix=idPrefix, data=data.frame(x=c(x1+(x2-x1)/8), y=c(signo*(y1+(y2-y1)/2))), mapping=aes(x=x, y=y), color=fillcolor, label=slabel, size=sizelabel)
-  
+
   calc_vals <- list("p" = p, "svg" = svg)
   return(calc_vals)
 }
@@ -1929,12 +1929,11 @@ draw_ziggurat_plot <- function(svg_scale_factor, progress)
 
 #' Plotting a ziggurat plot
 #'
-#' 
+#'
 #' @param love Do you love cats? Defaults to TRUE.
 #' @keywords cats
 #' @export
-#' @examples
-#' ziggurat_graph()
+#' @examples  ziggurat_graph("data/","M_PL_006.csv",print_to_file = FALSE)
 
 ziggurat_graph <- function(datadir,filename,
                            paintlinks = TRUE, displaylabelszig = TRUE, print_to_file = FALSE, plotsdir ="plot_results/ziggurat/", flip_results = FALSE,
