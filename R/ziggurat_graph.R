@@ -8,10 +8,6 @@ library(igraph)
 library(ggplot2)
 
 
-#source("network-kanalysis.R", encoding="UTF-8")
-#source("svg.R", encoding="UTF-8")
-
-
 gen_sq_label <- function(nodes, joinchars = "\n")
 {
   nnodes <- length(nodes)
@@ -187,7 +183,6 @@ draw_tail <- function(idPrefix, p,svg,fat_tail,lado,color,sqlabel,basex,basey,ga
   ecolor <- "transparent"
   bgcolor <- color
   labelcolor <- ifelse(length(zgg$labels_color)>0,zgg$labels_color[2-as.numeric(is_guild_a)],color)
-  #labelcolor <- color
   palpha <- zgg$alpha_link
   sidex <- lado*(0.5+sqrt(nrow(fat_tail)))
   paintsidex <- sidex
@@ -413,7 +408,6 @@ handle_outsiders <- function(p,svg,outsiders,df_chains) {
                          slink = zgg$size_link, clink = c(zgg$color_link),
                          alpha_l = zgg$alpha_link , spline = bend_line)
         }
-
       }
     }
 
@@ -1715,9 +1709,6 @@ init_working_values <- function()
   zgg$straight_links <- data.frame(x1=c(), x2 = c(), y1 = c(),  y2 = c())
   zgg$bent_links <- data.frame(x=c(), y = c(),  number = c())
   zgg$count_bent_links <- 0
-
-
-  #zgg$link <- data.frame(x1=rep(0,zgg$spline_points), x2 = rep(0,zgg$spline_points), y1 = rep(0,zgg$spline_points),  y2 = rep(0,zgg$spline_points))
 }
 
 
@@ -1849,9 +1840,6 @@ draw_ziggurat_plot <- function(svg_scale_factor, progress)
   z <- draw_inner_orphans(p, svg)
   p <- z["p"][[1]]
   svg <- z["svg"][[1]]
-  # zend_time <- proc.time()
-  # print("despues de draw_inner_orphans")
-  # print(zend_time - zinit_time)
 
   # Draw inner links
   if (!is.null(progress)) progress$inc(1/11, detail=strings$value("MESSAGE_ZIGGURAT_PROGRESS_DRAWING_INNER_LINKS"))
@@ -1861,19 +1849,11 @@ draw_ziggurat_plot <- function(svg_scale_factor, progress)
     svg <- z["svg"][[1]]
   }
 
-  # zend_time <- proc.time()
-  # print("despues de draw_inner_links")
-  # print(zend_time - zinit_time)
-
   # Weirds management
   if (!is.null(progress)) progress$inc(1/11, detail=strings$value("MESSAGE_ZIGGURAT_PROGRESS_DRAWING_WEIRDS"))
   v <- handle_weirds(p,svg,weirds_a,weirds_b,zgg$lado,zgg$gap)
   p <- v["p"][[1]]
   svg <- v["svg"][[1]]
-
-  # zend_time <- proc.time()
-  # print("despues de handle_weirds")
-  # print(zend_time - zinit_time)
 
   zgg$df_chains <- v["df_chains"][[1]]
   # Specied outside the giant componente
@@ -1884,19 +1864,10 @@ draw_ziggurat_plot <- function(svg_scale_factor, progress)
     svg <- v["svg"][[1]]
   }
 
-  # zend_time <- proc.time()
-  # print("despues de handle_outsiders")
-  # print(zend_time - zinit_time)
-
-
   # Legend, title and final annotations
   v <- write_annotations(p, svg)
   p <- v["p"][[1]]
   svg <- v["svg"][[1]]
-
-  # zend_time <- proc.time()
-  # print("despues de write annotations")
-  # print(zend_time - zinit_time)
 
   # Plot straight links
   if (!is.null(progress)) progress$inc(1/11, detail=strings$value("MESSAGE_ZIGGURAT_PROGRESS_DRAWING_LINKS"))
@@ -1915,31 +1886,87 @@ draw_ziggurat_plot <- function(svg_scale_factor, progress)
   if (is.null(progress))
     display_plot(p,zgg$print_to_file,zgg$flip_results, landscape = zgg$landscape_plot)
 
-  # guarda los resultados
+  # Stores results
   zgg$plot  <- p
   zgg$svg   <- svg
 
-  # zend_time <- proc.time()
-  # print("despues de display plot")
-  # print(zend_time - zinit_time)
   if (!is.null(progress)) progress$inc(0, detail=strings$value("MESSAGE_ZIGGURAT_PROGRESS_DONE"))
 
   return(zgg)
 }
 
-#' Plotting a ziggurat plot
+#' Plotting a ziggurat graph
 #'
+#' This function plots the ziggurat graph of a bipartite network. Configuration parameters and
+#' results are stored in a global environment called zgg. This environment is not destroyed
+#' after the function is executed, so the developer can store it in a configuration file, retrieve
+#' network analysis variables and so on. If a new ziggurat_graph is called, zgg is destroyed and
+#' created again for the new plot. Plotting options are explained in the user manual.
 #'
-#' @param love Do you love cats? Defaults to TRUE.
-#' @keywords cats
+#' @param datadir the name of the file of the interaction matrix
+#' @param filename the file with the interaction matrix
+#' @param print_to_file if set to FALSE the plot is displayed in the R session window
+#' @param plotsdir the directory where the plot is stored
+#' @param flip_results displays the graph in portrait configuration
+#' @param aspect_ratio ziggurat plot default aspect ratio
+#' @param alpha_level transparency for ziggurats' filling
+#' @param color_guild_a default filling for nodes of guild_a
+#' @param color_guild_b default filling for nodes of guild_b
+#' @param color_link default links color
+#' @param alpha_link link transparency
+#' @param size_link width of the links
+#' @param displace_y_b relative vertical displacement of guild_b inner ziggurats
+#' @param displace_y_a relative vertical displacement of guild_a inner ziggurats
+#' @param labels_size default nodes labels size
+#' @param lsize_kcoremax nodes in kshell max label size
+#' @param lsize_zig nodes in inner ziggurats label size
+#' @param lsize_kcore1 labels of nodes in kshell 1
+#' @param lsize_legend legend label size
+#' @param lsize_kcorebox default kshell boxes label size
+#' @param labels_color default label colors
+#' @param height_box_y_expand expand inner ziggurat rectangles default height by this factor
+#' @param kcore2tail_vertical_separation expand vertical of kshell 1 species linked to kshell 2 by this factor
+#' @param kcore1tail_disttocore expand vertical separation of kshell 1 species from kshell max (guild_a, guild,b)
+#' @param innertail_vertical_separation expand vertical separation of kshell species connected to khsell > 2 & < kshell max
+#' @param horiz_kcoremax_tails_expand expand horizontal separation of weird tails connected to kshell max
+#' @param factor_hop_x expand inner ziggurats horizontal distance
+#' @param diplace_legend modify legend position by these fractions
+#' @param fattailjumphoriz displace kshell 1 species linked to leftmost kshell max species
+#' @param fattailjumpvert idem for vertical position
+#' @param coremax_triangle_width_factor expand khsell max rectangles width by this factor
+#' @param coremax_triangle_height_factor expand khsell max rectangles height by this factor
+#' @param paint_outsiders paint species not connected to giant component
+#' @param displace_outside_component displace outsider species (horizontal, vertical)
+#' @param outsiders_separation_expand multiply by this factor outsiders' separation
+#' @param outsiders_legend_expand displace outsiders legend
+#' @param weirdskcore2_horizontal_dist_rootleaf_expand expand horizontal distance of weird tail root node connected to kshell 2
+#' @param weirdskcore2_vertical_dist_rootleaf_expand expand vertical distance of weird tails connected to kshell 2
+#' @param weirds_boxes_separation_count weird species boxes separation count
+#' @param root_weird_expand expand root weird distances of tails connected to kshell <> 2
+#' @param hide_plot_border hide border around the plot
+#' @param rescale_plot_area Full plot area rescaling (horizontal, vertical)
+#' @param kcore1weirds_leafs_vertical_separation expand vertical separation of weird tails connected to kshell 1 species
+#' @param corebox_border_size width of kshell boxes
+#' @param kcore_species_name_display display species names
+#' @param kcore_species_name_break allow new lines in species names
+#' @param shorten_species_names number of characters of species name to display
+#' @param label_strguilda string labels of guild a
+#' @param label_strguildb string labels of guild b
+#' @param landscape_plot paper landscape configuration
+#' @param backg_color plot background color
+#' @param show_title show plot title
+#' @param use_spline use splines to draw links
+#' @param spline_points number of points for each spline
+#' @param svg_scale_factor only for interactive apps, do not modify
+#' @param progress only for interactive apps, do not modifiy
 #' @export
-#' @examples  ziggurat_graph("data/","M_PL_006.csv",print_to_file = FALSE)
+#' @examples ziggurat_graph("data/","M_PL_001.csv",plotsdir="grafresults/",print_to_file = TRUE)
 
 ziggurat_graph <- function(datadir,filename,
                            paintlinks = TRUE, displaylabelszig = TRUE, print_to_file = FALSE, plotsdir ="plot_results/ziggurat/", flip_results = FALSE,
                            aspect_ratio = 1,
                            alpha_level = 0.2, color_guild_a = c("#4169E1","#00008B"), color_guild_b = c("#F08080","#FF0000"),
-                           color_link = "#696969", alpha_link = 0.2, size_link = 0.5,
+                           color_link = "slategray3", alpha_link = 0.5, size_link = 0.5,
                            displace_y_b = rep(0,11),
                            displace_y_a = rep(0,11),
                            labels_size = 3.5, lsize_kcoremax = 3.5, lsize_zig = 3, lsize_kcore1 = 2.5, lsize_legend = 4, lsize_core_box = 2.5,
@@ -1961,9 +1988,6 @@ ziggurat_graph <- function(datadir,filename,
                            )
 {
   zgg <<- new.env()
-  # print("Environment")
-  # print(environment())
-
   if (!is.null(progress)) progress$inc(1/11, detail=strings$value("MESSAGE_ZIGGURAT_PROGRESS_ANALYZING_NETWORK"))
   f <- read_and_analyze(datadir,filename,label_strguilda, label_strguildb)
   zgg$result_analysis <- f["result_analysis"][[1]]
@@ -1997,5 +2021,4 @@ ziggurat_graph <- function(datadir,filename,
 # ziggurat_graph("data/","M_PL_031.csv",plotsdir="named/",print_to_file = FALSE,
 #                color_link = "Lavender", show_title = FALSE,
 #                alpha_link = 0.7, size_link = 0.4 )
-# end_time <- proc.time()
-# print(end_time - init_time)
+

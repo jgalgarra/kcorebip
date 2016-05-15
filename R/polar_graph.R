@@ -257,6 +257,7 @@ polar_graph <- function( nname, directorystr = "data/", plotsdir = "plot_results
                                MeanKradius = result_analysis$meandist, MeanKdegree = result_analysis$meankdegree,
                                showtext = pshowtext, printable_range = printable_labels, progress
                               )
+  # Non interactive mode. Plots stored in file or displayer in R window
   if (is.null(progress))
   {
     if (show_histograms)
@@ -266,6 +267,7 @@ polar_graph <- function( nname, directorystr = "data/", plotsdir = "plot_results
     if (print_to_file)
       dev.off()
   }
+  # Message for interactive apps.
   if (!is.null(progress)) {
     progress$inc(0, detail=strings$value("MESSAGE_POLAR_PROGRESS_DONE"))
     return(r)

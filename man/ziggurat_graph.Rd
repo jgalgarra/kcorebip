@@ -2,14 +2,14 @@
 % Please edit documentation in R/ziggurat_graph.R
 \name{ziggurat_graph}
 \alias{ziggurat_graph}
-\title{Plotting a ziggurat plot}
+\title{Plotting a ziggurat graph}
 \usage{
 ziggurat_graph(datadir, filename, paintlinks = TRUE,
   displaylabelszig = TRUE, print_to_file = FALSE,
   plotsdir = "plot_results/ziggurat/", flip_results = FALSE,
   aspect_ratio = 1, alpha_level = 0.2, color_guild_a = c("#4169E1",
   "#00008B"), color_guild_b = c("#F08080", "#FF0000"),
-  color_link = "#696969", alpha_link = 0.2, size_link = 0.5,
+  color_link = "slategray3", alpha_link = 0.5, size_link = 0.5,
   displace_y_b = rep(0, 11), displace_y_a = rep(0, 11), labels_size = 3.5,
   lsize_kcoremax = 3.5, lsize_zig = 3, lsize_kcore1 = 2.5,
   lsize_legend = 4, lsize_core_box = 2.5, labels_color = c(),
@@ -33,13 +33,126 @@ ziggurat_graph(datadir, filename, paintlinks = TRUE,
   progress = NULL)
 }
 \arguments{
-\item{love}{Do you love cats? Defaults to TRUE.}
+\item{datadir}{the name of the file of the interaction matrix}
+
+\item{filename}{the file with the interaction matrix}
+
+\item{print_to_file}{if set to FALSE the plot is displayed in the R session window}
+
+\item{plotsdir}{the directory where the plot is stored}
+
+\item{flip_results}{displays the graph in portrait configuration}
+
+\item{aspect_ratio}{ziggurat plot default aspect ratio}
+
+\item{alpha_level}{transparency for ziggurats' filling}
+
+\item{color_guild_a}{default filling for nodes of guild_a}
+
+\item{color_guild_b}{default filling for nodes of guild_b}
+
+\item{color_link}{default links color}
+
+\item{alpha_link}{link transparency}
+
+\item{size_link}{width of the links}
+
+\item{displace_y_b}{relative vertical displacement of guild_b inner ziggurats}
+
+\item{displace_y_a}{relative vertical displacement of guild_a inner ziggurats}
+
+\item{labels_size}{default nodes labels size}
+
+\item{lsize_kcoremax}{nodes in kshell max label size}
+
+\item{lsize_zig}{nodes in inner ziggurats label size}
+
+\item{lsize_kcore1}{labels of nodes in kshell 1}
+
+\item{lsize_legend}{legend label size}
+
+\item{labels_color}{default label colors}
+
+\item{height_box_y_expand}{expand inner ziggurat rectangles default height by this factor}
+
+\item{kcore2tail_vertical_separation}{expand vertical of kshell 1 species linked to kshell 2 by this factor}
+
+\item{kcore1tail_disttocore}{expand vertical separation of kshell 1 species from kshell max (guild_a, guild,b)}
+
+\item{innertail_vertical_separation}{expand vertical separation of kshell species connected to khsell > 2 & < kshell max}
+
+\item{horiz_kcoremax_tails_expand}{expand horizontal separation of weird tails connected to kshell max}
+
+\item{factor_hop_x}{expand inner ziggurats horizontal distance}
+
+\item{fattailjumphoriz}{displace kshell 1 species linked to leftmost kshell max species}
+
+\item{fattailjumpvert}{idem for vertical position}
+
+\item{coremax_triangle_height_factor}{expand khsell max rectangles height by this factor}
+
+\item{coremax_triangle_width_factor}{expand khsell max rectangles width by this factor}
+
+\item{paint_outsiders}{paint species not connected to giant component}
+
+\item{displace_outside_component}{displace outsider species (horizontal, vertical)}
+
+\item{outsiders_separation_expand}{multiply by this factor outsiders' separation}
+
+\item{outsiders_legend_expand}{displace outsiders legend}
+
+\item{weirdskcore2_horizontal_dist_rootleaf_expand}{expand horizontal distance of weird tail root node connected to kshell 2}
+
+\item{weirdskcore2_vertical_dist_rootleaf_expand}{expand vertical distance of weird tails connected to kshell 2}
+
+\item{weirds_boxes_separation_count}{weird species boxes separation count}
+
+\item{root_weird_expand}{expand root weird distances of tails connected to kshell <> 2}
+
+\item{hide_plot_border}{hide border around the plot}
+
+\item{rescale_plot_area}{Full plot area rescaling (horizontal, vertical)}
+
+\item{kcore1weirds_leafs_vertical_separation}{expand vertical separation of weird tails connected to kshell 1 species}
+
+\item{corebox_border_size}{width of kshell boxes}
+
+\item{kcore_species_name_display}{display species names}
+
+\item{kcore_species_name_break}{allow new lines in species names}
+
+\item{label_strguilda}{string labels of guild a}
+
+\item{label_strguildb}{string labels of guild b}
+
+\item{landscape_plot}{paper landscape configuration}
+
+\item{backg_color}{plot background color}
+
+\item{show_title}{show plot title}
+
+\item{use_spline}{use splines to draw links}
+
+\item{spline_points}{number of points for each spline}
+
+\item{svg_scale_factor}{only for interactive apps, do not modify}
+
+\item{progress}{only for interactive apps, do not modifiy}
+
+\item{lsize_kcorebox}{default kshell boxes label size}
+
+\item{diplace_legend}{modify legend position by these fractions}
+
+\item{shorten_species_names}{number of characters of species name to display}
 }
 \description{
-Plotting a ziggurat plot
+This function plots the ziggurat graph of a bipartite network. Configuration parameters and
+results are stored in a global environment called zgg. This environment is not destroyed
+after the function is executed, so the developer can store it in a configuration file, retrieve
+network analysis variables and so on. If a new ziggurat_graph is called, zgg is destroyed and
+created again for the new plot. Plotting options are explained in the user manual.
 }
 \examples{
- ziggurat_graph("data/","M_PL_006.csv",print_to_file = FALSE)
+ziggurat_graph("data/","M_PL_001.csv",plotsdir="grafresults/",print_to_file = TRUE)
 }
-\keyword{cats}
 
