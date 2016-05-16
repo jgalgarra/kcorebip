@@ -85,6 +85,8 @@ ziggurat_graph(datadir, filename, paintlinks = TRUE,
 
 \item{factor_hop_x}{expand inner ziggurats horizontal distance}
 
+\item{displace_legend}{modify legend position by these fractions}
+
 \item{fattailjumphoriz}{displace kshell 1 species linked to leftmost kshell max species}
 
 \item{fattailjumpvert}{idem for vertical position}
@@ -111,7 +113,7 @@ ziggurat_graph(datadir, filename, paintlinks = TRUE,
 
 \item{hide_plot_border}{hide border around the plot}
 
-\item{rescale_plot_area}{Full plot area rescaling (horizontal, vertical)}
+\item{rescale_plot_area}{full plot area rescaling (horizontal, vertical)}
 
 \item{kcore1weirds_leafs_vertical_separation}{expand vertical separation of weird tails connected to kshell 1 species}
 
@@ -140,8 +142,6 @@ ziggurat_graph(datadir, filename, paintlinks = TRUE,
 \item{progress}{only for interactive apps, do not modifiy}
 
 \item{lsize_kcorebox}{default kshell boxes label size}
-
-\item{diplace_legend}{modify legend position by these fractions}
 
 \item{shorten_species_names}{number of characters of species name to display}
 }

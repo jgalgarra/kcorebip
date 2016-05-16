@@ -1930,7 +1930,7 @@ draw_ziggurat_plot <- function(svg_scale_factor, progress)
 #' @param innertail_vertical_separation expand vertical separation of kshell species connected to khsell > 2 & < kshell max
 #' @param horiz_kcoremax_tails_expand expand horizontal separation of weird tails connected to kshell max
 #' @param factor_hop_x expand inner ziggurats horizontal distance
-#' @param diplace_legend modify legend position by these fractions
+#' @param displace_legend modify legend position by these fractions
 #' @param fattailjumphoriz displace kshell 1 species linked to leftmost kshell max species
 #' @param fattailjumpvert idem for vertical position
 #' @param coremax_triangle_width_factor expand khsell max rectangles width by this factor
@@ -1944,7 +1944,7 @@ draw_ziggurat_plot <- function(svg_scale_factor, progress)
 #' @param weirds_boxes_separation_count weird species boxes separation count
 #' @param root_weird_expand expand root weird distances of tails connected to kshell <> 2
 #' @param hide_plot_border hide border around the plot
-#' @param rescale_plot_area Full plot area rescaling (horizontal, vertical)
+#' @param rescale_plot_area full plot area rescaling (horizontal, vertical)
 #' @param kcore1weirds_leafs_vertical_separation expand vertical separation of weird tails connected to kshell 1 species
 #' @param corebox_border_size width of kshell boxes
 #' @param kcore_species_name_display display species names
