@@ -1,0 +1,494 @@
+This is pdfTeX, Version 3.1415926-2.4-1.40.13 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2013.8.13)  17 MAY 2016 12:10
+entering extended mode
+**kcorebip_man.tex
+
+(D:\disco_usuario\javier\upm\doctorado\tesis\codigo\kcorebip\mansrc\kcorebip_ma
+n.tex
+LaTeX2e <2011/06/27>
+Babel <v3.8m> and hyphenation patterns for english, afrikaans, ancientgreek, ar
+abic, armenian, assamese, basque, bengali, bokmal, bulgarian, catalan, coptic, 
+croatian, czech, danish, dutch, esperanto, estonian, farsi, finnish, french, ga
+lician, german, german-x-2012-05-30, greek, gujarati, hindi, hungarian, iceland
+ic, indonesian, interlingua, irish, italian, kannada, kurmanji, latin, latvian,
+ lithuanian, malayalam, marathi, mongolian, mongolianlmc, monogreek, ngerman, n
+german-x-2012-05-30, nynorsk, oriya, panjabi, pinyin, polish, portuguese, roman
+ian, russian, sanskrit, serbian, slovak, slovenian, spanish, swedish, swissgerm
+an, tamil, telugu, turkish, turkmen, ukenglish, ukrainian, uppersorbian, usengl
+ishmax, welsh, loaded.
+
+(D:\disco_usuario\javier\upm\doctorado\tesis\codigo\kcorebip\mansrc\article.cls
+Document Class: article 2014/09/29 v1.4h Standard LaTeX document class
+("C:\Program Files\MiKTeX 2.9\tex\latex\base\size12.clo"
+File: size12.clo 2007/10/19 v1.4h Standard LaTeX file (size option)
+)
+\c@part=\count79
+\c@section=\count80
+\c@subsection=\count81
+\c@subsubsection=\count82
+\c@paragraph=\count83
+\c@subparagraph=\count84
+\c@figure=\count85
+\c@table=\count86
+\abovecaptionskip=\skip41
+\belowcaptionskip=\skip42
+\bibindent=\dimen102
+)
+("C:\Program Files\MiKTeX 2.9\tex\latex\graphics\graphicx.sty"
+Package: graphicx 1999/02/16 v1.0f Enhanced LaTeX Graphics (DPC,SPQR)
+
+("C:\Program Files\MiKTeX 2.9\tex\latex\graphics\keyval.sty"
+Package: keyval 1999/03/16 v1.13 key=value parser (DPC)
+\KV@toks@=\toks14
+)
+("C:\Program Files\MiKTeX 2.9\tex\latex\graphics\graphics.sty"
+Package: graphics 2009/02/05 v1.0o Standard LaTeX Graphics (DPC,SPQR)
+
+("C:\Program Files\MiKTeX 2.9\tex\latex\graphics\trig.sty"
+Package: trig 1999/03/16 v1.09 sin cos tan (DPC)
+)
+("C:\Program Files\MiKTeX 2.9\tex\latex\00miktex\graphics.cfg"
+File: graphics.cfg 2007/01/18 v1.5 graphics configuration of teTeX/TeXLive
+)
+Package graphics Info: Driver file: pdftex.def on input line 91.
+
+("C:\Program Files\MiKTeX 2.9\tex\latex\pdftex-def\pdftex.def"
+File: pdftex.def 2011/05/27 v0.06d Graphics/color for pdfTeX
+
+("C:\Program Files\MiKTeX 2.9\tex\generic\oberdiek\infwarerr.sty"
+Package: infwarerr 2010/04/08 v1.3 Providing info/warning/error messages (HO)
+)
+("C:\Program Files\MiKTeX 2.9\tex\generic\oberdiek\ltxcmds.sty"
+Package: ltxcmds 2011/11/09 v1.22 LaTeX kernel commands for general use (HO)
+)
+\Gread@gobject=\count87
+))
+\Gin@req@height=\dimen103
+\Gin@req@width=\dimen104
+)
+("C:\Program Files\MiKTeX 2.9\tex\latex\oberdiek\epstopdf.sty"
+Package: epstopdf 2010/02/09 v2.5 Conversion with epstopdf on the fly (HO)
+
+("C:\Program Files\MiKTeX 2.9\tex\latex\oberdiek\epstopdf-base.sty"
+Package: epstopdf-base 2010/02/09 v2.5 Base part for package epstopdf
+
+("C:\Program Files\MiKTeX 2.9\tex\latex\oberdiek\grfext.sty"
+Package: grfext 2010/08/19 v1.1 Manage graphics extensions (HO)
+
+("C:\Program Files\MiKTeX 2.9\tex\generic\oberdiek\kvdefinekeys.sty"
+Package: kvdefinekeys 2011/04/07 v1.3 Define keys (HO)
+))
+("C:\Program Files\MiKTeX 2.9\tex\latex\oberdiek\kvoptions.sty"
+Package: kvoptions 2011/06/30 v3.11 Key value format for package options (HO)
+
+("C:\Program Files\MiKTeX 2.9\tex\generic\oberdiek\kvsetkeys.sty"
+Package: kvsetkeys 2012/04/25 v1.16 Key value parser (HO)
+
+("C:\Program Files\MiKTeX 2.9\tex\generic\oberdiek\etexcmds.sty"
+Package: etexcmds 2011/02/16 v1.5 Avoid name clashes with e-TeX commands (HO)
+
+("C:\Program Files\MiKTeX 2.9\tex\generic\oberdiek\ifluatex.sty"
+Package: ifluatex 2010/03/01 v1.3 Provides the ifluatex switch (HO)
+Package ifluatex Info: LuaTeX not detected.
+)
+Package etexcmds Info: Could not find \expanded.
+(etexcmds)             That can mean that you are not using pdfTeX 1.50 or
+(etexcmds)             that some package has redefined \expanded.
+(etexcmds)             In the latter case, load this package earlier.
+)))
+("C:\Program Files\MiKTeX 2.9\tex\generic\oberdiek\pdftexcmds.sty"
+Package: pdftexcmds 2011/11/29 v0.20 Utility functions of pdfTeX for LuaTeX (HO
+)
+
+("C:\Program Files\MiKTeX 2.9\tex\generic\oberdiek\ifpdf.sty"
+Package: ifpdf 2011/01/30 v2.3 Provides the ifpdf switch (HO)
+Package ifpdf Info: pdfTeX in PDF mode is detected.
+)
+Package pdftexcmds Info: LuaTeX not detected.
+Package pdftexcmds Info: \pdf@primitive is available.
+Package pdftexcmds Info: \pdf@ifprimitive is available.
+Package pdftexcmds Info: \pdfdraftmode found.
+)
+Package grfext Info: Graphics extension search list:
+(grfext)             [.png,.pdf,.jpg,.mps,.jpeg,.jbig2,.jb2,.PNG,.PDF,.JPG,.JPE
+G,.JBIG2,.JB2,.eps]
+(grfext)             \AppendGraphicsExtensions on input line 452.
+))
+("C:\Program Files\MiKTeX 2.9\tex\latex\biblatex\biblatex.sty"
+Package: biblatex 2015/10/21 v3.1 programmable bibliographies (PK/JW/AB)
+
+("C:\Program Files\MiKTeX 2.9\tex\latex\biblatex\biblatex1.sty"
+Package: biblatex1 2015/10/21 v3.1 programmable bibliographies (bibtex) (PK/JW/
+AB)
+
+("C:\Program Files\MiKTeX 2.9\tex\latex\etoolbox\etoolbox.sty"
+Package: etoolbox 2015/08/02 v2.2a e-TeX tools for LaTeX (JAW)
+
+("C:\Program Files\MiKTeX 2.9\tex\latex\misc\etex.sty"
+Package: etex 1998/03/26 v2.0 eTeX basic definition package (PEB)
+\et@xins=\count88
+)
+\etb@tempcnta=\count89
+)
+("C:\Program Files\MiKTeX 2.9\tex\latex\logreq\logreq.sty"
+Package: logreq 2010/08/04 v1.0 xml request logger
+\lrq@indent=\count90
+
+("C:\Program Files\MiKTeX 2.9\tex\latex\logreq\logreq.def"
+File: logreq.def 2010/08/04 v1.0 logreq spec v1.0
+))
+("C:\Program Files\MiKTeX 2.9\tex\latex\base\ifthen.sty"
+Package: ifthen 2001/05/26 v1.1c Standard LaTeX ifthen package (DPC)
+)
+("C:\Program Files\MiKTeX 2.9\tex\latex\ltxmisc\url.sty"
+\Urlmuskip=\muskip10
+Package: url 2006/04/12  ver 3.3  Verb mode for urls, etc.
+)
+\c@tabx@nest=\count91
+\c@listtotal=\count92
+\c@listcount=\count93
+\c@liststart=\count94
+\c@liststop=\count95
+\c@citecount=\count96
+\c@citetotal=\count97
+\c@multicitecount=\count98
+\c@multicitetotal=\count99
+\c@instcount=\count100
+\c@maxnames=\count101
+\c@minnames=\count102
+\c@maxitems=\count103
+\c@minitems=\count104
+\c@citecounter=\count105
+\c@savedcitecounter=\count106
+\c@uniquelist=\count107
+\c@uniquename=\count108
+\c@refsection=\count109
+\c@refsegment=\count110
+\c@maxextrayear=\count111
+\c@maxextraalpha=\count112
+\c@abbrvpenalty=\count113
+\c@highnamepenalty=\count114
+\c@lownamepenalty=\count115
+\c@maxparens=\count116
+\c@parenlevel=\count117
+\blx@tempcnta=\count118
+\blx@tempcntb=\count119
+\blx@tempcntc=\count120
+\blx@maxsection=\count121
+\blx@maxsegment=\count122
+\blx@notetype=\count123
+\blx@parenlevel@text=\count124
+\blx@parenlevel@foot=\count125
+\labelnumberwidth=\skip43
+\labelalphawidth=\skip44
+\shorthandwidth=\skip45
+\biblabelsep=\skip46
+\bibitemsep=\skip47
+\bibnamesep=\skip48
+\bibinitsep=\skip49
+\bibparsep=\skip50
+\bibhang=\skip51
+\blx@auxin=\read1
+\blx@auxout=\write3
+\c@mincomprange=\count126
+\c@maxcomprange=\count127
+\c@mincompwidth=\count128
+\c@labelname=\count129
+\c@savedlabelname=\count130
+\c@author=\count131
+\c@savedauthor=\count132
+\c@shortauthor=\count133
+\c@savedshortauthor=\count134
+\c@editor=\count135
+\c@savededitor=\count136
+\c@editora=\count137
+\c@savededitora=\count138
+\c@editorb=\count139
+\c@savededitorb=\count140
+\c@editorc=\count141
+\c@savededitorc=\count142
+\c@shorteditor=\count143
+\c@savedshorteditor=\count144
+\c@bookauthor=\count145
+\c@savedbookauthor=\count146
+\c@translator=\count147
+\c@savedtranslator=\count148
+\c@annotator=\count149
+\c@savedannotator=\count150
+\c@commentator=\count151
+\c@savedcommentator=\count152
+\c@introduction=\count153
+\c@savedintroduction=\count154
+\c@foreword=\count155
+\c@savedforeword=\count156
+\c@afterword=\count157
+\c@savedafterword=\count158
+\c@holder=\count159
+\c@savedholder=\count160
+\c@namea=\count161
+\c@savednamea=\count162
+\c@nameb=\count163
+\c@savednameb=\count164
+\c@namec=\count165
+\c@savednamec=\count166
+\c@institution=\count167
+\c@savedinstitution=\count168
+\c@language=\count169
+\c@savedlanguage=\count170
+\c@location=\count171
+\c@savedlocation=\count172
+\c@organization=\count173
+\c@savedorganization=\count174
+\c@origlocation=\count175
+\c@savedoriglocation=\count176
+\c@origpublisher=\count177
+\c@savedorigpublisher=\count178
+\c@pageref=\count179
+\c@savedpageref=\count180
+\c@publisher=\count181
+\c@savedpublisher=\count182
+\c@lista=\count183
+\c@savedlista=\count184
+\c@listb=\count185
+\c@savedlistb=\count186
+\c@listc=\count187
+\c@savedlistc=\count188
+\c@listd=\count189
+\c@savedlistd=\count190
+\c@liste=\count191
+\c@savedliste=\count192
+\c@listf=\count193
+\c@savedlistf=\count194
+Package biblatex Info: Trying to load compatibility code...
+Package biblatex Info: ... file 'blx-compat.def' found.
+
+("C:\Program Files\MiKTeX 2.9\tex\latex\biblatex\blx-compat.def"
+File: blx-compat.def 2015/10/21 v3.1 biblatex compatibility (PK/JW/AB)
+)
+Package biblatex Info: Trying to load generic definitions...
+Package biblatex Info: ... file 'biblatex.def' found.
+
+("C:\Program Files\MiKTeX 2.9\tex\latex\biblatex\biblatex.def"
+File: biblatex.def 
+\c@textcitecount=\count195
+\c@textcitetotal=\count196
+\c@textcitemaxnames=\count197
+\c@biburlnumpenalty=\count198
+\c@biburlucpenalty=\count199
+\c@biburllcpenalty=\count200
+\c@smartand=\count201
+)
+Package biblatex Info: Trying to load natbib compatibility...
+Package biblatex Info: ... file 'blx-natbib.def' found.
+
+("C:\Program Files\MiKTeX 2.9\tex\latex\biblatex\blx-natbib.def"
+File: blx-natbib.def 2015/10/21 v3.1 biblatex compatibility (PK/JW/AB)
+)
+Package biblatex Info: Trying to load bibliography style 'alphabetic'...
+Package biblatex Info: ... file 'alphabetic.bbx' found.
+
+("C:\Program Files\MiKTeX 2.9\tex\latex\biblatex\bbx\alphabetic.bbx"
+File: alphabetic.bbx 2015/10/21 v3.1 biblatex bibliography style (PK/JW/AB)
+Package biblatex Info: Trying to load bibliography style 'standard'...
+Package biblatex Info: ... file 'standard.bbx' found.
+
+("C:\Program Files\MiKTeX 2.9\tex\latex\biblatex\bbx\standard.bbx"
+File: standard.bbx 2015/10/21 v3.1 biblatex bibliography style (PK/JW/AB)
+\c@bbx:relatedcount=\count202
+\c@bbx:relatedtotal=\count203
+))
+Package biblatex Info: Trying to load citation style 'alphabetic'...
+Package biblatex Info: ... file 'alphabetic.cbx' found.
+
+("C:\Program Files\MiKTeX 2.9\tex\latex\biblatex\cbx\alphabetic.cbx"
+File: alphabetic.cbx 2015/10/21 v3.1 biblatex citation style (PK/JW/AB)
+Package biblatex Info: Redefining '\cite'.
+Package biblatex Info: Redefining '\parencite'.
+Package biblatex Info: Redefining '\footcite'.
+Package biblatex Info: Redefining '\footcitetext'.
+Package biblatex Info: Redefining '\smartcite'.
+Package biblatex Info: Redefining '\textcite'.
+Package biblatex Info: Redefining '\textcites'.
+Package biblatex Info: Redefining '\cites'.
+Package biblatex Info: Redefining '\parencites'.
+Package biblatex Info: Redefining '\smartcites'.
+)
+Package biblatex Info: Trying to load configuration file...
+Package biblatex Info: ... file 'biblatex.cfg' found.
+
+("C:\Program Files\MiKTeX 2.9\tex\latex\biblatex\biblatex.cfg"
+File: biblatex.cfg 
+)))
+Package biblatex Info: Trying to load language 'english'...
+Package biblatex Info: ... file 'english.lbx' found.
+
+("C:\Program Files\MiKTeX 2.9\tex\latex\biblatex\lbx\english.lbx"
+File: english.lbx 2015/10/21 v3.1 biblatex localization (PK/JW/AB)
+)
+\@quotelevel=\count204
+\@quotereset=\count205
+
+(D:\disco_usuario\javier\upm\doctorado\tesis\codigo\kcorebip\mansrc\kcorebip_ma
+n.aux)
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 10.
+LaTeX Font Info:    ... okay on input line 10.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 10.
+LaTeX Font Info:    ... okay on input line 10.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 10.
+LaTeX Font Info:    ... okay on input line 10.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 10.
+LaTeX Font Info:    ... okay on input line 10.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 10.
+LaTeX Font Info:    ... okay on input line 10.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 10.
+LaTeX Font Info:    ... okay on input line 10.
+ ("C:\Program Files\MiKTeX 2.9\tex\context\base\supp-pdf.mkii"
+[Loading MPS to PDF converter (version 2006.09.02).]
+\scratchcounter=\count206
+\scratchdimen=\dimen105
+\scratchbox=\box26
+\nofMPsegments=\count207
+\nofMParguments=\count208
+\everyMPshowfont=\toks15
+\MPscratchCnt=\count209
+\MPscratchDim=\dimen106
+\MPnumerator=\count210
+\makeMPintoPDFobject=\count211
+\everyMPtoPDFconversion=\toks16
+)
+Package biblatex Info: No input encoding detected.
+(biblatex)             Assuming 'ascii'.
+Package biblatex Info: Automatic encoding selection.
+(biblatex)             Assuming data encoding 'ascii'.
+Package biblatex Info: Trying to load bibliographic data...
+Package biblatex Info: ... file 'kcorebip_man.bbl' found.
+
+(D:\disco_usuario\javier\upm\doctorado\tesis\codigo\kcorebip\mansrc\kcorebip_ma
+n.bbl)
+Package biblatex Info: Reference section=0 on input line 10.
+Package biblatex Info: Reference segment=0 on input line 10.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <14.4> on input line 13.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <7> on input line 13.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <12> on input line 24.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <8> on input line 24.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <6> on input line 24.
+ <red_example.pdf, id=1, 845.1575pt x 597.23125pt>
+File: red_example.pdf Graphic file (type pdf)
+ <use red_example.pdf>
+Package pdftex.def Info: red_example.pdf used on input line 38.
+(pdftex.def)             Requested size: 338.057pt x 238.88826pt.
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+[1
+
+{C:/Users/algarra/AppData/Local/MiKTeX/2.9/pdftex/config/pdftex.map}]
+Underfull \vbox (badness 1337) has occurred while \output is active []
+
+ [2 <D:/disco_usuario/javier/upm/doctorado/tesis/codigo/kcorebip/mansrc/red_exa
+mple.pdf, page is rotated 90 degrees>]
+
+LaTeX Warning: File `Modvskdegree3.eps' not found on input line 75.
+
+Package epstopdf Info: Source file: <Modvskdegree3.eps>
+(epstopdf)             Output file: <Modvskdegree3-eps-converted-to.pdf>
+(epstopdf)                    date: 2015-07-20 22:36:35
+(epstopdf)                    size: 311409 bytes
+(epstopdf)             Command: <epstopdf --outfile=Modvskdegree3-eps-converted
+-to.pdf Modvskdegree3.eps>
+(epstopdf)             \includegraphics on input line 75.
+Package epstopdf Info: Output file is already uptodate.
+<Modvskdegree3-eps-converted-to.pdf, id=30, 592.2125pt x 638.385pt>
+File: Modvskdegree3-eps-converted-to.pdf Graphic file (type pdf)
+
+<use Modvskdegree3-eps-converted-to.pdf>
+Package pdftex.def Info: Modvskdegree3-eps-converted-to.pdf used on input line 
+75.
+(pdftex.def)             Requested size: 414.54591pt x 446.86644pt.
+
+Overfull \hbox (24.54591pt too wide) in paragraph at lines 75--76
+ [][] 
+ []
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+
+LaTeX Warning: Reference `fig:corrfigs' on page 3 undefined on input line 84.
+
+[3]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [4 <D:/disco_usuario/javier/upm/doctorado/tesis/codigo/kcorebip/mansrc/Modvskd
+egree3-eps-converted-to.pdf>]
+Overfull \hbox (12.37532pt too wide) in paragraph at lines 88--89
+[]\OT1/cmr/m/n/12 The net-work $\OML/cmm/m/it/12 PL[]\OT1/cmr/m/n/12 021$[Kat+9
+0] is big and strongly mod-u-lar, with $\OML/cmm/m/it/12 Modularity$
+ []
+
+
+LaTeX Warning: File `ALL_SD_004.eps' not found on input line 96.
+
+Package epstopdf Info: Source file: <ALL_SD_004.eps>
+(epstopdf)             Output file: <ALL_SD_004-eps-converted-to.pdf>
+(epstopdf)                    date: 2015-07-16 15:06:19
+(epstopdf)                    size: 458570 bytes
+(epstopdf)             Command: <epstopdf --outfile=ALL_SD_004-eps-converted-to
+.pdf ALL_SD_004.eps>
+(epstopdf)             \includegraphics on input line 96.
+Package epstopdf Info: Output file is already uptodate.
+<ALL_SD_004-eps-converted-to.pdf, id=40, 968.61874pt x 1040.88875pt>
+File: ALL_SD_004-eps-converted-to.pdf Graphic file (type pdf)
+
+<use ALL_SD_004-eps-converted-to.pdf>
+Package pdftex.def Info: ALL_SD_004-eps-converted-to.pdf used on input line 96.
+
+(pdftex.def)             Requested size: 387.44063pt x 416.34813pt.
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+[5] [6 <D:/disco_usuario/javier/upm/doctorado/tesis/codigo/kcorebip/mansrc/ALL_
+SD_004-eps-converted-to.pdf>]
+Overfull \hbox (5.21478pt too wide) in paragraph at lines 104--104
+\OT1/cmr/m/n/12 tion of in-fras-truc-ture net-works''. In: \OT1/cmr/m/it/12 Phy
+s-i-cal Re-view E \OT1/cmr/m/n/12 71.1 (2005),
+ []
+
+[7]
+(D:\disco_usuario\javier\upm\doctorado\tesis\codigo\kcorebip\mansrc\kcorebip_ma
+n.aux)
+
+LaTeX Warning: There were undefined references.
+
+Package logreq Info: Writing requests to 'kcorebip_man.run.xml'.
+ ) 
+Here is how much of TeX's memory you used:
+ 6515 strings out of 493921
+ 107551 string characters out of 3147276
+ 272420 words of memory out of 3000000
+ 9753 multiletter control sequences out of 15000+200000
+ 9155 words of font info for 32 fonts, out of 3000000 for 9000
+ 841 hyphenation exceptions out of 8191
+ 42i,6n,48p,866b,915s stack positions out of 5000i,500n,10000p,200000b,50000s
+<C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C:/Pr
+ogram Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmex10.pfb><C:/Program Fi
+les/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmmi12.pfb><C:/Program Files/MiKT
+eX 2.9/fonts/type1/public/amsfonts/cm/cmmi6.pfb><C:/Program Files/MiKTeX 2.9/fo
+nts/type1/public/amsfonts/cm/cmmi8.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1
+/public/amsfonts/cm/cmr12.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/a
+msfonts/cm/cmr17.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/c
+m/cmr8.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy10.p
+fb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy8.pfb><C:/Pr
+ogram Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmti12.pfb>
+Output written on kcorebip_man.pdf (7 pages, 944497 bytes).
+PDF statistics:
+ 89 PDF objects out of 1000 (max. 8388607)
+ 0 named destinations out of 1000 (max. 500000)
+ 16 words of extra memory for PDF output out of 10000 (max. 10000000)
+

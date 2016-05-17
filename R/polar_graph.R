@@ -11,6 +11,7 @@ paint_kdegree_kradius <- function(graph, num_guild_a, num_guild_b,
                                   network_name = "",
                                   NODF = 0, Modularity = 0, MeanKradius = 0, MeanKdegree = 0,
                                   printable_range = printable_labels,
+                                  fname_append = file_name_append,
                                   progress
                                   )
 {
@@ -217,6 +218,7 @@ paint_kdegree_kradius <- function(graph, num_guild_a, num_guild_b,
 #' @param lsize_legend legend label size
 #' @param lsize_axis_title axis title size
 #' @param lsize_legend_title legend label size
+#' @param file_name_append a label that the user may append to the plot file for convenience
 #' @param auxiliar for interactive apps, do not modify
 #' @param printable_labels range of labeled species
 #' @export
@@ -226,7 +228,9 @@ polar_graph <- function( nname, directorystr = "data/", plotsdir = "plot_results
                          show_histograms = TRUE, glabels = c("Plant", "Pollinator"),
                          gshortened = c("pl","pol"),
                          lsize_title = 22, lsize_axis = 12, lsize_legend = 13,
-                         lsize_axis_title = 14, lsize_legend_title = 15, progress=NULL, printable_labels = 0)
+                         lsize_axis_title = 14, lsize_legend_title = 15,
+                         file_name_append = "",
+                         progress=NULL, printable_labels = 0)
 {
   nname_name <- strsplit(nname,".csv")[[1]][1]
   sguild_a <<- gshortened[1]
@@ -244,18 +248,21 @@ polar_graph <- function( nname, directorystr = "data/", plotsdir = "plot_results
   if (print_to_file){
     dir.create(plotsdir, showWarnings = FALSE)
     ppi <- 600
+    if (length(file_name_append) > 0)
+      ftname_append <- paste0("_",file_name_append)
     if (show_histograms)
-      png(paste0(plotsdir,nname_name,"_polar.png"), width=12*ppi, height=12*ppi, res=ppi)
+      png(paste0(plotsdir,nname_name,"_polar",ftname_append,".png"), width=12*ppi, height=12*ppi, res=ppi)
     else
-      png(paste0(plotsdir,nname_name,"_polar.png"), width=9*ppi, height=9*ppi, res=ppi)
+      png(paste0(plotsdir,nname_name,"_polar",ftname_append,".png"), width=9*ppi, height=9*ppi, res=ppi)
   }
 
   r <- paint_kdegree_kradius(result_analysis$graph, result_analysis$num_guild_a,result_analysis$num_guild_b,
                              lsize_title , lsize_axis, lsize_legend, lsize_axis_title , lsize_legend_title,
-                               network_name = nname_name, NODF = result_analysis$nested_values["NODF"],
-                               Modularity =  result_analysis$modularity_measure,
-                               MeanKradius = result_analysis$meandist, MeanKdegree = result_analysis$meankdegree,
-                               showtext = pshowtext, printable_range = printable_labels, progress
+                             network_name = nname_name, NODF = result_analysis$nested_values["NODF"],
+                             Modularity =  result_analysis$modularity_measure,
+                             MeanKradius = result_analysis$meandist, MeanKdegree = result_analysis$meankdegree,
+                             showtext = pshowtext, fname_append = ftname_append,
+                             printable_range = printable_labels, progress
                               )
   # Non interactive mode. Plots stored in file or displayer in R window
   if (is.null(progress))

@@ -1,0 +1,226 @@
+% $ biblatex auxiliary file $
+% $ biblatex version 2.5 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated as
+% required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+\entry{alvarez:2005k}{article}{}
+  \name{author}{4}{}{%
+    {{}%
+     {Alvarez-Hamelin}{A.-H.}%
+     {Jos{\'e}~Ignacio}{J.~I.}%
+     {}{}%
+     {}{}}%
+    {{}%
+     {Dall'Asta}{D.}%
+     {Luca}{L.}%
+     {}{}%
+     {}{}}%
+    {{}%
+     {Barrat}{B.}%
+     {Alain}{A.}%
+     {}{}%
+     {}{}}%
+    {{}%
+     {Vespignani}{V.}%
+     {Alessandro}{A.}%
+     {}{}%
+     {}{}}%
+  }
+  \strng{namehash}{AHJI+1}
+  \strng{fullhash}{AHJIDLBAVA1}
+  \field{labelalpha}{AH+05}
+  \field{sortinit}{A}
+  \field{title}{k-core decomposition: A tool for the visualization of large
+  scale networks}
+  \field{journaltitle}{arXiv preprint cs/0504107}
+  \field{year}{2005}
+\endentry
+
+\entry{bastolla:2009architecture}{article}{}
+  \name{author}{6}{}{%
+    {{}%
+     {Bastolla}{B.}%
+     {Ugo}{U.}%
+     {}{}%
+     {}{}}%
+    {{}%
+     {Fortuna}{F.}%
+     {Miguel~A}{M.~A.}%
+     {}{}%
+     {}{}}%
+    {{}%
+     {Pascual-Garc{\'\i}a}{P.-G.}%
+     {Alberto}{A.}%
+     {}{}%
+     {}{}}%
+    {{}%
+     {Ferrera}{F.}%
+     {Antonio}{A.}%
+     {}{}%
+     {}{}}%
+    {{}%
+     {Luque}{L.}%
+     {Bartolo}{B.}%
+     {}{}%
+     {}{}}%
+    {{}%
+     {Bascompte}{B.}%
+     {Jordi}{J.}%
+     {}{}%
+     {}{}}%
+  }
+  \list{publisher}{1}{%
+    {Nature Publishing Group}%
+  }
+  \strng{namehash}{BU+1}
+  \strng{fullhash}{BUFMAPGAFALBBJ1}
+  \field{labelalpha}{Bas+09}
+  \field{sortinit}{B}
+  \field{number}{7241}
+  \field{pages}{1018\bibrangedash 1020}
+  \field{title}{The architecture of mutualistic networks minimizes competition
+  and increases biodiversity}
+  \field{volume}{458}
+  \field{journaltitle}{Nature}
+  \field{year}{2009}
+\endentry
+
+\entry{carlo:2003avian}{article}{}
+  \name{author}{3}{}{%
+    {{}%
+     {Carlo}{C.}%
+     {Tom{\'a}s~A}{T.~A.}%
+     {}{}%
+     {}{}}%
+    {{}%
+     {Collazo}{C.}%
+     {Jaime~A}{J.~A.}%
+     {}{}%
+     {}{}}%
+    {{}%
+     {Groom}{G.}%
+     {Martha~J}{M.~J.}%
+     {}{}%
+     {}{}}%
+  }
+  \list{publisher}{1}{%
+    {Springer}%
+  }
+  \strng{namehash}{CTACJAGMJ1}
+  \strng{fullhash}{CTACJAGMJ1}
+  \field{labelalpha}{CCG03}
+  \field{sortinit}{C}
+  \field{number}{1}
+  \field{pages}{119\bibrangedash 131}
+  \field{title}{Avian fruit preferences across a Puerto Rican forested
+  landscape: pattern consistency and implications for seed removal}
+  \field{volume}{134}
+  \field{journaltitle}{Oecologia}
+  \field{year}{2003}
+\endentry
+
+\entry{crome:1975ecology}{article}{}
+  \name{author}{1}{}{%
+    {{}%
+     {Crome}{C.}%
+     {FHJ}{F.}%
+     {}{}%
+     {}{}}%
+  }
+  \list{publisher}{1}{%
+    {CSIRO}%
+  }
+  \strng{namehash}{CF1}
+  \strng{fullhash}{CF1}
+  \field{labelalpha}{Cro75}
+  \field{sortinit}{C}
+  \field{number}{2}
+  \field{pages}{155\bibrangedash 185}
+  \field{title}{The ecology of fruit pigeons in tropical Northern Queensland}
+  \field{volume}{2}
+  \field{journaltitle}{Wildlife Research}
+  \field{year}{1975}
+\endentry
+
+\entry{kato:1990insect}{article}{}
+  \true{moreauthor}
+  \name{author}{4}{}{%
+    {{}%
+     {Kato}{K.}%
+     {Makoto}{M.}%
+     {}{}%
+     {}{}}%
+    {{}%
+     {Kakutani}{K.}%
+     {Takehiko}{T.}%
+     {}{}%
+     {}{}}%
+    {{}%
+     {Inoue}{I.}%
+     {Tamiji}{T.}%
+     {}{}%
+     {}{}}%
+    {{}%
+     {Itino}{I.}%
+     {Takao}{T.}%
+     {}{}%
+     {}{}}%
+  }
+  \list{publisher}{1}{%
+    {Biological Laboratory, Kyoto University}%
+  }
+  \strng{namehash}{KM+1}
+  \strng{fullhash}{KMKTITIT+1}
+  \field{labelalpha}{Kat+90}
+  \field{sortinit}{K}
+  \field{title}{Insect-flower relationship in the primary beech forest of Ashu,
+  Kyoto: an overview of the flowering phenology and the seasonal pattern of
+  insect visits}
+  \field{year}{1990}
+\endentry
+
+\entry{latora:2005vulnerability}{article}{}
+  \name{author}{2}{}{%
+    {{}%
+     {Latora}{L.}%
+     {Vito}{V.}%
+     {}{}%
+     {}{}}%
+    {{}%
+     {Marchiori}{M.}%
+     {Massimo}{M.}%
+     {}{}%
+     {}{}}%
+  }
+  \list{publisher}{1}{%
+    {APS}%
+  }
+  \strng{namehash}{LVMM1}
+  \strng{fullhash}{LVMM1}
+  \field{labelalpha}{LM05}
+  \field{sortinit}{L}
+  \field{number}{1}
+  \field{pages}{015103}
+  \field{title}{Vulnerability and protection of infrastructure networks}
+  \field{volume}{71}
+  \field{journaltitle}{Physical Review E}
+  \field{year}{2005}
+\endentry
+
+\lossort
+\endlossort
+
+\endinput

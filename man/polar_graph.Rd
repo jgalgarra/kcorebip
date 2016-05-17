@@ -8,8 +8,8 @@ polar_graph(nname, directorystr = "data/", plotsdir = "plot_results/polar/",
   print_to_file = FALSE, pshowtext = FALSE, show_histograms = TRUE,
   glabels = c("Plant", "Pollinator"), gshortened = c("pl", "pol"),
   lsize_title = 22, lsize_axis = 12, lsize_legend = 13,
-  lsize_axis_title = 14, lsize_legend_title = 15, progress = NULL,
-  printable_labels = 0)
+  lsize_axis_title = 14, lsize_legend_title = 15, file_name_append = "",
+  progress = NULL, printable_labels = 0)
 }
 \arguments{
 \item{nname}{the name of the file of the interaction matrix}
@@ -37,6 +37,8 @@ polar_graph(nname, directorystr = "data/", plotsdir = "plot_results/polar/",
 \item{lsize_axis_title}{axis title size}
 
 \item{lsize_legend_title}{legend label size}
+
+\item{file_name_append}{a label that the user may append to the plot file for convenience}
 
 \item{printable_labels}{range of labeled species}
 

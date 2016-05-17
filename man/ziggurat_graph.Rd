@@ -29,8 +29,8 @@ ziggurat_graph(datadir, filename, paintlinks = TRUE,
   kcore_species_name_display = c(), kcore_species_name_break = c(),
   shorten_species_name = 0, label_strguilda = "", label_strguildb = "",
   landscape_plot = TRUE, backg_color = "white", show_title = TRUE,
-  use_spline = TRUE, spline_points = 100, svg_scale_factor = 10,
-  progress = NULL)
+  use_spline = TRUE, spline_points = 100, file_name_append = "",
+  svg_scale_factor = 10, progress = NULL)
 }
 \arguments{
 \item{datadir}{the name of the file of the interaction matrix}
@@ -136,6 +136,8 @@ ziggurat_graph(datadir, filename, paintlinks = TRUE,
 \item{use_spline}{use splines to draw links}
 
 \item{spline_points}{number of points for each spline}
+
+\item{file_name_append}{a label that the user may append to the plot file for convenience}
 
 \item{svg_scale_factor}{only for interactive apps, do not modify}
 

@@ -1562,16 +1562,18 @@ draw_coremax_tails <- function(p, svg)
   return(calc_vals)
 }
 
-display_plot <- function(p, printfile, flip, plwidth=14, plheight=11, ppi = 300, landscape = zgg$label_strguild)
+display_plot <- function(p, printfile, flip, plwidth=14, plheight=11, ppi = 300, landscape = zgg$label_strguild, fname_append = "")
 {
   if (flip)
     p <- p + coord_flip()
   if (printfile){
+    if (length(fname_append) > 0)
+      ftname_append <- paste0("_",fname_append)
     dir.create(zgg$plotsdir, showWarnings = FALSE)
     if (landscape)
-      png(paste0("",zgg$plotsdir,"/",zgg$network_name,"_ziggurat.png"), width=(plwidth*ppi), height=plheight*ppi, res=ppi)
+      png(paste0("",zgg$plotsdir,"/",zgg$network_name,"_ziggurat",ftname_append,".png"), width=(plwidth*ppi), height=plheight*ppi, res=ppi)
     else
-      png(paste0("",zgg$plotsdir,"/",zgg$network_name,"_ziggurat.png"), width=(plheight*ppi), height=plwidth*ppi, res=ppi)
+      png(paste0("",zgg$plotsdir,"/",zgg$network_name,"_ziggurat",ftname_append,".png"), width=(plheight*ppi), height=plwidth*ppi, res=ppi)
   }
   print(p)
   if (printfile)
@@ -1622,7 +1624,7 @@ def_configuration <- function(paintlinks, displaylabelszig , print_to_file, plot
                               corebox_border_size,
                               kcore_species_name_display,kcore_species_name_break,shorten_species_name,
                               label_strguilda, label_strguildb, landscape_plot, backg_color, show_title,
-                              use_spline, spline_points
+                              use_spline, spline_points, file_name_append
                               )
 {
   # ENVIRONMENT CONFIGURATION PARAMETERS
@@ -1678,6 +1680,7 @@ def_configuration <- function(paintlinks, displaylabelszig , print_to_file, plot
   zgg$show_title <- show_title
   zgg$use_spline <- use_spline
   zgg$spline_points <- spline_points
+  zgg$file_name_append <- file_name_append
 }
 
 init_working_values <- function()
@@ -1884,7 +1887,7 @@ draw_ziggurat_plot <- function(svg_scale_factor, progress)
     }
   }
   if (is.null(progress))
-    display_plot(p,zgg$print_to_file,zgg$flip_results, landscape = zgg$landscape_plot)
+    display_plot(p,zgg$print_to_file,zgg$flip_results, landscape = zgg$landscape_plot, fname_append = zgg$file_name_append)
 
   # Stores results
   zgg$plot  <- p
@@ -1957,6 +1960,7 @@ draw_ziggurat_plot <- function(svg_scale_factor, progress)
 #' @param show_title show plot title
 #' @param use_spline use splines to draw links
 #' @param spline_points number of points for each spline
+#' @param file_name_append a label that the user may append to the plot file for convenience
 #' @param svg_scale_factor only for interactive apps, do not modify
 #' @param progress only for interactive apps, do not modifiy
 #' @export
@@ -1983,8 +1987,7 @@ ziggurat_graph <- function(datadir,filename,
                            kcore_species_name_display = c(), kcore_species_name_break = c(),
                            shorten_species_name = 0, label_strguilda = "", label_strguildb = "", landscape_plot = TRUE,
                            backg_color = "white", show_title = TRUE, use_spline =TRUE, spline_points = 100,
-                           svg_scale_factor=10,
-                           progress=NULL
+                           file_name_append = "", svg_scale_factor=10, progress=NULL
                            )
 {
   zgg <<- new.env()
@@ -2011,7 +2014,7 @@ ziggurat_graph <- function(datadir,filename,
                     root_weird_expand, hide_plot_border, rescale_plot_area,kcore1weirds_leafs_vertical_separation,
                     corebox_border_size, kcore_species_name_display,kcore_species_name_break,shorten_species_name,
                     label_strguilda, label_strguildb, landscape_plot, backg_color, show_title,
-                    use_spline, spline_points
+                    use_spline, spline_points, file_name_append
                     )
   init_working_values()
   draw_ziggurat_plot(svg_scale_factor, progress)
