@@ -12,6 +12,7 @@ paint_kdegree_kradius <- function(graph, num_guild_a, num_guild_b,
                                   NODF = 0, Modularity = 0, MeanKradius = 0, MeanKdegree = 0,
                                   printable_range = printable_labels,
                                   fname_append = "",
+                                  ptitle = "",
                                   progress
                                   )
 {
@@ -128,7 +129,8 @@ paint_kdegree_kradius <- function(graph, num_guild_a, num_guild_b,
   dftext <- data.frame(xlab,ylab,pylab)
   dftext$fillcol <- maxcore
   polar_plot <- polar_plot + annotate(geom="text",x=xlab,y=pylab,label=ylab,size=5, color="gray20", lineheight=.8)
-  polar_plot <- polar_plot + ggtitle(sprintf("Network %s NODF: %.02f Modularity: %.04f\n\n Avg k-radius: %.02f Avg k-degree: %.02f", network_name, NODF, Modularity, MeanKradius, MeanKdegree)) +
+  if (ptitle)
+    polar_plot <- polar_plot + ggtitle(sprintf("Network %s NODF: %.02f Modularity: %.04f\n\n Avg k-radius: %.02f Avg k-degree: %.02f", network_name, NODF, Modularity, MeanKradius, MeanKdegree)) +
     guides(row = guide_legend(nrow = 1))
   histo_dist <- ggplot(dfaux, aes(kradius)) + geom_histogram(alpha = alpha_level,binwidth=extreme/15,
                                                              color="white",fill = "forestgreen") +
@@ -217,7 +219,8 @@ paint_kdegree_kradius <- function(graph, num_guild_a, num_guild_b,
 #' @param lsize_axis_title axis title size
 #' @param lsize_legend_title legend label size
 #' @param file_name_append a label that the user may append to the plot file name for convenience
-#' @param auxiliar for interactive apps, do not modify
+#' @param print_title show title and network parameters
+#' @param progress auxiliar for interactive apps, do not modify
 #' @param printable_labels range of labeled species
 #' @export
 #' @examples polar_graph("M_PL_007.csv","data/",plotsdir="grafresults/",print_to_file = TRUE)
@@ -227,14 +230,14 @@ polar_graph <- function( nname, directorystr = "data/", plotsdir = "plot_results
                          gshortened = c("pl","pol"),
                          lsize_title = 22, lsize_axis = 12, lsize_legend = 13,
                          lsize_axis_title = 14, lsize_legend_title = 15,
-                         file_name_append = "",
+                         file_name_append = "", print_title = TRUE,
                          progress=NULL, printable_labels = 0)
 {
   nname_name <- strsplit(nname,".csv")[[1]][1]
   sguild_a <<- gshortened[1]
   sguild_b <<- gshortened[2]
   slabels <<- glabels
-  if (grepl("_SD_",nname)){
+  if (grepl("_SD_",nname) & (gshortened[1]=="pol") &  (gshortened[1]=="pl")){
     sguild_b = "disp"
     slabels <<- c("Plant", "Disperser")
   }
@@ -262,7 +265,7 @@ polar_graph <- function( nname, directorystr = "data/", plotsdir = "plot_results
                              Modularity =  result_analysis$modularity_measure,
                              MeanKradius = result_analysis$meandist, MeanKdegree = result_analysis$meankdegree,
                              showtext = pshowtext, fname_append = ftname_append,
-                             printable_range = printable_labels, progress
+                             printable_range = printable_labels, ptitle = print_title, progress
                               )
   # Non interactive mode. Plots stored in file or displayer in R window
   if (is.null(progress))
