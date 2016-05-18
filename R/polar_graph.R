@@ -11,7 +11,7 @@ paint_kdegree_kradius <- function(graph, num_guild_a, num_guild_b,
                                   network_name = "",
                                   NODF = 0, Modularity = 0, MeanKradius = 0, MeanKdegree = 0,
                                   printable_range = printable_labels,
-                                  fname_append = file_name_append,
+                                  fname_append = "",
                                   progress
                                   )
 {
@@ -152,10 +152,9 @@ paint_kdegree_kradius <- function(graph, num_guild_a, num_guild_b,
     ggtitle("k-radius") + ylab("Species")
 #   if (log_histograms)
 #     histo_dist <- histo_dist + scale_x_log10()
-  histo_core <- ggplot(dfaux, aes(x=kcorenum)) + # geom_histogram(width = 0.5, alpha =alpha_level, binwidth=1,color="white",fill = "slategray1") + theme(legend.position = "none") +theme_bw() +
-                geom_histogram(alpha =alpha_level, binwidth=1,color="white",fill = "slategray1") + theme(legend.position = "none") +theme_bw() +
-    #xlim(1, max(dfaux$maxcore)) +
-    scale_x_continuous(breaks=seq(1, maxcore, by=1), lim=c(1,maxcore+1)) +
+  histo_core <- ggplot(dfaux, aes(x=kcorenum)) +
+                geom_histogram(alpha = alpha_level, binwidth = 1,color="white",fill = "slategray3") + theme(legend.position = "none") +theme_bw() +
+    #scale_x_continuous(breaks=seq(0, maxcore, by=1), lim=c(1,maxcore+1)) +
     theme(panel.border = element_blank(),
           legend.key = element_blank(),
           panel.grid.minor.x = element_blank(),
@@ -169,8 +168,7 @@ paint_kdegree_kradius <- function(graph, num_guild_a, num_guild_b,
           legend.text = element_text(size=lsize_legend),
           plot.title = element_text(size=lsize_title,lineheight=.8, face="bold"),
           axis.text.y = element_text(face="bold", size=lsize_axis),
-          axis.text.x = element_text(angle = 0, face="bold", size=lsize_axis, hjust = -2.5),
-          axis.ticks.x = element_blank(),
+          axis.text.x = element_text(angle = 0, face="bold", size=lsize_axis),
           axis.title.y  = element_text(face="bold", size=lsize_axis_title),
           axis.title.x = element_blank()
     ) +
@@ -218,7 +216,7 @@ paint_kdegree_kradius <- function(graph, num_guild_a, num_guild_b,
 #' @param lsize_legend legend label size
 #' @param lsize_axis_title axis title size
 #' @param lsize_legend_title legend label size
-#' @param file_name_append a label that the user may append to the plot file for convenience
+#' @param file_name_append a label that the user may append to the plot file name for convenience
 #' @param auxiliar for interactive apps, do not modify
 #' @param printable_labels range of labeled species
 #' @export
@@ -248,8 +246,10 @@ polar_graph <- function( nname, directorystr = "data/", plotsdir = "plot_results
   if (print_to_file){
     dir.create(plotsdir, showWarnings = FALSE)
     ppi <- 600
-    if (length(file_name_append) > 0)
+    if (file_name_append != "")
       ftname_append <- paste0("_",file_name_append)
+    else
+      ftname_append <- file_name_append
     if (show_histograms)
       png(paste0(plotsdir,nname_name,"_polar",ftname_append,".png"), width=12*ppi, height=12*ppi, res=ppi)
     else

@@ -1567,8 +1567,10 @@ display_plot <- function(p, printfile, flip, plwidth=14, plheight=11, ppi = 300,
   if (flip)
     p <- p + coord_flip()
   if (printfile){
-    if (length(fname_append) > 0)
+    if (fname_append != "")
       ftname_append <- paste0("_",fname_append)
+    else
+      ftname_append <- fname_append
     dir.create(zgg$plotsdir, showWarnings = FALSE)
     if (landscape)
       png(paste0("",zgg$plotsdir,"/",zgg$network_name,"_ziggurat",ftname_append,".png"), width=(plwidth*ppi), height=plheight*ppi, res=ppi)
@@ -1960,7 +1962,7 @@ draw_ziggurat_plot <- function(svg_scale_factor, progress)
 #' @param show_title show plot title
 #' @param use_spline use splines to draw links
 #' @param spline_points number of points for each spline
-#' @param file_name_append a label that the user may append to the plot file for convenience
+#' @param file_name_append a label that the user may append to the plot file name for convenience
 #' @param svg_scale_factor only for interactive apps, do not modify
 #' @param progress only for interactive apps, do not modifiy
 #' @export
