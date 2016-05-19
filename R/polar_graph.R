@@ -205,8 +205,8 @@ paint_kdegree_kradius <- function(graph, num_guild_a, num_guild_b,
 #' This function plots the polar graph of a bipartite network and the histograms of kshell
 #' kradius and kdegree
 #'
-#' @param nname the name of the file of the interaction matrix
-#' @param directorystr the directory where the \code{nname} file is stored
+#' @param red the name of the file of the interaction matrix
+#' @param directorystr the directory where the \code{red} file is stored
 #' @param plotsdir the directory where the plot is stored
 #' @param print_to_file if set to FALSE the plot is displayed in the R session window
 #' @param pshowtext auxiliar for interactive apps, do not modify
@@ -225,7 +225,7 @@ paint_kdegree_kradius <- function(graph, num_guild_a, num_guild_b,
 #' @export
 #' @examples polar_graph("M_PL_007.csv","data/",plotsdir="grafresults/",print_to_file = TRUE)
 
-polar_graph <- function( nname, directorystr = "data/", plotsdir = "plot_results/polar/", print_to_file = FALSE, pshowtext = FALSE,
+polar_graph <- function( red, directorystr = "data/", plotsdir = "plot_results/polar/", print_to_file = FALSE, pshowtext = FALSE,
                          show_histograms = TRUE, glabels = c("Plant", "Pollinator"),
                          gshortened = c("pl","pol"),
                          lsize_title = 22, lsize_axis = 12, lsize_legend = 13,
@@ -233,17 +233,17 @@ polar_graph <- function( nname, directorystr = "data/", plotsdir = "plot_results
                          file_name_append = "", print_title = TRUE,
                          progress=NULL, printable_labels = 0)
 {
-  nname_name <- strsplit(nname,".csv")[[1]][1]
+  red_name <- strsplit(red,".csv")[[1]][1]
   sguild_a <<- gshortened[1]
   sguild_b <<- gshortened[2]
   slabels <<- glabels
-  if (grepl("_SD_",nname) & (gshortened[1]=="pol") &  (gshortened[1]=="pl")){
+  if (grepl("_SD_",red) & (gshortened[1]=="pol") &  (gshortened[1]=="pl")){
     sguild_b = "disp"
     slabels <<- c("Plant", "Disperser")
   }
 
   if (!is.null(progress)) progress$inc(1/4, detail=strings$value("MESSAGE_POLAR_PROGRESS_ANALYZING_NETWORK"))
-  result_analysis <- analyze_network(nname, directory = directorystr, guild_a = sguild_a, guild_b = sguild_b, plot_graphs = FALSE)
+  result_analysis <- analyze_network(red, directory = directorystr, guild_a = sguild_a, guild_b = sguild_b, plot_graphs = FALSE)
   numlinks <- result_analysis$links
 
   if (print_to_file){
@@ -254,14 +254,14 @@ polar_graph <- function( nname, directorystr = "data/", plotsdir = "plot_results
     else
       ftname_append <- file_name_append
     if (show_histograms)
-      png(paste0(plotsdir,nname_name,"_polar",ftname_append,".png"), width=12*ppi, height=12*ppi, res=ppi)
+      png(paste0(plotsdir,red_name,"_polar",ftname_append,".png"), width=12*ppi, height=12*ppi, res=ppi)
     else
-      png(paste0(plotsdir,nname_name,"_polar",ftname_append,".png"), width=9*ppi, height=9*ppi, res=ppi)
+      png(paste0(plotsdir,red_name,"_polar",ftname_append,".png"), width=9*ppi, height=9*ppi, res=ppi)
   }
 
   r <- paint_kdegree_kradius(result_analysis$graph, result_analysis$num_guild_a,result_analysis$num_guild_b,
                              lsize_title , lsize_axis, lsize_legend, lsize_axis_title , lsize_legend_title,
-                             network_name = nname_name, NODF = result_analysis$nested_values["NODF"],
+                             network_name = red_name, NODF = result_analysis$nested_values["NODF"],
                              Modularity =  result_analysis$modularity_measure,
                              MeanKradius = result_analysis$meandist, MeanKdegree = result_analysis$meankdegree,
                              showtext = pshowtext, fname_append = ftname_append,
