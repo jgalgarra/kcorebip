@@ -25,7 +25,7 @@ gen_sq_label <- function(nodes, joinchars = "\n")
 
 create_label_species <- function(strent,newline = FALSE){
   strchar <- ifelse(newline,"\n","")
-  pieces <- unlist(strsplit(strent," "))
+  pieces <- unlist(strsplit(unlist(strent)," "))
   if (is.na(pieces[2]))
     pieces[2] = ""
   if (zgg$shorten_species_name>0){
@@ -1335,14 +1335,14 @@ handle_fat_tails <- function(p, svg)
   fgap <- 0.7*zgg$hop_x
   zgg$pos_tail_x <- min(zgg$last_xtail_a[[zgg$kcoremax]],zgg$last_xtail_b[[zgg$kcoremax]],zgg$list_dfs_b[[zgg$kcoremax]][1,]$x1-fgap,zgg$list_dfs_a[[zgg$kcoremax]][1,]$x1-fgap)
   nrows_fat <- nrow(fat_tail_b)+nrow(fat_tail_a)
-  if (exists("fat_tail_a")) {
+  if ((exists("fat_tail_a")) & (zgg$kcoremax > 2)) {
     f <- draw_fat_tail(p,svg,fat_tail_a,nrows_fat,zgg$list_dfs_b,zgg$color_guild_a[1],
                        zgg$pos_tail_x,pos_tail_y,zgg$fattailjumphoriz[1],zgg$fattailjumpvert[1],fgap,inverse="yes")
     p <- f["p"][[1]]
     svg <- f["svg"][[1]]
   }
 
-  if (exists("fat_tail_b")) {
+  if ((exists("fat_tail_b")) & (zgg$kcoremax > 2)) {
     f <- draw_fat_tail(p,svg,fat_tail_b,nrows_fat,zgg$list_dfs_a,zgg$color_guild_b[1],zgg$pos_tail_x,
                        pos_tail_y,zgg$fattailjumphoriz[2],zgg$fattailjumpvert[2],fgap,inverse="no", is_guild_a = FALSE)
     p <- f["p"][[1]]
@@ -1952,9 +1952,9 @@ draw_ziggurat_plot <- function(svg_scale_factor, progress)
 #' @param rescale_plot_area full plot area rescaling (horizontal, vertical)
 #' @param kcore1weirds_leafs_vertical_separation expand vertical separation of weird tails connected to kshell 1 species
 #' @param corebox_border_size width of kshell boxes
-#' @param kcore_species_name_display display species names
-#' @param kcore_species_name_break allow new lines in species names
-#' @param shorten_species_names number of characters of species name to display
+#' @param kcore_species_name_display display species names of  shells listed in this vector
+#' @param kcore_species_name_break allow new lines in species names of  shells listed in this vector
+#' @param shorten_species_name number of characters of species name to display
 #' @param label_strguilda string labels of guild a
 #' @param label_strguildb string labels of guild b
 #' @param landscape_plot paper landscape configuration

@@ -228,8 +228,8 @@ paint_kdegree_kradius <- function(graph, num_guild_a, num_guild_b,
 polar_graph <- function( red, directorystr = "data/", plotsdir = "plot_results/polar/", print_to_file = FALSE, pshowtext = FALSE,
                          show_histograms = TRUE, glabels = c("Plant", "Pollinator"),
                          gshortened = c("pl","pol"),
-                         lsize_title = 22, lsize_axis = 12, lsize_legend = 13,
-                         lsize_axis_title = 14, lsize_legend_title = 15,
+                         lsize_title = 22, lsize_axis = 16,
+                         lsize_legend = 16,lsize_axis_title = 16, lsize_legend_title = 16,
                          file_name_append = "", print_title = TRUE,
                          progress=NULL, printable_labels = 0)
 {
