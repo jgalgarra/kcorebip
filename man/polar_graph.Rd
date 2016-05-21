@@ -4,17 +4,17 @@
 \alias{polar_graph}
 \title{Plotting a polar graph}
 \usage{
-polar_graph(nname, directorystr = "data/", plotsdir = "plot_results/polar/",
+polar_graph(red, directorystr = "data/", plotsdir = "plot_results/polar/",
   print_to_file = FALSE, pshowtext = FALSE, show_histograms = TRUE,
   glabels = c("Plant", "Pollinator"), gshortened = c("pl", "pol"),
-  lsize_title = 22, lsize_axis = 12, lsize_legend = 13,
-  lsize_axis_title = 14, lsize_legend_title = 15, file_name_append = "",
-  progress = NULL, printable_labels = 0)
+  lsize_title = 22, lsize_axis = 16, lsize_legend = 16,
+  lsize_axis_title = 16, lsize_legend_title = 16, file_name_append = "",
+  print_title = TRUE, progress = NULL, printable_labels = 0)
 }
 \arguments{
-\item{nname}{the name of the file of the interaction matrix}
+\item{red}{the name of the file of the interaction matrix}
 
-\item{directorystr}{the directory where the \code{nname} file is stored}
+\item{directorystr}{the directory where the \code{red} file is stored}
 
 \item{plotsdir}{the directory where the plot is stored}
 
@@ -38,11 +38,13 @@ polar_graph(nname, directorystr = "data/", plotsdir = "plot_results/polar/",
 
 \item{lsize_legend_title}{legend label size}
 
-\item{file_name_append}{a label that the user may append to the plot file for convenience}
+\item{file_name_append}{a label that the user may append to the plot file name for convenience}
+
+\item{print_title}{show title and network parameters}
+
+\item{progress}{auxiliar for interactive apps, do not modify}
 
 \item{printable_labels}{range of labeled species}
-
-\item{auxiliar}{for interactive apps, do not modify}
 }
 \description{
 This function plots the polar graph of a bipartite network and the histograms of kshell

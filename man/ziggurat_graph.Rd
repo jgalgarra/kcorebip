@@ -119,9 +119,11 @@ ziggurat_graph(datadir, filename, paintlinks = TRUE,
 
 \item{corebox_border_size}{width of kshell boxes}
 
-\item{kcore_species_name_display}{display species names}
+\item{kcore_species_name_display}{display species names of  shells listed in this vector}
 
-\item{kcore_species_name_break}{allow new lines in species names}
+\item{kcore_species_name_break}{allow new lines in species names of  shells listed in this vector}
+
+\item{shorten_species_name}{number of characters of species name to display}
 
 \item{label_strguilda}{string labels of guild a}
 
@@ -137,15 +139,13 @@ ziggurat_graph(datadir, filename, paintlinks = TRUE,
 
 \item{spline_points}{number of points for each spline}
 
-\item{file_name_append}{a label that the user may append to the plot file for convenience}
+\item{file_name_append}{a label that the user may append to the plot file name for convenience}
 
 \item{svg_scale_factor}{only for interactive apps, do not modify}
 
 \item{progress}{only for interactive apps, do not modifiy}
 
 \item{lsize_kcorebox}{default kshell boxes label size}
-
-\item{shorten_species_names}{number of characters of species name to display}
 }
 \description{
 This function plots the ziggurat graph of a bipartite network. Configuration parameters and

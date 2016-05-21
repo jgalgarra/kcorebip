@@ -16,7 +16,7 @@
   {}
 \endgroup
 
-\entry{alvarez:2005k}{article}{}
+\entry{alvarez2005k}{article}{}
   \name{author}{4}{}{%
     {{}%
      {Alvarez-Hamelin}{A.-H.}%
@@ -49,56 +49,70 @@
   \field{year}{2005}
 \endentry
 
-\entry{bastolla:2009architecture}{article}{}
-  \name{author}{6}{}{%
+\entry{almeida2008consistent}{article}{}
+  \name{author}{5}{}{%
     {{}%
-     {Bastolla}{B.}%
-     {Ugo}{U.}%
+     {Almeida-Neto}{A.-N.}%
+     {M{\'a}rio}{M.}%
      {}{}%
      {}{}}%
     {{}%
-     {Fortuna}{F.}%
-     {Miguel~A}{M.~A.}%
+     {Guimaraes}{G.}%
+     {Paulo}{P.}%
      {}{}%
      {}{}}%
     {{}%
-     {Pascual-Garc{\'\i}a}{P.-G.}%
-     {Alberto}{A.}%
+     {Guimar{\~a}es}{G.}%
+     {Paulo~R}{P.~R.}%
      {}{}%
      {}{}}%
     {{}%
-     {Ferrera}{F.}%
-     {Antonio}{A.}%
+     {Loyola}{L.}%
+     {Rafael~D}{R.~D.}%
      {}{}%
      {}{}}%
     {{}%
-     {Luque}{L.}%
-     {Bartolo}{B.}%
+     {Ulrich}{U.}%
+     {Werner}{W.}%
      {}{}%
      {}{}}%
+  }
+  \list{publisher}{1}{%
+    {Wiley Online Library}%
+  }
+  \strng{namehash}{ANM+1}
+  \strng{fullhash}{ANMGPGPRLRDUW1}
+  \field{labelalpha}{AN+08}
+  \field{sortinit}{A}
+  \field{number}{8}
+  \field{pages}{1227\bibrangedash 1239}
+  \field{title}{A consistent metric for nestedness analysis in ecological
+  systems: reconciling concept and measurement}
+  \field{volume}{117}
+  \field{journaltitle}{Oikos}
+  \field{year}{2008}
+\endentry
+
+\entry{bascompte2009}{article}{}
+  \name{author}{1}{}{%
     {{}%
      {Bascompte}{B.}%
      {Jordi}{J.}%
      {}{}%
      {}{}}%
   }
-  \list{publisher}{1}{%
-    {Nature Publishing Group}%
-  }
-  \strng{namehash}{BU+1}
-  \strng{fullhash}{BUFMAPGAFALBBJ1}
-  \field{labelalpha}{Bas+09}
+  \strng{namehash}{BJ1}
+  \strng{fullhash}{BJ1}
+  \field{labelalpha}{Bas09}
   \field{sortinit}{B}
-  \field{number}{7241}
-  \field{pages}{1018\bibrangedash 1020}
-  \field{title}{The architecture of mutualistic networks minimizes competition
-  and increases biodiversity}
-  \field{volume}{458}
-  \field{journaltitle}{Nature}
+  \field{pages}{416\bibrangedash 419}
+  \field{title}{Disentangling the web of life}
+  \field{volume}{325}
+  \field{journaltitle}{Science}
   \field{year}{2009}
 \endentry
 
-\entry{carlo:2003avian}{article}{}
+\entry{carlo2003avian}{article}{}
   \name{author}{3}{}{%
     {{}%
      {Carlo}{C.}%
@@ -132,92 +146,78 @@
   \field{year}{2003}
 \endentry
 
-\entry{crome:1975ecology}{article}{}
-  \name{author}{1}{}{%
-    {{}%
-     {Crome}{C.}%
-     {FHJ}{F.}%
-     {}{}%
-     {}{}}%
-  }
-  \list{publisher}{1}{%
-    {CSIRO}%
-  }
-  \strng{namehash}{CF1}
-  \strng{fullhash}{CF1}
-  \field{labelalpha}{Cro75}
-  \field{sortinit}{C}
-  \field{number}{2}
-  \field{pages}{155\bibrangedash 185}
-  \field{title}{The ecology of fruit pigeons in tropical Northern Queensland}
-  \field{volume}{2}
-  \field{journaltitle}{Wildlife Research}
-  \field{year}{1975}
-\endentry
-
-\entry{kato:1990insect}{article}{}
-  \true{moreauthor}
-  \name{author}{4}{}{%
-    {{}%
-     {Kato}{K.}%
-     {Makoto}{M.}%
-     {}{}%
-     {}{}}%
-    {{}%
-     {Kakutani}{K.}%
-     {Takehiko}{T.}%
-     {}{}%
-     {}{}}%
-    {{}%
-     {Inoue}{I.}%
-     {Tamiji}{T.}%
-     {}{}%
-     {}{}}%
-    {{}%
-     {Itino}{I.}%
-     {Takao}{T.}%
-     {}{}%
-     {}{}}%
-  }
-  \list{publisher}{1}{%
-    {Biological Laboratory, Kyoto University}%
-  }
-  \strng{namehash}{KM+1}
-  \strng{fullhash}{KMKTITIT+1}
-  \field{labelalpha}{Kat+90}
-  \field{sortinit}{K}
-  \field{title}{Insect-flower relationship in the primary beech forest of Ashu,
-  Kyoto: an overview of the flowering phenology and the seasonal pattern of
-  insect visits}
-  \field{year}{1990}
-\endentry
-
-\entry{latora:2005vulnerability}{article}{}
+\entry{dormann2014method}{article}{}
   \name{author}{2}{}{%
     {{}%
-     {Latora}{L.}%
-     {Vito}{V.}%
+     {Dormann}{D.}%
+     {Carsten~F}{C.~F.}%
      {}{}%
      {}{}}%
     {{}%
-     {Marchiori}{M.}%
-     {Massimo}{M.}%
+     {Strauss}{S.}%
+     {Rouven}{R.}%
      {}{}%
      {}{}}%
   }
   \list{publisher}{1}{%
-    {APS}%
+    {Wiley Online Library}%
   }
-  \strng{namehash}{LVMM1}
-  \strng{fullhash}{LVMM1}
-  \field{labelalpha}{LM05}
-  \field{sortinit}{L}
+  \strng{namehash}{DCFSR1}
+  \strng{fullhash}{DCFSR1}
+  \field{labelalpha}{DS14}
+  \field{sortinit}{D}
   \field{number}{1}
-  \field{pages}{015103}
-  \field{title}{Vulnerability and protection of infrastructure networks}
-  \field{volume}{71}
-  \field{journaltitle}{Physical Review E}
-  \field{year}{2005}
+  \field{pages}{90\bibrangedash 98}
+  \field{title}{A method for detecting modules in quantitative bipartite
+  networks}
+  \field{volume}{5}
+  \field{journaltitle}{Methods in Ecology and Evolution}
+  \field{year}{2014}
+\endentry
+
+\entry{ramirez1989biologia}{article}{}
+  \name{author}{1}{}{%
+    {{}%
+     {Ramirez}{R.}%
+     {Nelson}{N.}%
+     {}{}%
+     {}{}}%
+  }
+  \list{publisher}{1}{%
+    {JSTOR}%
+  }
+  \strng{namehash}{RN1}
+  \strng{fullhash}{RN1}
+  \field{labelalpha}{Ram89}
+  \field{sortinit}{R}
+  \field{pages}{319\bibrangedash 330}
+  \field{title}{Biolog{\'\i}a de polinizaci{\'o}n en una comunidad arbustiva
+  tropical de la alta Guayana venezolana}
+  \field{journaltitle}{Biotropica}
+  \field{year}{1989}
+\endentry
+
+\entry{seidman1983network}{article}{}
+  \name{author}{1}{}{%
+    {{}%
+     {Seidman}{S.}%
+     {Stephen~B}{S.~B.}%
+     {}{}%
+     {}{}}%
+  }
+  \list{publisher}{1}{%
+    {Elsevier}%
+  }
+  \strng{namehash}{SSB1}
+  \strng{fullhash}{SSB1}
+  \field{labelalpha}{Sei83}
+  \field{sortinit}{S}
+  \field{number}{3}
+  \field{pages}{269\bibrangedash 287}
+  \field{title}{Network structure and minimum degree}
+  \field{volume}{5}
+  \field{journaltitle}{Social networks}
+  \field{year}{1983}
 \endentry
 
 \lossort
