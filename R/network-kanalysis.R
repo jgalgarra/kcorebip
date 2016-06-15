@@ -201,7 +201,7 @@ analyze_network <- function(namenetwork, directory="", guild_a = "pl", guild_b =
 
   # kdegree computation
   aux_graf <- data.frame(kdegree=V(an$g)$kdegree, kradius=V(an$g)$kradius ,
-                        krisk=V(an$g)$krisk, kcorenum=V(an$g)$kcorenum)
+                         krisk=V(an$g)$krisk, kcorenum=V(an$g)$kcorenum)
 
   for (l in 1:nrow(edge_matrix))
   {

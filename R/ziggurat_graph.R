@@ -1626,7 +1626,7 @@ def_configuration <- function(paintlinks, displaylabelszig , print_to_file, plot
                               corebox_border_size,
                               kcore_species_name_display,kcore_species_name_break,shorten_species_name,
                               label_strguilda, label_strguildb, landscape_plot, backg_color, show_title,
-                              use_spline, spline_points, file_name_append
+                              use_spline, spline_points, file_name_append, svg_scale_factor, progress
                               )
 {
   # ENVIRONMENT CONFIGURATION PARAMETERS
@@ -1683,6 +1683,8 @@ def_configuration <- function(paintlinks, displaylabelszig , print_to_file, plot
   zgg$use_spline <- use_spline
   zgg$spline_points <- spline_points
   zgg$file_name_append <- file_name_append
+  zgg$svg_scale_factor <- svg_scale_factor
+  zgg$progress <- progress
 }
 
 init_working_values <- function()
@@ -1800,8 +1802,10 @@ draw_ziggurat_plot <- function(svg_scale_factor, progress)
   zgg$last_xtail_b <- f["last_xtail_b"][[1]]
   zgg$last_ytail_b <- f["last_ytail_b"][[1]]
   # Add kcore1 information
-  zgg$list_dfs_a[[1]] <- conf_kcore1_info(zgg$str_guild_a)
-  zgg$list_dfs_b[[1]] <- conf_kcore1_info(zgg$str_guild_b)
+  if (!is.null(zgg$cores[1,])){
+    zgg$list_dfs_a[[1]] <- conf_kcore1_info(zgg$str_guild_a)
+    zgg$list_dfs_b[[1]] <- conf_kcore1_info(zgg$str_guild_b)
+  }
   # Add outsiders information
   info_out_a <- conf_outsiders_info(zgg$str_guild_a)
   info_out_b <- conf_outsiders_info(zgg$str_guild_b)
@@ -2016,7 +2020,7 @@ ziggurat_graph <- function(datadir,filename,
                     root_weird_expand, hide_plot_border, rescale_plot_area,kcore1weirds_leafs_vertical_separation,
                     corebox_border_size, kcore_species_name_display,kcore_species_name_break,shorten_species_name,
                     label_strguilda, label_strguildb, landscape_plot, backg_color, show_title,
-                    use_spline, spline_points, file_name_append
+                    use_spline, spline_points, file_name_append, svg_scale_factor, progress
                     )
   init_working_values()
   draw_ziggurat_plot(svg_scale_factor, progress)
