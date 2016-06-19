@@ -47,10 +47,10 @@ k^A_{radius}(m) = \frac{1}{\mid C^{B} \mid}\sum\limits_{j \in C^{B}} dist_{mj}  
 \centering
 \includegraphics[scale=0.4]{red_example.pdf}
 \caption {Examples of \textit{$k_{radius}$} in a fictional network.}
-\label{fig:red_example}
+\label{fig:KMAN_red_example}
 \end{figure}
 
-Figure \ref{fig:red_example} is a very simple fictional network, with only seven nodes. The upper left graph shows network structure. In the upper right figure, species $A1$ belongs to $C^{A}$.  The distance to each of the nodes of $C^{B}$ is $1$, so its \textit{$k_{radius1}(1)$} is $1$. In the bottom right figure, node  $A2$ also belongs to $C^{A}$ but there is not any direct link with $B2$, so the distance between them is $3$ and \textit{$k_{radius}(2)$} is $\frac{5}{3}$. In the bottom left figure, node $B4$ is not part of $C^{B}$, and as may be expected, the value of its \textit{$k_{radius}$} is higher. 
+Figure \ref{fig:KMAN_red_example} is a very simple fictional network, with only seven nodes. The upper left graph shows network structure. In the upper right figure, species $A1$ belongs to $C^{A}$.  The distance to each of the nodes of $C^{B}$ is $1$, so its \textit{$k_{radius1}(1)$} is $1$. In the bottom right figure, node  $A2$ also belongs to $C^{A}$ but there is not any direct link with $B2$, so the distance between them is $3$ and \textit{$k_{radius}(2)$} is $\frac{5}{3}$. In the bottom left figure, node $B4$ is not part of $C^{B}$, and as may be expected, the value of its \textit{$k_{radius}$} is higher. 
 
 A global value can be defined averaging this magnitude across network:
 
@@ -60,7 +60,7 @@ A global value can be defined averaging this magnitude across network:
 \label{avgkradius}
 \end{equation}
 
-In our example network of Figure \ref{fig:red_example}, the value is $11/7$. 
+In our example network of Figure \ref{fig:KMAN_red_example}, the value is $11/7$. 
 
 ${k}_{radius}$ is a useful magnitude to measure network compactness but it not a good measure of centrality. For instance, its value for an isolated specialist linked to the maximum core is low. \emph{To attend this necessity,} we define a second \textit{k-magnitude}, the ${k}_{degree}$:
 
@@ -70,7 +70,7 @@ k^A_{degree}(m) = \sum\limits_{j} \frac{a_{mj} }{k_{radius}j}  \quad   m \in A, 
 \label{kdegree}
 \end{equation}
 
-\noindent where $a_{mj}$ is the element of the interaction matrix that represents the link. So the $k_{degree}m$ is the sum of the inverse of $k_{radius}$ for each node linked to $m$. A node of the innermost shell will have a high degree, whereas specialists have only one or two links and so a low $k_{degree}$. In the example of Figure \ref{fig:red_example}, this magnitude is $1+3/5+3/5 = 11/5$ for node $B3$, while only $3/7$ for node $B4$. 
+\noindent where $a_{mj}$ is the element of the interaction matrix that represents the link. So the $k_{degree}m$ is the sum of the inverse of $k_{radius}$ for each node linked to $m$. A node of the innermost shell will have a high degree, whereas specialists have only one or two links and so a low $k_{degree}$. In the example of Figure \ref{fig:KMAN_red_example}, this magnitude is $1+3/5+3/5 = 11/5$ for node $B3$, while only $3/7$ for node $B4$. 
 
 \subsection*{Input file format}
 \label{input_file_format}
@@ -83,7 +83,7 @@ The naming convention is $M\_XX\_NNN.csv$ where $XX$ is the type, $PL$ for polli
 \centering
 \includegraphics[scale=0.8]{SD_029_csv.png}
 \caption {Examples of input file, the seed disperser network $029$ of \href{http://www.web-of-life.es/}{web of life} site.}
-\label{fig:red_example}
+\label{fig:KMAN_red_example}
 \end{figure}
 
 \subsection*{Network analysis}
@@ -124,7 +124,7 @@ The function returns:
    
 \item \texttt{graph}: an igraph::graph object
 
-\item \texttt{max\_xore}: maximum k shell index
+\item \texttt{max\_core}: maximum k shell index
 
 \item \texttt{nested\_values}: a list containing all the values provided by the bipartite::nested function, unless \texttt{only\_NODF} set TRUE.
 
@@ -140,7 +140,7 @@ The function returns:
 
 \item \texttt{spaths\_mat}: matrix with node to node shortest distance paths.
 
-\item \texttt{matrix}: adyacency matrix with nodes of guild a by columns and guild b by rows.
+\item \texttt{matrix}: interaction matrix with nodes of guild a by columns and guild b by rows.
 
 \item \texttt{g\_cores}: list with the value of kshell for each node.
 
@@ -158,7 +158,7 @@ The \textit{Polar Plot} shows nodes (species) centrality and provides an overvie
 
 Nodes are depicted with their centers located at $k_{radius}$. Angles are assigned at random by the visualization algorithm and each guild lies inside one of the half planes. The size of each node is proportional to its $k_{degree}$ and the color represents the $k_{shell}$. This visualization does not include links. The user may choose adding the histograms of \textit{k-magnitudes}, a handy option because they convey a wealth of structural information.
 
-%Figure \ref{fig:red_example} is a real mid size network. A reduced number of nodes have a high $k_{degree}$, while most species are peripheral. 
+%Figure \ref{fig:KMAN_red_example} is a real mid size network. A reduced number of nodes have a high $k_{degree}$, while most species are peripheral. 
 
 \noindent The function call is:
 
@@ -178,7 +178,7 @@ polar_graph <- function( red, directorystr = "data/",
 \end{verbatim}
 \normalsize
 
-The parameters \texttt{red}, \texttt{directorystr} and \texttt{plotsdir} are the name of the adyacency matrix, the directory where it is stored and the name of the plotting directory. If \texttt{print\_to\_file} is set to \texttt{FALSE} the polar plot will be displayed in the current R session. The name of the output file is that of the input file
+The parameters \texttt{red}, \texttt{directorystr} and \texttt{plotsdir} are the name of the interaction matrix, the directory where it is stored and the name of the plotting directory. If \texttt{print\_to\_file} is set to \texttt{FALSE} the polar plot will be displayed in the current R session. The name of the output file is that of the input file
 plus \texttt{\_polar.png}. Paths are relative to the current working path in \texttt{R} but you may also specify absolute paths.
 
 File plots have a resolution of 600 dots per inch, and a size of 12 x 12 inches. If the user wants to display the result in the current R session, label sizes may appear different depending on the installed fonts and size of the plotting window.
@@ -196,7 +196,7 @@ polar_graph("M_PL_034.csv","data/",plotsdir="grafresults/",
 \centering
 \includegraphics[scale=0.4]{M_PL_034_polar.png}
 %\caption {Examples of \textit{$k_{radius}$} in a fictional network.}
-\label{fig:red_example}
+\label{fig:KMAN_red_example}
 \end{figure}
 
 The plot title includes the network average ${k}_{radius}$ and ${k}_{degree}$, a common measurement of \textit{nestedness} called $NODF$ \cite{almeida2008consistent} and $Modularity$ following the \textit{QanBiMo} method \cite{dormann2014method}.
@@ -213,7 +213,7 @@ The configuration of a polar graph is quite simple. The following picture shows 
 \begin{figure}[ht!]
 \centering
 \includegraphics[scale=0.75]{polar_params.pdf}
-\label{fig:polar_params}
+\label{fig:KMAN_polar_params}
 \end{figure}
 
 \clearpage
@@ -229,7 +229,7 @@ Species of the maximum shell are ordered by their $k_{degree}$ with the highest 
 \centering
 \includegraphics[scale=0.4]{M_SD_004_ziggurat.png}
 \caption {Ziggurat graph of an avian frugivore community in Puerto Rico with 54 species and 95 links \cite{carlo2003avian}.}
-\label{fig:ziggurat}
+\label{fig:KMAN_ziggurat}
 \end{figure}
 
 Nodes of $1$-$shell$ are scattered around the ziggurats. When multiple species of this shell are connected to the same node of any of the ziggurats they are clustered to reduce the number of lines. For instance, plants species $22, 30$ and $33$ are specialists linked to the generalist disperser $3$. With this organization, we get a clear view of structure and interconnections. The almond shape leaves a wide space in the center of the graph to depict the links and they do not overcross the boxes of the different species.
@@ -270,11 +270,11 @@ ziggurat_graph(datadir, filename, paintlinks = TRUE,
 \normalsize
 
 The configuration of ziggurat plots is richer but also more complex than that of polar graphs. Some parameters
-are equivalent to those of the polar plot, suchs as \texttt{filename}, \texttt{datadir} and \texttt{plotsdir} that
-provide the input file, input directory and ouptput directory. The output file is called as the input file
+are equivalent to those of the polar plot, such as \texttt{filename}, \texttt{datadir} and \texttt{plotsdir} that
+provide the input file, input directory and output directory. The output file is called as the input file
 plus \texttt{\_ziggurat.png} and the user may also add the \texttt{file\_name\_append} label.
 
-Graphical parameters provide a powerful toolset to improve visualizations. Figure \ref{fig:ziggurat} was created with the
+Graphical parameters provide a powerful toolset to improve visualizations. Figure \ref{fig:KMAN_ziggurat} was created with the
 default call:
 
 \fontsize{3.5mm}{3.5mm}\selectfont
@@ -302,7 +302,7 @@ The same graph looks improved with some additional input data.
 \centering
 \includegraphics[scale=0.75]{M_SD_004_ziggurat_improved.pdf}
 %\caption {Ziggurat graph of an avian frugivore community in Puerto Rico with 54 species and 95 links\cite{carlo2003avian}.}
-\label{fig:ziggurat}
+\label{fig:KMAN_ziggurat}
 \end{figure}
 
 \clearpage
@@ -321,7 +321,7 @@ ziggurat_graph("data/","M_PL_012.csv",  plotsdir = "grafresults/",
 \centering
 \includegraphics[scale=0.4]{M_PL_012_ziggurat.png}
 \caption {Ziggurat graph of a plant - pollinator network in Garajonay, La Palma (Spain). Olesen, unpublished.}
-\label{fig:ziggurat_012}
+\label{fig:KMAN_ziggurat_012}
 \end{figure}
 
 This plot is nearly ready for publishing, some minor improvements would be nice, for instance increasing label sizes. However
@@ -332,11 +332,11 @@ we are going to modify several input values to show how the picture changes.
 \centering
 \includegraphics[scale=0.75]{M_PL_012_ziggurat_improved.pdf}
 %\caption {Ziggurat graph of an avian frugivore community in Puerto Rico with 54 species and 95 links\cite{carlo2003avian}.}
-\label{fig:ziggurat_012_improved}
+\label{fig:KMAN_ziggurat_012_improved}
 \end{figure}
 
 \clearpage
-We will not repeat the meaning of those that we have explained in the previous example. The meaning of some of the new ones are quite
+We will not repeat the meaning of those that we have explained in the previous example. The role of some of the new ones are quite
 evident. We have changed the filling colors of ziggurats, providing the pairs \texttt{color\_guild\_a} and \texttt{color\_guild\_b},
 and also the species label colors. A dime background is added as well. This trick shows the plotting area, that was horizontally increased
 a $20\%$ with \texttt{rescale\_plot\_area=c(1.2,1)}. This change only affects the plotting area, not the the figure. The aspect ratio may
@@ -345,7 +345,7 @@ to include, but we have added it to explain its meaning.
 
 If you do not use splines, as in this example, links appear as straight lines. If you use splines you could also tell the function how many points they should have.
 
-\textit{Fat tails} are the two sets of \textit{1-shell} species eventually linked to highest degree generalists, those that are located
+\textit{Fat tails} are the two sets of \textit{1-shell} species eventually linked to highest $k_{degree}$ generalists, those that are located
 leftmost in the max \textit{k-shell}. We may modify the vertical and horizontal distances to those species with \texttt{fattailjumpvert}
 and \texttt{fattailjumphoriz}. Compare the relative position of plant species $28$ in this plot with the deafult one.
 
@@ -354,7 +354,7 @@ We saw how \texttt{height\_box\_y\_expand} controls the height of outer ziggurat
 The overall horizontal distance of \textit{1-shell} species linked to max \textit{k-shell} (except fat tails) is increased or decreased with
 \texttt{horiz\_kcoremax\_tails\_expand}.
 
-Vertical separation of inner ziggurats is changed with vectors \texttt{displace\_y\_a} and \texttt{displace\_y\_b}. In this example, ziggurat
+Vertical separation of ziggurats is changed with vectors \texttt{displace\_y\_a} and \texttt{displace\_y\_b}. In this example, ziggurat
 of \textit{2-shell} plants is moved upwards by a $50\%$,  \textit{2-shell} pollinators downwards $20\%$ and  \textit{3-shell} pollinators upwards $10\%$.
 
 Finally, vertical separation of tails connected to inner ziggurats is increased with \texttt{innertail\_vertical\_separation}. See plant
@@ -369,7 +369,7 @@ has species of both kinds.
 \centering
 \includegraphics[scale=0.45]{M_PL_031_ziggurat.png}
 \caption {Default ziggurat graph of a plant - pollinator network in Alta Guyana (Venezuela) \cite{ramirez1989biologia}.}
-\label{fig:ziggurat_031}
+\label{fig:KMAN_ziggurat_031}
 \end{figure}
 
 Outsiders appear under the main plot. This network has a rich set of weird chains, linked both to ziggurats of \textit{2-shell} and to the
@@ -383,7 +383,7 @@ The \texttt{ziggurat\_grap} function offers input fields to manage the appearanc
 \centering
 \includegraphics[scale=0.8]{M_PL_031_ziggurat_improved.pdf}
 %\caption {Default ziggurat graph of a plant - pollinator network in Alta Guyana (Venezuela) \cite{ramirez1989biologia}.}
-\label{fig:ziggurat_031}
+\label{fig:KMAN_ziggurat_031}
 \end{figure}
 
 
@@ -397,7 +397,7 @@ names of \textit{1-shell} cannot be displayed
 \centering
 \includegraphics[scale=0.4]{M_SD_025_ziggurat.png}
 %\caption {Default ziggurat graph of a plant - pollinator network in Alta Guyana (Venezuela) \cite{ramirez1989biologia}.}
-\label{fig:ziggurat_025}
+\label{fig:KMAN_ziggurat_025}
 \end{figure}
 
 \fontsize{3.5mm}{3.5mm}\selectfont
