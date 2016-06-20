@@ -228,7 +228,7 @@ analyze_network <- function(namenetwork, directory="", guild_a = "pl", guild_b =
 
 
   calc_values <- list("graph" = an$g, "max_core" = max_core, "nested_values" = nested_values, "num_guild_a" = num_guild_a,
-                      "num_guild_b" = num_guild_b, "links" = length(V(an$g)), "meandist" = meandist, "meankdegree" = meankdegree,
+                      "num_guild_b" = num_guild_b, "links" = length(E(an$g)), "meandist" = meandist, "meankdegree" = meankdegree,
                       "spaths_mat" = spaths_mat, "matrix" = as.matrix(m), "g_cores" = g_cores, "modularity_measure" = modularity_measure)
   return(calc_values)
 }

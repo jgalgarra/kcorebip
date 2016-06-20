@@ -7,7 +7,6 @@ library(bipartite)
 library(igraph)
 library(ggplot2)
 
-
 gen_sq_label <- function(nodes, joinchars = "\n")
 {
   nnodes <- length(nodes)
@@ -495,7 +494,7 @@ conf_kcore1_info <- function(strguild)
 {
   auxlistdf <- data.frame(x1=NA,x2=NA,y1=NA,y2=NA,r=NA,col_row=NA,kdegree=NA,kradius=NA,name_species=NA,label=NA)
   retlistdf <- data.frame(x1=c(),x2=c(),y1=c(),y2=c(),r=c(),col_row=c(),kdegree=c(),kradius=c(),name_species=c(),label=c())
-  num_s <- zgg$cores[1,]$num_species_guild_a
+  num_s <- zgg$df_cores[1,]$num_species_guild_a
   if (strguild == zgg$str_guild_a)
     listspecies = zgg$df_cores[1,]$species_guild_a
   else
@@ -1802,7 +1801,7 @@ draw_ziggurat_plot <- function(svg_scale_factor, progress)
   zgg$last_xtail_b <- f["last_xtail_b"][[1]]
   zgg$last_ytail_b <- f["last_ytail_b"][[1]]
   # Add kcore1 information
-  if (!is.null(zgg$cores[1,])){
+  if (!is.null(zgg$df_cores[1,])){
     zgg$list_dfs_a[[1]] <- conf_kcore1_info(zgg$str_guild_a)
     zgg$list_dfs_b[[1]] <- conf_kcore1_info(zgg$str_guild_b)
   }
@@ -2027,7 +2026,7 @@ ziggurat_graph <- function(datadir,filename,
   return(zgg)
 }
 
-# ziggurat_graph("data/","M_PL_031.csv",plotsdir="named/",print_to_file = FALSE,
+# ziggurat_graph("data/","M_PL_008.csv",plotsdir="named/",print_to_file = FALSE,
 #                color_link = "Lavender", show_title = FALSE,
 #                alpha_link = 0.7, size_link = 0.4 )
 
