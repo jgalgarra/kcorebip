@@ -24,7 +24,7 @@ analyze_network(namenetwork, directory = "", guild_a = "pl",
 \code{calc_values} a list containing the following objects
 \itemize{
  \item{\code{"graph"}}{ an \code{igraph::graph} object}
- \item{\code{"max_xore"}}{ maximum k shell index}
+ \item{\code{"max_core"}}{ maximum k shell index}
  \item{\code{"nested_values"}}{ a list containing all the values provided by the \code{bipartite::nested} function, unless \code{only_NODF} set \code{TRUE}}
  \item{\code{"num_guild_a"}}{ number of nodes of guild a}
  \item{\code{"num_guild_b"}}{ number of nodes of guild b}
