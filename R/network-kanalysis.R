@@ -108,7 +108,7 @@ analyze_network <- function(namenetwork, directory="", guild_a = "pl", guild_b =
   names_guild_b <- nread$names_guild_b
   num_guild_b <- nread$num_guild_b
   num_guild_a <- nread$num_guild_a
-  edge_matrix <- get.edges(an$g, E(an$g))
+  edge_matrix <- igraph::get.edges(an$g, E(an$g))
   spaths_mat <- shortest.paths(an$g)
   g_cores <- graph.coreness(an$g)
 
