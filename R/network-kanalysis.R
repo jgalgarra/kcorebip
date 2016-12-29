@@ -222,7 +222,7 @@ analyze_network <- function(namenetwork, directory="", guild_a = "pl", guild_b =
 
   V(an$g)$kdegree <- aux_graf$kdegree
   V(an$g)$kradius <- aux_graf$kradius
-  V(an$g)$krisk <- aux_graf$krisk
+  V(an$g)$krisk <- aux_graf$krisk + 0.1*aux_graf$kcorenum
   V(an$g)$kcorenum <- aux_graf$kcorenum
   meankdegree <- mean(V(an$g)$kdegree)
 
