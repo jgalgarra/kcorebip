@@ -1255,7 +1255,7 @@ handle_orphans <- function(vg)
 {
   zgg$df_orph_a <- data.frame(c())
   zgg$df_orph_b <- data.frame(c())
-  zgg$mtxlinks <- data.frame(get.edgelist(vg))
+  zgg$mtxlinks <- data.frame(igraph::get.edgelist(vg))
   names(zgg$mtxlinks) <- c("guild_a","guild_b")
   if (length(grep(zgg$str_guild_b,zgg$mtxlinks[1,1]))>0)
     names(zgg$mtxlinks) <- rev(names(zgg$mtxlinks))
@@ -1802,8 +1802,10 @@ draw_ziggurat_plot <- function(svg_scale_factor, progress)
   zgg$last_ytail_b <- f["last_ytail_b"][[1]]
   # Add kcore1 information
   if (!is.null(zgg$df_cores[1,])){
-    zgg$list_dfs_a[[1]] <- conf_kcore1_info(zgg$str_guild_a)
-    zgg$list_dfs_b[[1]] <- conf_kcore1_info(zgg$str_guild_b)
+    if (zgg$df_cores[1,]$num_species_guild_a > 0)
+      zgg$list_dfs_a[[1]] <- conf_kcore1_info(zgg$str_guild_a)
+    if (zgg$df_cores[1,]$num_species_guild_b > 0)
+      zgg$list_dfs_b[[1]] <- conf_kcore1_info(zgg$str_guild_b)
   }
   # Add outsiders information
   info_out_a <- conf_outsiders_info(zgg$str_guild_a)
