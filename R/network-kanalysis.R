@@ -38,6 +38,8 @@ read_network <- function(namenetwork, guild_astr = "pl", guild_bstr = "pol", dir
   for (i in 1:num_guild_b){
     g <- g + vertices(paste0(guild_bstr,i),color="red",guild_id="b",name_species=names_guild_b[i],id=i)
   }
+
+
   # for (j in 1:num_guild_a)
   # {
   #   for (i in 1:num_guild_b)
@@ -47,13 +49,13 @@ read_network <- function(namenetwork, guild_astr = "pl", guild_bstr = "pol", dir
   #     }
   #   }
   # }
+
   mm <- matrix(unlist(list(m)),nrow=num_guild_b,ncol=num_guild_a)
   listedgesn <- which(mm!=0, arr.ind = T)
   listedgesn <- listedgesn[order(listedgesn[,1],listedgesn[,2]),]
-  for (k in 1:nrow(listedgesn))
-    g <- g + igraph::edges(paste0(guild_bstr,listedgesn[k,]["row"]),
-                           paste0(guild_astr,listedgesn[k,]["col"]))
-
+  listedgesn[,1] <- paste0(guild_bstr,listedgesn[,1])
+  listedgesn[,2] <- paste0(guild_astr,listedgesn[,2])
+  g <- g + graph.edgelist(listedgesn)
   calc_values <- list("graph" = g, "matrix" = m, "num_guild_b" = num_guild_b, "num_guild_a" = num_guild_a,
                       "names_guild_a" = names_guild_a, "names_guild_b"=names_guild_b)
   return(calc_values)
@@ -271,4 +273,4 @@ get_bipartite <- function(g, str_guild_a = "Plant", str_guild_b = "Pollinator", 
   return(bg)
 }
 
-#result_analysis <- analyze_network("M_PL_007.csv", directory = "data/", guild_a = "Plant", guild_b = "Pollinator", plot_graphs = TRUE)
+#result_analysis <- analyze_network("M_PL_007.csv", directory = "data/", guild_a = "Plant", guild_b = "Pollinator", plot_graphs = FALSE)
