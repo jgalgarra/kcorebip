@@ -38,16 +38,26 @@ read_network <- function(namenetwork, guild_astr = "pl", guild_bstr = "pol", dir
   for (i in 1:num_guild_b){
     g <- g + vertices(paste0(guild_bstr,i),color="red",guild_id="b",name_species=names_guild_b[i],id=i)
   }
-  for (i in 1:num_guild_b){
-    for (j in 1:num_guild_a){
-      if (m[i,j]!=0) {
-        g <- g + edges(paste0(guild_bstr,i),paste0(guild_astr,j))
-      }
-    }
-  }
+  # for (j in 1:num_guild_a)
+  # {
+  #   for (i in 1:num_guild_b)
+  #   {
+  #     if (m[i,j]!=0) {
+  #       g <- g + igraph::edges(paste0(guild_bstr,i),paste0(guild_astr,j))
+  #     }
+  #   }
+  # }
+  mm <- matrix(unlist(list(m)),nrow=num_guild_b,ncol=num_guild_a)
+  listedgesn <- which(mm!=0, arr.ind = T)
+  listedgesn <- listedgesn[order(listedgesn[,1],listedgesn[,2]),]
+  for (k in 1:nrow(listedgesn))
+    g <- g + igraph::edges(paste0(guild_bstr,listedgesn[k,]["row"]),
+                           paste0(guild_astr,listedgesn[k,]["col"]))
+
   calc_values <- list("graph" = g, "matrix" = m, "num_guild_b" = num_guild_b, "num_guild_a" = num_guild_a,
                       "names_guild_a" = names_guild_a, "names_guild_b"=names_guild_b)
   return(calc_values)
+
 }
 
 #' Network analysis using k core decomposition
