@@ -7,6 +7,7 @@ library(bipartite)
 library(igraph)
 library(ggplot2)
 
+
 gen_sq_label <- function(nodes, joinchars = "\n")
 {
   nnodes <- length(nodes)
@@ -1197,10 +1198,10 @@ write_annotations <- function(p, svg)
                                                                axis.ticks.x=element_blank(),
                                                                axis.ticks.y=element_blank(),
                                                                axis.title.x = element_blank(),
-                                                               axis.title.y = element_blank(),
-                                                               plot.background = element_rect(fill = zgg$backg_color),
+                                                               axis.title.y = element_blank(),                                                               plot.background = element_rect(fill = zgg$backg_color),
                                                                panel.background = element_rect(fill = zgg$backg_color),
                                                                plot.title = element_text(lineheight=.7,
+                                                                                         hjust = 0.5,
                                                                                          face="plain"))
   if (zgg$hide_plot_border)
     p <- p + theme(panel.border=element_blank())
@@ -1581,6 +1582,23 @@ display_plot <- function(p, printfile, flip, plwidth=14, plheight=11, ppi = 300,
     dev.off()
 }
 
+strip_isolated_nodes <- function()
+{
+  lgrados <- igraph::degree(zgg$result_analysis$graph)
+  if (sum(lgrados == 0) > 0)
+    for (k in 1:length(lgrados))
+    {
+      if (lgrados[k] == 0){
+        zgg$result_analysis$graph <- delete_vertices(zgg$result_analysis$graph,names(lgrados[k]))
+        if ( length(grep(zgg$str_guild_b,names(lgrados[k]) )) >0 )
+          zgg$result_analysis$num_guild_b <<- zgg$result_analysis$num_guild_b -1
+        else
+          zgg$result_analysis$num_guild_a <<- zgg$result_analysis$num_guild_a -1
+      }
+    }
+}
+
+
 read_and_analyze <- function(directorystr,network_file,label_strguilda,label_strguildb)
 {
   str_guild_a <- "pl"
@@ -1602,6 +1620,7 @@ read_and_analyze <- function(directorystr,network_file,label_strguilda,label_str
 
   result_analysis <- analyze_network(network_file, directory = directorystr, guild_a = str_guild_a,
                                      guild_b = str_guild_b)
+
 
   calc_vals <- list("result_analysis" = result_analysis, "str_guild_a" = str_guild_a, "str_guild_b" = str_guild_b,
                     "name_guild_a" = name_guild_a, "name_guild_b" = name_guild_b,
@@ -2023,6 +2042,7 @@ ziggurat_graph <- function(datadir,filename,
                     label_strguilda, label_strguildb, landscape_plot, backg_color, show_title,
                     use_spline, spline_points, file_name_append, svg_scale_factor, progress
                     )
+  strip_isolated_nodes()
   init_working_values()
   draw_ziggurat_plot(svg_scale_factor, progress)
   return(zgg)

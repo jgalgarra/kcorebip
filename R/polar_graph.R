@@ -228,6 +228,24 @@ polar_graph <- function( red, directorystr = "data/", plotsdir = "plot_results/p
                          file_name_append = "", print_title = TRUE,
                          progress=NULL, printable_labels = 0)
 {
+
+  strip_isolated_nodes <- function()
+  {
+    lgrados <- igraph::degree(result_analysis$graph)
+    if (sum(lgrados == 0) > 0)
+      for (k in 1:length(lgrados))
+      {
+        if (lgrados[k] == 0){
+          result_analysis$graph <<- delete_vertices(result_analysis$graph,names(lgrados[k]))
+          if ( length(grep(sguild_b,names(lgrados[k]) )) >0 )
+            result_analysis$num_guild_b <<- result_analysis$num_guild_b -1
+          else
+            result_analysis$num_guild_a <<- result_analysis$num_guild_a -1
+        }
+      }
+  }
+
+
   red_name <- strsplit(red,".csv")[[1]][1]
   sguild_a <<- gshortened[1]
   sguild_b <<- gshortened[2]
@@ -239,8 +257,9 @@ polar_graph <- function( red, directorystr = "data/", plotsdir = "plot_results/p
 
   if (!is.null(progress)) progress$inc(1/4, detail=strings$value("MESSAGE_POLAR_PROGRESS_ANALYZING_NETWORK"))
   result_analysis <- analyze_network(red, directory = directorystr, guild_a = sguild_a, guild_b = sguild_b, plot_graphs = FALSE)
+  strip_isolated_nodes()
   numlinks <- result_analysis$links
-
+  an$result_analysis <<- result_analysis
   if (print_to_file){
     dir.create(plotsdir, showWarnings = FALSE)
     ppi <- 600
