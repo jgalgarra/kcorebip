@@ -1,26 +1,13 @@
-This is pdfTeX, Version 3.1415926-2.4-1.40.13 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2013.8.13)  22 MAY 2016 23:17
+This is pdfTeX, Version 3.14159265-2.6-1.40.17 (MiKTeX 2.9.6100 64-bit) (preloaded format=pdflatex 2016.12.19)  3 FEB 2017 14:22
 entering extended mode
-**D:/disco_usuario/javier/upm/doctorado/tesis/codigo/kcorebip/mansrc/kcorebip_m
-an.tex
-
-(D:/disco_usuario/javier/upm/doctorado/tesis/codigo/kcorebip/mansrc/kcorebip_ma
-n.tex
-LaTeX2e <2011/06/27>
-Babel <v3.8m> and hyphenation patterns for english, afrikaans, ancientgreek, ar
-abic, armenian, assamese, basque, bengali, bokmal, bulgarian, catalan, coptic, 
-croatian, czech, danish, dutch, esperanto, estonian, farsi, finnish, french, ga
-lician, german, german-x-2012-05-30, greek, gujarati, hindi, hungarian, iceland
-ic, indonesian, interlingua, irish, italian, kannada, kurmanji, latin, latvian,
- lithuanian, malayalam, marathi, mongolian, mongolianlmc, monogreek, ngerman, n
-german-x-2012-05-30, nynorsk, oriya, panjabi, pinyin, polish, portuguese, roman
-ian, russian, sanskrit, serbian, slovak, slovenian, spanish, swedish, swissgerm
-an, tamil, telugu, turkish, turkmen, ukenglish, ukrainian, uppersorbian, usengl
-ishmax, welsh, loaded.
-
-(D:\disco_usuario\javier\upm\doctorado\tesis\codigo\kcorebip\mansrc\article.cls
+**./kcorebip_man.tex
+(kcorebip_man.tex
+LaTeX2e <2016/03/31> patch level 3
+Babel <3.9r> and hyphenation patterns for 75 language(s) loaded.
+(article.cls
 Document Class: article 2014/09/29 v1.4h Standard LaTeX document class
 ("C:\Program Files\MiKTeX 2.9\tex\latex\base\size12.clo"
-File: size12.clo 2007/10/19 v1.4h Standard LaTeX file (size option)
+File: size12.clo 2014/09/29 v1.4h Standard LaTeX file (size option)
 )
 \c@part=\count79
 \c@section=\count80
@@ -35,31 +22,31 @@ File: size12.clo 2007/10/19 v1.4h Standard LaTeX file (size option)
 \bibindent=\dimen102
 )
 ("C:\Program Files\MiKTeX 2.9\tex\latex\graphics\graphicx.sty"
-Package: graphicx 1999/02/16 v1.0f Enhanced LaTeX Graphics (DPC,SPQR)
+Package: graphicx 2014/10/28 v1.0g Enhanced LaTeX Graphics (DPC,SPQR)
 
 ("C:\Program Files\MiKTeX 2.9\tex\latex\graphics\keyval.sty"
-Package: keyval 1999/03/16 v1.13 key=value parser (DPC)
+Package: keyval 2014/10/28 v1.15 key=value parser (DPC)
 \KV@toks@=\toks14
 )
 ("C:\Program Files\MiKTeX 2.9\tex\latex\graphics\graphics.sty"
-Package: graphics 2009/02/05 v1.0o Standard LaTeX Graphics (DPC,SPQR)
+Package: graphics 2016/07/10 v1.0t Standard LaTeX Graphics (DPC,SPQR)
 
 ("C:\Program Files\MiKTeX 2.9\tex\latex\graphics\trig.sty"
-Package: trig 1999/03/16 v1.09 sin cos tan (DPC)
+Package: trig 2016/01/03 v1.10 sin cos tan (DPC)
 )
-("C:\Program Files\MiKTeX 2.9\tex\latex\00miktex\graphics.cfg"
-File: graphics.cfg 2007/01/18 v1.5 graphics configuration of teTeX/TeXLive
+("C:\Program Files\MiKTeX 2.9\tex\latex\graphics-cfg\graphics.cfg"
+File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
 )
-Package graphics Info: Driver file: pdftex.def on input line 91.
+Package graphics Info: Driver file: pdftex.def on input line 99.
 
-("C:\Program Files\MiKTeX 2.9\tex\latex\pdftex-def\pdftex.def"
-File: pdftex.def 2011/05/27 v0.06d Graphics/color for pdfTeX
+("C:\Program Files\MiKTeX 2.9\tex\latex\graphics-def\pdftex.def"
+File: pdftex.def 2016/07/10 v0.06j Graphics/color for pdfTeX
 
 ("C:\Program Files\MiKTeX 2.9\tex\generic\oberdiek\infwarerr.sty"
-Package: infwarerr 2010/04/08 v1.3 Providing info/warning/error messages (HO)
+Package: infwarerr 2016/05/16 v1.4 Providing info/warning/error messages (HO)
 )
 ("C:\Program Files\MiKTeX 2.9\tex\generic\oberdiek\ltxcmds.sty"
-Package: ltxcmds 2011/11/09 v1.22 LaTeX kernel commands for general use (HO)
+Package: ltxcmds 2016/05/16 v1.23 LaTeX kernel commands for general use (HO)
 )
 \Gread@gobject=\count87
 ))
@@ -67,28 +54,28 @@ Package: ltxcmds 2011/11/09 v1.22 LaTeX kernel commands for general use (HO)
 \Gin@req@width=\dimen104
 )
 ("C:\Program Files\MiKTeX 2.9\tex\latex\oberdiek\epstopdf.sty"
-Package: epstopdf 2010/02/09 v2.5 Conversion with epstopdf on the fly (HO)
+Package: epstopdf 2016/05/15 v2.6 Conversion with epstopdf on the fly (HO)
 
 ("C:\Program Files\MiKTeX 2.9\tex\latex\oberdiek\epstopdf-base.sty"
-Package: epstopdf-base 2010/02/09 v2.5 Base part for package epstopdf
+Package: epstopdf-base 2016/05/15 v2.6 Base part for package epstopdf
 
 ("C:\Program Files\MiKTeX 2.9\tex\latex\oberdiek\grfext.sty"
-Package: grfext 2010/08/19 v1.1 Manage graphics extensions (HO)
+Package: grfext 2016/05/16 v1.2 Manage graphics extensions (HO)
 
 ("C:\Program Files\MiKTeX 2.9\tex\generic\oberdiek\kvdefinekeys.sty"
-Package: kvdefinekeys 2011/04/07 v1.3 Define keys (HO)
+Package: kvdefinekeys 2016/05/16 v1.4 Define keys (HO)
 ))
 ("C:\Program Files\MiKTeX 2.9\tex\latex\oberdiek\kvoptions.sty"
-Package: kvoptions 2011/06/30 v3.11 Key value format for package options (HO)
+Package: kvoptions 2016/05/16 v3.12 Key value format for package options (HO)
 
 ("C:\Program Files\MiKTeX 2.9\tex\generic\oberdiek\kvsetkeys.sty"
-Package: kvsetkeys 2012/04/25 v1.16 Key value parser (HO)
+Package: kvsetkeys 2016/05/16 v1.17 Key value parser (HO)
 
 ("C:\Program Files\MiKTeX 2.9\tex\generic\oberdiek\etexcmds.sty"
-Package: etexcmds 2011/02/16 v1.5 Avoid name clashes with e-TeX commands (HO)
+Package: etexcmds 2016/05/16 v1.6 Avoid name clashes with e-TeX commands (HO)
 
 ("C:\Program Files\MiKTeX 2.9\tex\generic\oberdiek\ifluatex.sty"
-Package: ifluatex 2010/03/01 v1.3 Provides the ifluatex switch (HO)
+Package: ifluatex 2016/05/16 v1.4 Provides the ifluatex switch (HO)
 Package ifluatex Info: LuaTeX not detected.
 )
 Package etexcmds Info: Could not find \expanded.
@@ -97,22 +84,23 @@ Package etexcmds Info: Could not find \expanded.
 (etexcmds)             In the latter case, load this package earlier.
 )))
 ("C:\Program Files\MiKTeX 2.9\tex\generic\oberdiek\pdftexcmds.sty"
-Package: pdftexcmds 2011/11/29 v0.20 Utility functions of pdfTeX for LuaTeX (HO
+Package: pdftexcmds 2016/05/21 v0.22 Utility functions of pdfTeX for LuaTeX (HO
 )
 
 ("C:\Program Files\MiKTeX 2.9\tex\generic\oberdiek\ifpdf.sty"
-Package: ifpdf 2011/01/30 v2.3 Provides the ifpdf switch (HO)
-Package ifpdf Info: pdfTeX in PDF mode is detected.
+Package: ifpdf 2016/05/14 v3.1 Provides the ifpdf switch
 )
 Package pdftexcmds Info: LuaTeX not detected.
 Package pdftexcmds Info: \pdf@primitive is available.
 Package pdftexcmds Info: \pdf@ifprimitive is available.
 Package pdftexcmds Info: \pdfdraftmode found.
 )
+Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
+38.
 Package grfext Info: Graphics extension search list:
 (grfext)             [.png,.pdf,.jpg,.mps,.jpeg,.jbig2,.jb2,.PNG,.PDF,.JPG,.JPE
 G,.JBIG2,.JB2,.eps]
-(grfext)             \AppendGraphicsExtensions on input line 452.
+(grfext)             \AppendGraphicsExtensions on input line 456.
 ))
 ("C:\Program Files\MiKTeX 2.9\tex\latex\listings\listings.sty"
 \lst@mode=\count88
@@ -140,193 +128,218 @@ File: listings.cfg 2015/06/04 1.6 listings configuration
 Package: listings 2015/06/04 1.6 (Carsten Heinz)
 
 ("C:\Program Files\MiKTeX 2.9\tex\latex\biblatex\biblatex.sty"
-Package: biblatex 2015/10/21 v3.1 programmable bibliographies (PK/JW/AB)
-
-("C:\Program Files\MiKTeX 2.9\tex\latex\biblatex\biblatex1.sty"
-Package: biblatex1 2015/10/21 v3.1 programmable bibliographies (bibtex) (PK/JW/
-AB)
+Package: biblatex 2016/12/05 v3.7 programmable bibliographies (PK/JW/AB)
 
 ("C:\Program Files\MiKTeX 2.9\tex\latex\etoolbox\etoolbox.sty"
-Package: etoolbox 2015/08/02 v2.2a e-TeX tools for LaTeX (JAW)
-
-("C:\Program Files\MiKTeX 2.9\tex\latex\misc\etex.sty"
-Package: etex 1998/03/26 v2.0 eTeX basic definition package (PEB)
-\et@xins=\count96
-)
-\etb@tempcnta=\count97
+Package: etoolbox 2016/12/01 v2.2b e-TeX tools for LaTeX (JAW)
+\etb@tempcnta=\count96
 )
 ("C:\Program Files\MiKTeX 2.9\tex\latex\logreq\logreq.sty"
 Package: logreq 2010/08/04 v1.0 xml request logger
-\lrq@indent=\count98
+\lrq@indent=\count97
 
 ("C:\Program Files\MiKTeX 2.9\tex\latex\logreq\logreq.def"
 File: logreq.def 2010/08/04 v1.0 logreq spec v1.0
 ))
 ("C:\Program Files\MiKTeX 2.9\tex\latex\base\ifthen.sty"
-Package: ifthen 2001/05/26 v1.1c Standard LaTeX ifthen package (DPC)
+Package: ifthen 2014/09/29 v1.1c Standard LaTeX ifthen package (DPC)
 )
-("C:\Program Files\MiKTeX 2.9\tex\latex\ltxmisc\url.sty"
+("C:\Program Files\MiKTeX 2.9\tex\latex\url\url.sty"
 \Urlmuskip=\muskip10
-Package: url 2006/04/12  ver 3.3  Verb mode for urls, etc.
+Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
 )
-\c@tabx@nest=\count99
-\c@listtotal=\count100
-\c@listcount=\count101
-\c@liststart=\count102
-\c@liststop=\count103
-\c@citecount=\count104
-\c@citetotal=\count105
-\c@multicitecount=\count106
-\c@multicitetotal=\count107
-\c@instcount=\count108
-\c@maxnames=\count109
-\c@minnames=\count110
-\c@maxitems=\count111
-\c@minitems=\count112
-\c@citecounter=\count113
-\c@savedcitecounter=\count114
-\c@uniquelist=\count115
-\c@uniquename=\count116
-\c@refsection=\count117
-\c@refsegment=\count118
-\c@maxextrayear=\count119
-\c@maxextraalpha=\count120
-\c@abbrvpenalty=\count121
-\c@highnamepenalty=\count122
-\c@lownamepenalty=\count123
-\c@maxparens=\count124
-\c@parenlevel=\count125
-\blx@tempcnta=\count126
-\blx@tempcntb=\count127
-\blx@tempcntc=\count128
-\blx@maxsection=\count129
-\blx@maxsegment=\count130
-\blx@notetype=\count131
-\blx@parenlevel@text=\count132
-\blx@parenlevel@foot=\count133
+("C:\Program Files\MiKTeX 2.9\tex\latex\xstring\xstring.sty"
+("C:\Program Files\MiKTeX 2.9\tex\generic\xstring\xstring.tex"
+\@xs@message=\write3
+\integerpart=\count98
+\decimalpart=\count99
+)
+Package: xstring 2013/10/13  v1.7c  String manipulations (C Tellechea)
+)
+\c@tabx@nest=\count100
+\c@listtotal=\count101
+\c@listcount=\count102
+\c@liststart=\count103
+\c@liststop=\count104
+\c@citecount=\count105
+\c@citetotal=\count106
+\c@multicitecount=\count107
+\c@multicitetotal=\count108
+\c@instcount=\count109
+\c@maxnames=\count110
+\c@minnames=\count111
+\c@maxitems=\count112
+\c@minitems=\count113
+\c@citecounter=\count114
+\c@savedcitecounter=\count115
+\c@uniquelist=\count116
+\c@uniquename=\count117
+\c@refsection=\count118
+\c@refsegment=\count119
+\c@maxextratitle=\count120
+\c@maxextratitleyear=\count121
+\c@maxextrayear=\count122
+\c@maxextraalpha=\count123
+\c@abbrvpenalty=\count124
+\c@highnamepenalty=\count125
+\c@lownamepenalty=\count126
+\c@maxparens=\count127
+\c@parenlevel=\count128
+\blx@tempcnta=\count129
+\blx@tempcntb=\count130
+\blx@tempcntc=\count131
+\blx@maxsection=\count132
+\blx@maxsegment@0=\count133
+\blx@notetype=\count134
+\blx@parenlevel@text=\count135
+\blx@parenlevel@foot=\count136
+\blx@sectionciteorder@0=\count137
 \labelnumberwidth=\skip43
 \labelalphawidth=\skip44
-\shorthandwidth=\skip45
-\biblabelsep=\skip46
-\bibitemsep=\skip47
-\bibnamesep=\skip48
-\bibinitsep=\skip49
-\bibparsep=\skip50
-\bibhang=\skip51
-\blx@auxin=\read1
-\blx@auxout=\write3
-\c@mincomprange=\count134
-\c@maxcomprange=\count135
-\c@mincompwidth=\count136
-\c@labelname=\count137
-\c@savedlabelname=\count138
-\c@author=\count139
-\c@savedauthor=\count140
-\c@shortauthor=\count141
-\c@savedshortauthor=\count142
-\c@editor=\count143
-\c@savededitor=\count144
-\c@editora=\count145
-\c@savededitora=\count146
-\c@editorb=\count147
-\c@savededitorb=\count148
-\c@editorc=\count149
-\c@savededitorc=\count150
-\c@shorteditor=\count151
-\c@savedshorteditor=\count152
-\c@bookauthor=\count153
-\c@savedbookauthor=\count154
-\c@translator=\count155
-\c@savedtranslator=\count156
-\c@annotator=\count157
-\c@savedannotator=\count158
-\c@commentator=\count159
-\c@savedcommentator=\count160
-\c@introduction=\count161
-\c@savedintroduction=\count162
-\c@foreword=\count163
-\c@savedforeword=\count164
-\c@afterword=\count165
-\c@savedafterword=\count166
-\c@holder=\count167
-\c@savedholder=\count168
-\c@namea=\count169
-\c@savednamea=\count170
-\c@nameb=\count171
-\c@savednameb=\count172
-\c@namec=\count173
-\c@savednamec=\count174
-\c@institution=\count175
-\c@savedinstitution=\count176
-\c@language=\count177
-\c@savedlanguage=\count178
-\c@location=\count179
-\c@savedlocation=\count180
-\c@organization=\count181
-\c@savedorganization=\count182
-\c@origlocation=\count183
-\c@savedoriglocation=\count184
-\c@origpublisher=\count185
-\c@savedorigpublisher=\count186
-\c@pageref=\count187
-\c@savedpageref=\count188
-\c@publisher=\count189
-\c@savedpublisher=\count190
-\c@lista=\count191
-\c@savedlista=\count192
-\c@listb=\count193
-\c@savedlistb=\count194
-\c@listc=\count195
-\c@savedlistc=\count196
-\c@listd=\count197
-\c@savedlistd=\count198
-\c@liste=\count199
-\c@savedliste=\count200
-\c@listf=\count201
-\c@savedlistf=\count202
+\biblabelsep=\skip45
+\bibitemsep=\skip46
+\bibnamesep=\skip47
+\bibinitsep=\skip48
+\bibparsep=\skip49
+\bibhang=\skip50
+\blx@bcfin=\read1
+\blx@bcfout=\write4
+\c@mincomprange=\count138
+\c@maxcomprange=\count139
+\c@mincompwidth=\count140
+Package biblatex Info: Trying to load biblatex default data model...
+Package biblatex Info: ... file 'blx-dm.def' found.
+
+("C:\Program Files\MiKTeX 2.9\tex\latex\biblatex\blx-dm.def")
+Package biblatex Info: Trying to load biblatex style data model...
+Package biblatex Info: ... file 'alphabetic.dbx' not found.
+Package biblatex Info: Trying to load biblatex custom data model...
+Package biblatex Info: ... file 'biblatex-dm.cfg' not found.
+\c@afterword=\count141
+\c@savedafterword=\count142
+\c@annotator=\count143
+\c@savedannotator=\count144
+\c@author=\count145
+\c@savedauthor=\count146
+\c@bookauthor=\count147
+\c@savedbookauthor=\count148
+\c@commentator=\count149
+\c@savedcommentator=\count150
+\c@editor=\count151
+\c@savededitor=\count152
+\c@editora=\count153
+\c@savededitora=\count154
+\c@editorb=\count155
+\c@savededitorb=\count156
+\c@editorc=\count157
+\c@savededitorc=\count158
+\c@foreword=\count159
+\c@savedforeword=\count160
+\c@holder=\count161
+\c@savedholder=\count162
+\c@introduction=\count163
+\c@savedintroduction=\count164
+\c@namea=\count165
+\c@savednamea=\count166
+\c@nameb=\count167
+\c@savednameb=\count168
+\c@namec=\count169
+\c@savednamec=\count170
+\c@translator=\count171
+\c@savedtranslator=\count172
+\c@shortauthor=\count173
+\c@savedshortauthor=\count174
+\c@shorteditor=\count175
+\c@savedshorteditor=\count176
+\c@labelname=\count177
+\c@savedlabelname=\count178
+\c@institution=\count179
+\c@savedinstitution=\count180
+\c@lista=\count181
+\c@savedlista=\count182
+\c@listb=\count183
+\c@savedlistb=\count184
+\c@listc=\count185
+\c@savedlistc=\count186
+\c@listd=\count187
+\c@savedlistd=\count188
+\c@liste=\count189
+\c@savedliste=\count190
+\c@listf=\count191
+\c@savedlistf=\count192
+\c@location=\count193
+\c@savedlocation=\count194
+\c@organization=\count195
+\c@savedorganization=\count196
+\c@origlocation=\count197
+\c@savedoriglocation=\count198
+\c@origpublisher=\count199
+\c@savedorigpublisher=\count266
+\c@publisher=\count267
+\c@savedpublisher=\count268
+\c@language=\count269
+\c@savedlanguage=\count270
+\c@pageref=\count271
+\c@savedpageref=\count272
+\shorthandwidth=\skip51
+\shortjournalwidth=\skip52
+\shortserieswidth=\skip53
+\shorttitlewidth=\skip54
+\shortauthorwidth=\skip55
+\shorteditorwidth=\skip56
 Package biblatex Info: Trying to load compatibility code...
 Package biblatex Info: ... file 'blx-compat.def' found.
 
 ("C:\Program Files\MiKTeX 2.9\tex\latex\biblatex\blx-compat.def"
-File: blx-compat.def 2015/10/21 v3.1 biblatex compatibility (PK/JW/AB)
+File: blx-compat.def 2016/12/05 v3.7 biblatex compatibility (PK/JW/AB)
+)
+Package biblatex Info: Trying to load BibTeX backend compatibility...
+Package biblatex Info: ... file 'blx-bibtex.def' found.
+
+("C:\Program Files\MiKTeX 2.9\tex\latex\biblatex\blx-bibtex.def"
+File: blx-bibtex.def 2016/12/05 v3.7 biblatex compatibility (PK/JW/AB)
+
+
+Package biblatex Warning: Using fall-back BibTeX(8) backend:
+(biblatex)                functionality may be reduced/unavailable.
+
 )
 Package biblatex Info: Trying to load generic definitions...
 Package biblatex Info: ... file 'biblatex.def' found.
-
-("C:\Program Files\MiKTeX 2.9\tex\latex\biblatex\biblatex.def"
-File: biblatex.def 
-\c@textcitecount=\count203
-\c@textcitetotal=\count204
-\c@textcitemaxnames=\count205
-\c@biburlnumpenalty=\count206
-\c@biburlucpenalty=\count207
-\c@biburllcpenalty=\count208
-\c@smartand=\count209
+ ("C:\Program Files\MiKTeX 2.9\tex\latex\biblatex\biblatex.def"
+File: biblatex.def 2016/12/05 v3.7 biblatex compatibility (PK/JW/AB)
+\c@textcitecount=\count273
+\c@textcitetotal=\count274
+\c@textcitemaxnames=\count275
+\c@biburlnumpenalty=\count276
+\c@biburlucpenalty=\count277
+\c@biburllcpenalty=\count278
+\c@smartand=\count279
 )
 Package biblatex Info: Trying to load natbib compatibility...
 Package biblatex Info: ... file 'blx-natbib.def' found.
 
 ("C:\Program Files\MiKTeX 2.9\tex\latex\biblatex\blx-natbib.def"
-File: blx-natbib.def 2015/10/21 v3.1 biblatex compatibility (PK/JW/AB)
+File: blx-natbib.def 2016/12/05 v3.7 biblatex compatibility (PK/JW/AB)
 )
 Package biblatex Info: Trying to load bibliography style 'alphabetic'...
 Package biblatex Info: ... file 'alphabetic.bbx' found.
 
 ("C:\Program Files\MiKTeX 2.9\tex\latex\biblatex\bbx\alphabetic.bbx"
-File: alphabetic.bbx 2015/10/21 v3.1 biblatex bibliography style (PK/JW/AB)
+File: alphabetic.bbx 2016/12/05 v3.7 biblatex bibliography style (PK/JW/AB)
 Package biblatex Info: Trying to load bibliography style 'standard'...
 Package biblatex Info: ... file 'standard.bbx' found.
 
 ("C:\Program Files\MiKTeX 2.9\tex\latex\biblatex\bbx\standard.bbx"
-File: standard.bbx 2015/10/21 v3.1 biblatex bibliography style (PK/JW/AB)
-\c@bbx:relatedcount=\count210
-\c@bbx:relatedtotal=\count211
+File: standard.bbx 2016/12/05 v3.7 biblatex bibliography style (PK/JW/AB)
+\c@bbx:relatedcount=\count280
+\c@bbx:relatedtotal=\count281
 ))
 Package biblatex Info: Trying to load citation style 'alphabetic'...
 Package biblatex Info: ... file 'alphabetic.cbx' found.
 
 ("C:\Program Files\MiKTeX 2.9\tex\latex\biblatex\cbx\alphabetic.cbx"
-File: alphabetic.cbx 2015/10/21 v3.1 biblatex citation style (PK/JW/AB)
+File: alphabetic.cbx 2016/12/05 v3.7 biblatex citation style (PK/JW/AB)
 Package biblatex Info: Redefining '\cite'.
 Package biblatex Info: Redefining '\parencite'.
 Package biblatex Info: Redefining '\footcite'.
@@ -343,130 +356,119 @@ Package biblatex Info: ... file 'biblatex.cfg' found.
 
 ("C:\Program Files\MiKTeX 2.9\tex\latex\biblatex\biblatex.cfg"
 File: biblatex.cfg 
-)))
+))
 ("C:\Program Files\MiKTeX 2.9\tex\latex\hyperref\hyperref.sty"
-Package: hyperref 2012/11/06 v6.83m Hypertext links for LaTeX
+Package: hyperref 2016/06/24 v6.83q Hypertext links for LaTeX
 
 ("C:\Program Files\MiKTeX 2.9\tex\generic\oberdiek\hobsub-hyperref.sty"
-Package: hobsub-hyperref 2012/04/25 v1.12 Bundle oberdiek, subset hyperref (HO)
+Package: hobsub-hyperref 2016/05/16 v1.14 Bundle oberdiek, subset hyperref (HO)
 
 
 ("C:\Program Files\MiKTeX 2.9\tex\generic\oberdiek\hobsub-generic.sty"
-Package: hobsub-generic 2012/04/25 v1.12 Bundle oberdiek, subset generic (HO)
-Package: hobsub 2012/04/25 v1.12 Construct package bundles (HO)
+Package: hobsub-generic 2016/05/16 v1.14 Bundle oberdiek, subset generic (HO)
+Package: hobsub 2016/05/16 v1.14 Construct package bundles (HO)
 Package hobsub Info: Skipping package `infwarerr' (already loaded).
 Package hobsub Info: Skipping package `ltxcmds' (already loaded).
 Package hobsub Info: Skipping package `ifluatex' (already loaded).
-Package: ifvtex 2010/03/01 v1.5 Detect VTeX and its facilities (HO)
+Package: ifvtex 2016/05/16 v1.6 Detect VTeX and its facilities (HO)
 Package ifvtex Info: VTeX not detected.
-Package: intcalc 2007/09/27 v1.1 Expandable calculations with integers (HO)
+Package: intcalc 2016/05/16 v1.2 Expandable calculations with integers (HO)
 Package hobsub Info: Skipping package `ifpdf' (already loaded).
 Package hobsub Info: Skipping package `etexcmds' (already loaded).
 Package hobsub Info: Skipping package `kvsetkeys' (already loaded).
 Package hobsub Info: Skipping package `kvdefinekeys' (already loaded).
 Package hobsub Info: Skipping package `pdftexcmds' (already loaded).
-Package: pdfescape 2011/11/25 v1.13 Implements pdfTeX's escape features (HO)
-Package: bigintcalc 2012/04/08 v1.3 Expandable calculations on big integers (HO
+Package: pdfescape 2016/05/16 v1.14 Implements pdfTeX's escape features (HO)
+Package: bigintcalc 2016/05/16 v1.4 Expandable calculations on big integers (HO
 )
-Package: bitset 2011/01/30 v1.1 Handle bit-vector datatype (HO)
-Package: uniquecounter 2011/01/30 v1.2 Provide unlimited unique counter (HO)
+Package: bitset 2016/05/16 v1.2 Handle bit-vector datatype (HO)
+Package: uniquecounter 2016/05/16 v1.3 Provide unlimited unique counter (HO)
 )
 Package hobsub Info: Skipping package `hobsub' (already loaded).
-Package: letltxmacro 2010/09/02 v1.4 Let assignment for LaTeX macros (HO)
-Package: hopatch 2011/06/24 v1.1 Wrapper for package hooks (HO)
-Package: xcolor-patch 2011/01/30 xcolor patch
-Package: atveryend 2011/06/30 v1.8 Hooks at the very end of document (HO)
-Package: atbegshi 2011/10/05 v1.16 At begin shipout hook (HO)
-Package: refcount 2011/10/16 v3.4 Data extraction from label references (HO)
-Package: hycolor 2011/01/30 v1.7 Color options for hyperref/bookmark (HO)
+Package: letltxmacro 2016/05/16 v1.5 Let assignment for LaTeX macros (HO)
+Package: hopatch 2016/05/16 v1.3 Wrapper for package hooks (HO)
+Package: xcolor-patch 2016/05/16 xcolor patch
+Package: atveryend 2016/05/16 v1.9 Hooks at the very end of document (HO)
+Package: atbegshi 2016/06/09 v1.18 At begin shipout hook (HO)
+Package: refcount 2016/05/16 v3.5 Data extraction from label references (HO)
+Package: hycolor 2016/05/16 v1.8 Color options for hyperref/bookmark (HO)
 )
 ("C:\Program Files\MiKTeX 2.9\tex\generic\ifxetex\ifxetex.sty"
 Package: ifxetex 2010/09/12 v0.6 Provides ifxetex conditional
 )
 ("C:\Program Files\MiKTeX 2.9\tex\latex\oberdiek\auxhook.sty"
-Package: auxhook 2011/03/04 v1.3 Hooks for auxiliary files (HO)
+Package: auxhook 2016/05/16 v1.4 Hooks for auxiliary files (HO)
 )
 \@linkdim=\dimen109
-\Hy@linkcounter=\count212
-\Hy@pagecounter=\count213
+\Hy@linkcounter=\count282
+\Hy@pagecounter=\count283
 
 ("C:\Program Files\MiKTeX 2.9\tex\latex\hyperref\pd1enc.def"
-File: pd1enc.def 2012/11/06 v6.83m Hyperref: PDFDocEncoding definition (HO)
+File: pd1enc.def 2016/06/24 v6.83q Hyperref: PDFDocEncoding definition (HO)
 )
-\Hy@SavedSpaceFactor=\count214
+\Hy@SavedSpaceFactor=\count284
 
 ("C:\Program Files\MiKTeX 2.9\tex\latex\00miktex\hyperref.cfg"
 File: hyperref.cfg 2002/06/06 v1.2 hyperref configuration of TeXLive
 )
-Package hyperref Info: Hyper figures OFF on input line 4443.
-Package hyperref Info: Link nesting OFF on input line 4448.
-Package hyperref Info: Hyper index ON on input line 4451.
-Package hyperref Info: Plain pages OFF on input line 4458.
-Package hyperref Info: Backreferencing OFF on input line 4463.
+Package hyperref Info: Hyper figures OFF on input line 4486.
+Package hyperref Info: Link nesting OFF on input line 4491.
+Package hyperref Info: Hyper index ON on input line 4494.
+Package hyperref Info: Plain pages OFF on input line 4501.
+Package hyperref Info: Backreferencing OFF on input line 4506.
 Package hyperref Info: Implicit mode ON; LaTeX internals redefined.
-Package hyperref Info: Bookmarks ON on input line 4688.
-\c@Hy@tempcnt=\count215
-LaTeX Info: Redefining \url on input line 5041.
+Package hyperref Info: Bookmarks ON on input line 4735.
+\c@Hy@tempcnt=\count285
+LaTeX Info: Redefining \url on input line 5088.
 \XeTeXLinkMargin=\dimen110
-\Fld@menulength=\count216
+\Fld@menulength=\count286
 \Field@Width=\dimen111
 \Fld@charsize=\dimen112
-Package hyperref Info: Hyper figures OFF on input line 6295.
-Package hyperref Info: Link nesting OFF on input line 6300.
-Package hyperref Info: Hyper index ON on input line 6303.
-Package hyperref Info: backreferencing OFF on input line 6310.
-Package hyperref Info: Link coloring OFF on input line 6315.
-Package hyperref Info: Link coloring with OCG OFF on input line 6320.
-Package hyperref Info: PDF/A mode OFF on input line 6325.
-LaTeX Info: Redefining \ref on input line 6365.
-LaTeX Info: Redefining \pageref on input line 6369.
-\Hy@abspage=\count217
-\c@Item=\count218
-\c@Hfootnote=\count219
+Package hyperref Info: Hyper figures OFF on input line 6342.
+Package hyperref Info: Link nesting OFF on input line 6347.
+Package hyperref Info: Hyper index ON on input line 6350.
+Package hyperref Info: backreferencing OFF on input line 6357.
+Package hyperref Info: Link coloring OFF on input line 6362.
+Package hyperref Info: Link coloring with OCG OFF on input line 6367.
+Package hyperref Info: PDF/A mode OFF on input line 6372.
+LaTeX Info: Redefining \ref on input line 6412.
+LaTeX Info: Redefining \pageref on input line 6416.
+\Hy@abspage=\count287
+\c@Item=\count288
+\c@Hfootnote=\count289
 )
 
 Package hyperref Message: Driver (autodetected): hpdftex.
 
 ("C:\Program Files\MiKTeX 2.9\tex\latex\hyperref\hpdftex.def"
-File: hpdftex.def 2012/11/06 v6.83m Hyperref driver for pdfTeX
-\Fld@listcount=\count220
-\c@bookmark@seq@number=\count221
+File: hpdftex.def 2016/06/24 v6.83q Hyperref driver for pdfTeX
+\Fld@listcount=\count290
+\c@bookmark@seq@number=\count291
 
 ("C:\Program Files\MiKTeX 2.9\tex\latex\oberdiek\rerunfilecheck.sty"
-Package: rerunfilecheck 2011/04/15 v1.7 Rerun checks for auxiliary files (HO)
+Package: rerunfilecheck 2016/05/16 v1.8 Rerun checks for auxiliary files (HO)
 Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
 82.
 )
-\Hy@SectionHShift=\skip52
+\Hy@SectionHShift=\skip57
 )
 Package hyperref Info: Option `colorlinks' set `true' on input line 12.
 Package biblatex Info: Trying to load language 'english'...
 Package biblatex Info: ... file 'english.lbx' found.
 
 ("C:\Program Files\MiKTeX 2.9\tex\latex\biblatex\lbx\english.lbx"
-File: english.lbx 2015/10/21 v3.1 biblatex localization (PK/JW/AB)
+File: english.lbx 2016/12/05 v3.7 biblatex localization (PK/JW/AB)
 )
-\@quotelevel=\count222
-\@quotereset=\count223
+\@quotelevel=\count292
+\@quotereset=\count293
 
-(D:\disco_usuario\javier\upm\doctorado\tesis\codigo\kcorebip\mansrc\kcorebip_ma
-n.aux
-
-LaTeX Warning: Label `fig:KMAN_red_example' multiply defined.
-
-
-LaTeX Warning: Label `fig:KMAN_red_example' multiply defined.
-
-
-LaTeX Warning: Label `polar_plot' multiply defined.
-
+(kcorebip_man.aux
 
 LaTeX Warning: Label `fig:KMAN_ziggurat' multiply defined.
 
-
-LaTeX Warning: Label `fig:KMAN_ziggurat_031' multiply defined.
-
 )
+\openout1 = `kcorebip_man.aux'.
+
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 20.
 LaTeX Font Info:    ... okay on input line 20.
 LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 20.
@@ -483,58 +485,59 @@ LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 20.
 LaTeX Font Info:    ... okay on input line 20.
  ("C:\Program Files\MiKTeX 2.9\tex\context\base\supp-pdf.mkii"
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count224
+\scratchcounter=\count294
 \scratchdimen=\dimen113
 \scratchbox=\box28
-\nofMPsegments=\count225
-\nofMParguments=\count226
+\nofMPsegments=\count295
+\nofMParguments=\count296
 \everyMPshowfont=\toks16
-\MPscratchCnt=\count227
+\MPscratchCnt=\count297
 \MPscratchDim=\dimen114
-\MPnumerator=\count228
-\makeMPintoPDFobject=\count229
+\MPnumerator=\count298
+\makeMPintoPDFobject=\count299
 \everyMPtoPDFconversion=\toks17
 )
-\c@lstlisting=\count230
+\c@lstlisting=\count300
 Package biblatex Info: No input encoding detected.
 (biblatex)             Assuming 'ascii'.
 Package biblatex Info: Automatic encoding selection.
 (biblatex)             Assuming data encoding 'ascii'.
+Package biblatex Info: Input encoding 'ascii' specified.
+Package biblatex Info: Data encoding 'ascii' specified.
+(biblatex)             No need to reencode data.
+\openout4 = `kcorebip_man-blx.bib'.
+
 Package biblatex Info: Trying to load bibliographic data...
 Package biblatex Info: ... file 'kcorebip_man.bbl' found.
-
-(D:\disco_usuario\javier\upm\doctorado\tesis\codigo\kcorebip\mansrc\kcorebip_ma
-n.bbl)
+ (kcorebip_man.bbl)
 Package biblatex Info: Reference section=0 on input line 20.
 Package biblatex Info: Reference segment=0 on input line 20.
 \AtBeginShipoutBox=\box29
  ("C:\Program Files\MiKTeX 2.9\tex\latex\graphics\color.sty"
-Package: color 2005/11/14 v1.0j Standard LaTeX Color (DPC)
-
-("C:\Program Files\MiKTeX 2.9\tex\latex\00miktex\color.cfg"
-File: color.cfg 2007/01/18 v1.5 color configuration of teTeX/TeXLive
+Package: color 2016/07/10 v1.1e Standard LaTeX Color (DPC)
+ ("C:\Program Files\MiKTeX 2.9\tex\latex\graphics-cfg\color.cfg"
+File: color.cfg 2016/01/02 v1.6 sample color configuration
 )
-Package color Info: Driver file: pdftex.def on input line 130.
+Package color Info: Driver file: pdftex.def on input line 147.
 )
 Package hyperref Info: Link coloring ON on input line 20.
 
 ("C:\Program Files\MiKTeX 2.9\tex\latex\hyperref\nameref.sty"
-Package: nameref 2012/10/27 v2.43 Cross-referencing by name of section
+Package: nameref 2016/05/21 v2.44 Cross-referencing by name of section
 
 ("C:\Program Files\MiKTeX 2.9\tex\generic\oberdiek\gettitlestring.sty"
-Package: gettitlestring 2010/12/03 v1.4 Cleanup title references (HO)
+Package: gettitlestring 2016/05/16 v1.5 Cleanup title references (HO)
 )
-\c@section@level=\count231
+\c@section@level=\count301
 )
 LaTeX Info: Redefining \ref on input line 20.
 LaTeX Info: Redefining \pageref on input line 20.
 LaTeX Info: Redefining \nameref on input line 20.
 
-(D:\disco_usuario\javier\upm\doctorado\tesis\codigo\kcorebip\mansrc\kcorebip_ma
-n.out)
-(D:\disco_usuario\javier\upm\doctorado\tesis\codigo\kcorebip\mansrc\kcorebip_ma
-n.out)
-\@outlinefile=\write4
+(kcorebip_man.out) (kcorebip_man.out)
+\@outlinefile=\write5
+\openout5 = `kcorebip_man.out'.
+
 LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <14.4> on input line 24.
 LaTeX Font Info:    External font `cmex10' loaded for size
@@ -547,43 +550,31 @@ LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <6> on input line 34.
  [1
 
-{C:/Users/algarra/AppData/Local/MiKTeX/2.9/pdftex/config/pdftex.map}]
-<red_example.pdf, id=29, 845.1575pt x 597.23125pt>
+{C:/ProgramData/MiKTeX/2.9/pdftex/config/pdftex.map}] <red_example.pdf, id=29, 
+845.1575pt x 597.23125pt>
 File: red_example.pdf Graphic file (type pdf)
- <use red_example.pdf>
+
+<use red_example.pdf>
 Package pdftex.def Info: red_example.pdf used on input line 48.
 (pdftex.def)             Requested size: 338.057pt x 238.88826pt.
-
-
-Package hyperref Warning: Suppressing empty link on input line 53.
-
-
-Package hyperref Warning: Suppressing empty link on input line 63.
-
-[2 <D:/disco_usuario/javier/upm/doctorado/tesis/codigo/kcorebip/mansrc/red_exam
-ple.pdf, page is rotated 90 degrees>]
-
-Package hyperref Warning: Suppressing empty link on input line 73.
-
-<SD_029_csv.png, id=49, 472.01344pt x 101.62968pt>
+ [2 <./red_example.pdf, page is rotated 90 degrees>]
+<SD_029_csv.png, id=52, 472.01344pt x 101.62968pt>
 File: SD_029_csv.png Graphic file (type png)
  <use SD_029_csv.png>
 Package pdftex.def Info: SD_029_csv.png used on input line 84.
 (pdftex.def)             Requested size: 377.61127pt x 81.30385pt.
 
-[3 <D:/disco_usuario/javier/upm/doctorado/tesis/codigo/kcorebip/mansrc/SD_029_c
-sv.png>]
+[3 <./SD_029_csv.png>]
 LaTeX Font Info:    Try loading font information for OMS+cmr on input line 106.
 
  ("C:\Program Files\MiKTeX 2.9\tex\latex\base\omscmr.fd"
-File: omscmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
+File: omscmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10.95> not available
 (Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 106.
 LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <10.95> on input line 116.
- [4]
-<M_PL_034_polar.png, id=71, 867.24pt x 867.24pt>
+[4] <M_PL_034_polar.png, id=74, 867.24pt x 867.24pt>
 File: M_PL_034_polar.png Graphic file (type png)
  <use M_PL_034_polar.png>
 Package pdftex.def Info: M_PL_034_polar.png used on input line 197.
@@ -594,8 +585,7 @@ LaTeX Warning: `!h' float specifier changed to `!ht'.
 
 [5
 
-] [6 <D:/disco_usuario/javier/upm/doctorado/tesis/codigo/kcorebip/mansrc/M_PL_0
-34_polar.png>] <polar_params.pdf, id=88, 542.025pt x 722.7pt>
+] [6 <./M_PL_034_polar.png>] <polar_params.pdf, id=91, 542.025pt x 722.7pt>
 File: polar_params.pdf Graphic file (type pdf)
 
 <use polar_params.pdf>
@@ -609,8 +599,7 @@ Overfull \hbox (16.51775pt too wide) in paragraph at lines 215--217
 
 LaTeX Warning: Float too large for page by 8.02367pt on input line 217.
 
-[7 <D:/disco_usuario/javier/upm/doctorado/tesis/codigo/kcorebip/mansrc/polar_pa
-rams.pdf>] <M_SD_004_ziggurat.png, id=107, 1011.78pt x 794.97pt>
+[7 <./polar_params.pdf>] <M_SD_004_ziggurat.png, id=110, 1011.78pt x 794.97pt>
 File: M_SD_004_ziggurat.png Graphic file (type png)
 
 <use M_SD_004_ziggurat.png>
@@ -624,12 +613,11 @@ Overfull \hbox (14.70483pt too wide) in paragraph at lines 230--231
 [8
 
 
- <D:/disco_usuario/javier/upm/doctorado/tesis/codigo/kcorebip/mansrc/M_SD_004_z
-iggurat.png (PNG copy)>]
+ <./M_SD_004_ziggurat.png (PNG copy)>]
 
 Package hyperref Warning: Suppressing empty link on input line 277.
 
-[9] <M_SD_004_ziggurat_improved.pdf, id=121, 542.025pt x 722.7pt>
+[9] <M_SD_004_ziggurat_improved.pdf, id=124, 542.025pt x 722.7pt>
 File: M_SD_004_ziggurat_improved.pdf Graphic file (type pdf)
 
 <use M_SD_004_ziggurat_improved.pdf>
@@ -644,9 +632,8 @@ Overfull \hbox (16.51775pt too wide) in paragraph at lines 303--306
 
 LaTeX Warning: Float too large for page by 8.02367pt on input line 306.
 
-[10 <D:/disco_usuario/javier/upm/doctorado/tesis/codigo/kcorebip/mansrc/M_SD_00
-4_ziggurat_improved.pdf>]
-<M_PL_012_ziggurat.png, id=143, 1011.78pt x 794.97pt>
+[10 <./M_SD_004_ziggurat_improved.pdf>]
+<M_PL_012_ziggurat.png, id=146, 1011.78pt x 794.97pt>
 File: M_PL_012_ziggurat.png Graphic file (type png)
 
 <use M_PL_012_ziggurat.png>
@@ -660,9 +647,8 @@ Overfull \hbox (14.70483pt too wide) in paragraph at lines 322--323
 [11
 
 
- <D:/disco_usuario/javier/upm/doctorado/tesis/codigo/kcorebip/mansrc/M_PL_012_z
-iggurat.png (PNG copy)>]
-<M_PL_012_ziggurat_improved.pdf, id=149, 542.025pt x 722.7pt>
+ <./M_PL_012_ziggurat.png (PNG copy)>]
+<M_PL_012_ziggurat_improved.pdf, id=152, 542.025pt x 722.7pt>
 File: M_PL_012_ziggurat_improved.pdf Graphic file (type pdf)
 
 <use M_PL_012_ziggurat_improved.pdf>
@@ -677,12 +663,11 @@ Overfull \hbox (16.51775pt too wide) in paragraph at lines 333--336
 
 LaTeX Warning: Float too large for page by 8.02367pt on input line 336.
 
-[12 <D:/disco_usuario/javier/upm/doctorado/tesis/codigo/kcorebip/mansrc/M_PL_01
-2_ziggurat_improved.pdf>] [13
+[12 <./M_PL_012_ziggurat_improved.pdf>] [13
 
 
 ]
-<M_PL_031_ziggurat.png, id=168, 817.1328pt x 794.0064pt>
+<M_PL_031_ziggurat.png, id=171, 817.1328pt x 794.0064pt>
 File: M_PL_031_ziggurat.png Graphic file (type png)
 
 <use M_PL_031_ziggurat.png>
@@ -690,9 +675,8 @@ Package pdftex.def Info: M_PL_031_ziggurat.png used on input line 370.
 (pdftex.def)             Requested size: 367.70636pt x 357.29958pt.
  [14
 
- <D:/disco_usuario/javier/upm/doctorado/tesis/codigo/kcorebip/mansrc/M_PL_031_z
-iggurat.png>]
-<M_PL_031_ziggurat_improved.pdf, id=179, 542.025pt x 722.7pt>
+ <./M_PL_031_ziggurat.png>]
+<M_PL_031_ziggurat_improved.pdf, id=182, 542.025pt x 722.7pt>
 File: M_PL_031_ziggurat_improved.pdf Graphic file (type pdf)
 
 <use M_PL_031_ziggurat_improved.pdf>
@@ -707,9 +691,11 @@ Overfull \hbox (43.62057pt too wide) in paragraph at lines 384--387
 
 LaTeX Warning: Float too large for page by 44.16078pt on input line 387.
 
-[15 <D:/disco_usuario/javier/upm/doctorado/tesis/codigo/kcorebip/mansrc/M_PL_03
-1_ziggurat_improved.pdf>]
-<M_SD_025_ziggurat.png, id=209, 1011.78pt x 794.97pt>
+[15 <./M_PL_031_ziggurat_improved.pdf>]
+Missing character: There is no Ã in font cmr12!
+Missing character: There is no § in font cmr12!
+
+<M_SD_025_ziggurat.png, id=212, 1011.78pt x 794.97pt>
 File: M_SD_025_ziggurat.png Graphic file (type png)
 
 <use M_SD_025_ziggurat.png>
@@ -729,8 +715,7 @@ th_factor = 1.25,[]
 [16
 
 
- <D:/disco_usuario/javier/upm/doctorado/tesis/codigo/kcorebip/mansrc/M_SD_025_z
-iggurat.png (PNG copy)>]
+ <./M_SD_025_ziggurat.png (PNG copy)>]
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <12> not available
 (Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 423.
  [17
@@ -748,16 +733,14 @@ nd ver-ti-cal sep-a-ra-tion of kshell species
  []
 
 [18] [19]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 556.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 558.
  [20
 
 ]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 556.
-
-(D:\disco_usuario\javier\upm\doctorado\tesis\codigo\kcorebip\mansrc\kcorebip_ma
-n.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 556.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 556.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 558.
+ (kcorebip_man.aux)
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 558.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 558.
 Package rerunfilecheck Info: File `kcorebip_man.out' has not changed.
 (rerunfilecheck)             Checksum: 1863B14B769CA35A970F1D7D84548097;47.
 
@@ -765,15 +748,17 @@ Package rerunfilecheck Info: File `kcorebip_man.out' has not changed.
 LaTeX Warning: There were multiply-defined labels.
 
 Package logreq Info: Writing requests to 'kcorebip_man.run.xml'.
+\openout1 = `kcorebip_man.run.xml'.
+
  ) 
 Here is how much of TeX's memory you used:
- 11332 strings out of 493921
- 181442 string characters out of 3147276
- 369152 words of memory out of 3000000
- 14458 multiletter control sequences out of 15000+200000
+ 12823 strings out of 493333
+ 213614 string characters out of 3139187
+ 485796 words of memory out of 3000000
+ 16178 multiletter control sequences out of 15000+200000
  10923 words of font info for 39 fonts, out of 3000000 for 9000
- 841 hyphenation exceptions out of 8191
- 42i,7n,48p,890b,925s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 1141 hyphenation exceptions out of 8191
+ 44i,7n,45p,824b,1280s stack positions out of 5000i,500n,10000p,200000b,50000s
 <C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx10.pfb><C:/Pr
 ogram Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C:/Program Fi
 les/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmex10.pfb><C:/Program Files/MiKT
@@ -790,9 +775,9 @@ nts/type1/public/amsfonts/cm/cmti10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type
 1/public/amsfonts/cm/cmti12.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public
 /amsfonts/cm/cmtt10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfont
 s/cm/cmtt12.pfb>
-Output written on kcorebip_man.pdf (20 pages, 2775566 bytes).
+Output written on kcorebip_man.pdf (20 pages, 2775834 bytes).
 PDF statistics:
- 297 PDF objects out of 1000 (max. 8388607)
+ 300 PDF objects out of 1000 (max. 8388607)
  43 named destinations out of 1000 (max. 500000)
  64 words of extra memory for PDF output out of 10000 (max. 10000000)
 

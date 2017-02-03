@@ -14,7 +14,7 @@
 \urlstyle{same}
 \addbibresource{kcorebip.bib} % The filename of the bibliography
 
-\title{Using the kcorebip package \\ \small{Version 0.1}}
+\title{Using the kcorebip package \\ \small{Version 0.2}}
 \author{Javier Garcia-Algarra \\ \href{mailto:jgalgarra@coit.es}{jgalgarra@coit.es} }
 
 \begin{document}
@@ -83,7 +83,7 @@ The naming convention is $M\_XX\_NNN.csv$ where $XX$ is the type, $PL$ for polli
 \centering
 \includegraphics[scale=0.8]{SD_029_csv.png}
 \caption {Examples of input file, the seed disperser network $029$ of \href{http://www.web-of-life.es/}{web of life} site.}
-\label{fig:KMAN_red_example}
+\label{fig:SD_029}
 \end{figure}
 
 \subsection*{Network analysis}
@@ -196,7 +196,7 @@ polar_graph("M_PL_034.csv","data/",plotsdir="grafresults/",
 \centering
 \includegraphics[scale=0.4]{M_PL_034_polar.png}
 %\caption {Examples of \textit{$k_{radius}$} in a fictional network.}
-\label{fig:KMAN_red_example}
+\label{fig:M_PL_034_polar}
 \end{figure}
 
 The plot title includes the network average ${k}_{radius}$ and ${k}_{degree}$, a common measurement of \textit{nestedness} called $NODF$ \cite{almeida2008consistent} and $Modularity$ following the \textit{QanBiMo} method \cite{dormann2014method}.
@@ -219,7 +219,7 @@ The configuration of a polar graph is quite simple. The following picture shows 
 \clearpage
 
 \subsection*{The Ziggurat Plot}
-\label{polar_plot}
+\label{the_ziggurat_plot}
 
 \textit{Ziggurat} is the second type of visualization, created from scratch. Species are grouped by their $k$-$shells$. Each of these groups are represented as small ziggurats. The maximum $k$-$shell$ is located on the left side, the other ones are arranged following an almond-like distribution. 
 
@@ -383,13 +383,13 @@ The \texttt{ziggurat\_grap} function offers input fields to manage the appearanc
 \centering
 \includegraphics[scale=0.8]{M_PL_031_ziggurat_improved.pdf}
 %\caption {Default ziggurat graph of a plant - pollinator network in Alta Guyana (Venezuela) \cite{ramirez1989biologia}.}
-\label{fig:KMAN_ziggurat_031}
+\label{fig:KMAN_ziggurat_031_improved}
 \end{figure}
 
 
 \clearpage
 
-It is possible to display the names of the species inside the ziggurat rectangles. Be careful, because they may make
+It is possible to display the names of the species inside the ziggurat rectangles. Be caçul, because they may make
 very difficult to understand the structure, we do not encourage using this feature unless the network is tiny. Species
 names of \textit{1-shell} cannot be displayed
 
@@ -543,6 +543,8 @@ are stored. If you are developing an application, you can retrieve:
 \item \texttt{file\_name\_append}: a label that the user may append to the plot file name for convenience.
 
 \item \texttt{svg\_scale\_factor}: only for interactive apps, do not modify.
+
+\item \texttt{weighted\_links}: weight function to display links, (\texttt{"none"},\texttt{"log10"},\texttt{"ln"})
 
 \item \texttt{progress}: only for interactive apps, do not modifiy.
 \end{itemize}

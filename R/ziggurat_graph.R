@@ -7,7 +7,6 @@ library(bipartite)
 library(igraph)
 library(ggplot2)
 
-
 gen_sq_label <- function(nodes, joinchars = "\n")
 {
   nnodes <- length(nodes)
@@ -171,10 +170,22 @@ draw_core_box <- function(grafo, svg, kcore)
   return(calc_vals)
 }
 
+get_link_weights <- function(matrixweight)
+{
+  if (zgg$weighted_links == "none")
+    return(1)
+  if (zgg$weighted_links == "log10")
+    return(1+log10(matrixweight))
+  if (zgg$weighted_links == "ln")
+    return(1+log(matrixweight))
+}
+
+
 draw_tail <- function(idPrefix, p,svg,fat_tail,lado,color,sqlabel,basex,basey,gap,
                       lxx2=0,lyy2=0,sqinverse = "no",
                       position = "West", background = "no",
-                      first_leaf = "yes", spline = "no", psize = zgg$lsize_kcore1, is_guild_a = TRUE)
+                      first_leaf = "yes", spline = "no",
+                      psize = zgg$lsize_kcore1, is_guild_a = TRUE, wlink=1)
 {
   adjust <- "yes"
   lvjust <- 0
@@ -213,7 +224,8 @@ draw_tail <- function(idPrefix, p,svg,fat_tail,lado,color,sqlabel,basex,basey,ga
   {
     ecolor <- "transparent"
     if (zgg$alpha_level != 1)
-      palpha <- max(zgg$alpha_level-0.12,0)
+      palpha <- max(zgg$alpha_level-0.09,0)
+
     rot_angle <-30
     if (position == "North")
     {
@@ -239,7 +251,7 @@ draw_tail <- function(idPrefix, p,svg,fat_tail,lado,color,sqlabel,basex,basey,ga
   if (zgg$paintlinks)
     add_link(xx1=posxx1, xx2 = plxx2,
                    yy1 = posyy1, yy2 = plyy2,
-                   slink = zgg$size_link, clink = c(zgg$color_link),
+                   slink = zgg$size_link*wlink, clink = c(zgg$color_link),
                    alpha_l = zgg$alpha_link , spline= spline)
   calc_vals <- list("p" = p, "svg" = svg, "sidex" = sidex, "xx" = posxx1, "yy" = posyy1)
   return(calc_vals)
@@ -248,7 +260,7 @@ draw_tail <- function(idPrefix, p,svg,fat_tail,lado,color,sqlabel,basex,basey,ga
 
 draw_edge_tails <- function(p,svg,point_x,point_y,kcoreother,long_tail,list_dfs,color_guild, inverse = "no",
                             vertical = "yes", orientation = "East", revanddrop = "no",
-                            pbackground = "yes", joinchars = "\n", tspline = "no", is_guild_a = TRUE)
+                            pbackground = "yes", joinchars = "\n", tspline = "no", is_guild_a = TRUE, wlink = 1)
 {
 
   if (orientation == "West")
@@ -296,11 +308,22 @@ draw_edge_tails <- function(p,svg,point_x,point_y,kcoreother,long_tail,list_dfs,
         point_y <- (zgg$innertail_vertical_separation-1)*sign(point_y)*zgg$height_y + point_y
         ryy <- point_y
       }
-      v<- draw_tail(paste0(ifelse(is_guild_a, "edge-kcore1-a-", "edge-kcore1-b-"), i), p,svg,little_tail,zgg$lado,color_guild[1],
+      tailweight <- 0
+      for (h in 1:nrow(little_tail))
+        if (is_guild_a)
+          tailweight <- tailweight + zgg$result_analysis$matrix[as.numeric(little_tail$partner[h]),
+                                                                        as.numeric(little_tail$orph[h])]
+        else
+          tailweight <- tailweight + zgg$result_analysis$matrix[as.numeric(little_tail$orph[h]),
+                                                                as.numeric(little_tail$partner[h])]
+      little_tail$weightlink <- get_link_weights(tailweight)
+      v<- draw_tail(paste0(ifelse(is_guild_a, "edge-kcore1-a-", "edge-kcore1-b-"), i),
+                    p,svg,little_tail,zgg$lado,color_guild[2],
                     gen_sq_label(little_tail$orph,joinchars = " "),
                     rxx,ryy,zgg$gap,lxx2 = xx2,
                     lyy2 = yy2, sqinverse = inverse, position = orientation,
-                    background = pbackground, spline = tspline, psize = zgg$lsize_kcore1, is_guild_a = is_guild_a)
+                    background = pbackground, spline = tspline, psize = zgg$lsize_kcore1,
+                    is_guild_a = is_guild_a, wlink = little_tail$weightlink[1])
       p <- v["p"][[1]]
       svg <- v["svg"][[1]]
       rxx <- v["xx"][[1]]
@@ -382,9 +405,9 @@ handle_outsiders <- function(p,svg,outsiders,df_chains) {
     zgg$outsiders_b <- zgg$outsider$name[grep(zgg$str_guild_b,zgg$outsider$name)]
     pox <- -(zgg$hop_x/4)+ zgg$tot_width * (zgg$displace_outside_component[1]-1)
     poy <- min(-zgg$last_ytail_b[!is.na(zgg$last_ytail_b)]-4*zgg$lado,df_chains$y1) * zgg$displace_outside_component[2]
-    dfo_a <- conf_outsiders(zgg$outsiders_a,pox,poy,zgg$lado,zgg$color_guild_a[1],zgg$str_guild_a)
+    dfo_a <- conf_outsiders(zgg$outsiders_a,pox,poy,zgg$lado,zgg$color_guild_a[2],zgg$str_guild_a)
     guild_sep <- poy-max(1,length(zgg$outsider)/10)*4*zgg$lado*zgg$outsiders_separation_expand/zgg$aspect_ratio
-    dfo_b <- conf_outsiders(zgg$outsiders_b,pox,guild_sep,zgg$lado,zgg$color_guild_b[1],zgg$str_guild_b)
+    dfo_b <- conf_outsiders(zgg$outsiders_b,pox,guild_sep,zgg$lado,zgg$color_guild_b[2],zgg$str_guild_b)
     f <- draw_sq_outsiders("outsiders-kcore1-a",p,svg,dfo_a,paintsidex,zgg$alpha_level,zgg$lsize_kcore1)
     p <- f["p"][[1]]
     svg <- f["svg"][[1]]
@@ -403,9 +426,11 @@ handle_outsiders <- function(p,svg,outsiders,df_chains) {
                              x2 = c(dfo_b[i,]$x1 +(dfo_b[i,]$x2-dfo_b[i,]$x1)/2),
                              y1 = c(dfo_a[j,]$y2),  y2 = c(dfo_b[i,]$y1) )
           lcolor = "orange"
+          tailweight <- get_link_weights(zgg$result_analysis$matrix[as.numeric(dfo_b[i,]$label),
+                                                                                       as.numeric(dfo_a[j,]$label)])
           add_link(xx1=link$x1, xx2 = link$x2,
                          yy1 = link$y1, yy2 = link$y2,
-                         slink = zgg$size_link, clink = c(zgg$color_link),
+                         slink = zgg$size_link*tailweight, clink = c(zgg$color_link),
                          alpha_l = zgg$alpha_link , spline = bend_line)
         }
       }
@@ -681,7 +706,7 @@ add_link <- function(xx1 = 0,xx2 = 0,yy1 = 0,yy2 = 0,
 {
   if (!zgg$use_spline)
     spline  <- "no"
-  link <- data.frame(x1=xx1, x2 = xx2, y1 = yy1,  y2 = yy2)
+  link <- data.frame(x1=xx1, x2 = xx2, y1 = yy1,  y2 = yy2, weightlink = slink)
 
   npoints_link <- zgg$spline_points
   col_link <- clink[1]
@@ -717,7 +742,9 @@ add_link <- function(xx1 = 0,xx2 = 0,yy1 = 0,yy2 = 0,
     ds1 <- as.data.frame(s1)
     zgg$count_bent_links <- zgg$count_bent_links + 1
     ds1$number <- zgg$count_bent_links
+    ds1$weightlink <- slink
     zgg$bent_links <- rbind(zgg$bent_links,ds1)
+
   }
   return(0)
 }
@@ -872,15 +899,16 @@ store_weird_species <- function (row_orph, df_store, strguild, lado, gap, origin
 draw_weird_chains <- function(grafo, svg, df_chains, paintsidex)
 {
   p <- grafo
+  df_chains$weightlink <- 0
   for (i in 1:nrow(df_chains))
   {
     sqinverse = "no"
     if (df_chains[i,]$guild == zgg$str_guild_a){
-      bgcolor <- zgg$color_guild_a[1]
+      bgcolor <- zgg$color_guild_a[2]
       is_guild_a <- TRUE
     }
     if (df_chains[i,]$guild == zgg$str_guild_b){
-      bgcolor <- zgg$color_guild_b[1]
+      bgcolor <- zgg$color_guild_b[2]
       is_guild_a <- FALSE
     }
     hjust <- 0
@@ -923,9 +951,18 @@ draw_weird_chains <- function(grafo, svg, df_chains, paintsidex)
       else
         splineshape = "weirdhorizontal"
       #color_link = "green"
+      tailweight <- 0
+      # for (h in 1:nrow(df_chains))
+        if (df_chains$guild[i] == zgg$str_guild_a)
+          tailweight <- tailweight + zgg$result_analysis$matrix[as.numeric(df_chains$partner[i]),
+                                                                      as.numeric(df_chains$orph[i])]
+        else
+          tailweight <- tailweight + zgg$result_analysis$matrix[as.numeric(df_chains$orph[i]),
+                                                                as.numeric(df_chains$partner[i])]
+      df_chains[i,]$weightlink <- get_link_weights(tailweight)
       add_link(xx1=xx1, xx2 = xx2,
                      yy1 = yy1, yy2 = yy2,
-                     slink = zgg$size_link, clink = c(zgg$color_link),
+                     slink = zgg$size_link*df_chains[i,]$weightlink, clink = c(zgg$color_link),
                      alpha_l = zgg$alpha_link , spline = splineshape)
     }
   }
@@ -1034,6 +1071,8 @@ draw_inner_links <- function(p, svg)
             {
               foundlinksa <- foundlinksa + 1
               data_b <- zgg$list_dfs_b[[kcb]][i,]
+              weightlink <- get_link_weights(zgg$result_analysis$matrix[as.numeric(data_b$label),
+                                                                        as.numeric(data_a$label)])
               bend_line = "no"
               if (((kc == 2) & (kcb == zgg$kcoremax)) | ((kc == zgg$kcoremax) & (kcb == 2)))
                 bend_line = "horizontal"
@@ -1082,9 +1121,10 @@ draw_inner_links <- function(p, svg)
                                    y1 = data_a$y1,  y2 = y_2)
                 lcolor = "blue"
               }
+
               add_link(xx1=link$x1, xx2 = link$x2,
                              yy1 = link$y1, yy2 = link$y2,
-                             slink = zgg$size_link, clink =  c(zgg$color_link),
+                             slink = zgg$size_link*weightlink, clink =  c(zgg$color_link),
                              alpha_l = zgg$alpha_link , spline = bend_line)
             }
             if (foundlinksa >= numberlinksa )
@@ -1106,11 +1146,13 @@ draw_fat_tail<- function(p,svg,fat_tail,nrows,list_dfs,color_guild,pos_tail_x,po
   if (nrow(fat_tail)>0)
   {
     plyy2 <- ifelse(inverse == "yes", list_dfs[[zgg$kcoremax]][1,]$y1-3*zgg$lado, list_dfs[[zgg$kcoremax]][1,]$y2-3*zgg$lado)
-    v<- draw_tail(ifelse(is_guild_a, "fat-kcore1-a", "fat-kcore1-b"), p,svg,fat_tail,zgg$lado,color_guild,gen_sq_label(fat_tail$orph),
+    v<- draw_tail(ifelse(is_guild_a, "fat-kcore1-a", "fat-kcore1-b"), p,svg,
+                  fat_tail,zgg$lado,color_guild,gen_sq_label(fat_tail$orph),
                   ppos_tail_x,ppos_tail_y,fgap,
                   lxx2 = list_dfs[[zgg$kcoremax]][1,]$x1,
                   lyy2 = plyy2,
-                  sqinverse = inverse, background = "no", psize = zgg$lsize_kcore1, is_guild_a = is_guild_a)
+                  sqinverse = inverse, background = "no", psize = zgg$lsize_kcore1,
+                  is_guild_a = is_guild_a, wlink = fat_tail$weightlink[1])
     p <- v["p"][[1]]
     svg <- v["svg"][[1]]
   }
@@ -1323,27 +1365,44 @@ handle_fat_tails <- function(p, svg)
 {
   fat_tail_x <- min(zgg$last_xtail_a[[zgg$kcoremax]],zgg$last_xtail_b[[zgg$kcoremax]],zgg$list_dfs_a[[zgg$kcoremax]][1,]$x1,zgg$list_dfs_b[[zgg$kcoremax]][1,]$y2)
   max_b_kdegree <- zgg$list_dfs_b[[zgg$kcoremax]][which(zgg$list_dfs_b[[zgg$kcoremax]]$kdegree == max(zgg$list_dfs_b[[zgg$kcoremax]]$kdegree)),]$label
-  if (exists("df_orph_a", envir = zgg))
+  if (exists("df_orph_a", envir = zgg)){
     fat_tail_a <- zgg$df_orph_a[(zgg$df_orph_a$partner == max(max_b_kdegree)) & (zgg$df_orph_a$repeated == "no"),]
+    tailweight <- 0
+    if (nrow(fat_tail_a)>0) {
+    for (h in 1:nrow(fat_tail_a))
+      tailweight <- tailweight + zgg$result_analysis$matrix[as.numeric(fat_tail_a$partner[h]),
+                                                                  as.numeric(fat_tail_a$orph[h])]
+      fat_tail_a$weightlink <- get_link_weights(tailweight)
+    }
+  }
   if (!exists("fat_tail_a"))
     fat_tail_a <- data.frame(c())
   max_a_kdegree <- zgg$list_dfs_a[[zgg$kcoremax]][which(zgg$list_dfs_a[[zgg$kcoremax]]$kdegree == max(zgg$list_dfs_a[[zgg$kcoremax]]$kdegree)),]$label
-  if (exists("df_orph_b", envir = zgg))
+  if (exists("df_orph_b", envir = zgg)){
     fat_tail_b <- zgg$df_orph_b[(zgg$df_orph_b$partner == max(max_a_kdegree)) & (zgg$df_orph_b$repeated == "no"),]
+    tailweight <- 0
+    if (nrow(fat_tail_b)>0) {
+      for (h in 1:nrow(fat_tail_b))
+        tailweight <- tailweight+zgg$result_analysis$matrix[as.numeric(fat_tail_b$orph[h]),
+                                                    as.numeric(fat_tail_b$partner[h])]
+      fat_tail_b$weightlink <- get_link_weights(tailweight)
+    }
+  }
   if (!exists("fat_tail_b"))
     fat_tail_b <- data.frame(c())
   fgap <- 0.7*zgg$hop_x
   zgg$pos_tail_x <- min(zgg$last_xtail_a[[zgg$kcoremax]],zgg$last_xtail_b[[zgg$kcoremax]],zgg$list_dfs_b[[zgg$kcoremax]][1,]$x1-fgap,zgg$list_dfs_a[[zgg$kcoremax]][1,]$x1-fgap)
   nrows_fat <- nrow(fat_tail_b)+nrow(fat_tail_a)
   if ((exists("fat_tail_a")) & (zgg$kcoremax > 2)) {
-    f <- draw_fat_tail(p,svg,fat_tail_a,nrows_fat,zgg$list_dfs_b,zgg$color_guild_a[1],
-                       zgg$pos_tail_x,pos_tail_y,zgg$fattailjumphoriz[1],zgg$fattailjumpvert[1],fgap,inverse="yes")
+    f <- draw_fat_tail(p,svg,fat_tail_a,nrows_fat,zgg$list_dfs_b,zgg$color_guild_a[2],
+                       zgg$pos_tail_x,pos_tail_y,zgg$fattailjumphoriz[1],
+                       zgg$fattailjumpvert[1],fgap,inverse="yes")
     p <- f["p"][[1]]
     svg <- f["svg"][[1]]
   }
 
   if ((exists("fat_tail_b")) & (zgg$kcoremax > 2)) {
-    f <- draw_fat_tail(p,svg,fat_tail_b,nrows_fat,zgg$list_dfs_a,zgg$color_guild_b[1],zgg$pos_tail_x,
+    f <- draw_fat_tail(p,svg,fat_tail_b,nrows_fat,zgg$list_dfs_a,zgg$color_guild_b[2],zgg$pos_tail_x,
                        pos_tail_y,zgg$fattailjumphoriz[2],zgg$fattailjumpvert[2],fgap,inverse="no", is_guild_a = FALSE)
     p <- f["p"][[1]]
     svg <- f["svg"][[1]]
@@ -1531,7 +1590,8 @@ draw_coremax_tails <- function(p, svg)
   {
     if (length(long_tail_a)>5)
       long_kcoremax_tail <- TRUE
-    v<-  draw_edge_tails(p,svg,point_x,(point_y+zgg$height_y*zgg$aspect_ratio),zgg$kcoremax,long_tail_a,zgg$list_dfs_b,zgg$color_guild_a, inverse = "yes",
+    v<-  draw_edge_tails(p,svg,point_x,(point_y+zgg$height_y*zgg$aspect_ratio),zgg$kcoremax,
+                         long_tail_a,zgg$list_dfs_b,zgg$color_guild_a, inverse = "yes",
                          vertical = "no", orientation = "South", revanddrop = "yes",
                          pbackground = "no", tspline = "arc", joinchars=zgg$joinstr)
     p <- v["p"][[1]]
@@ -1547,10 +1607,19 @@ draw_coremax_tails <- function(p, svg)
   if ( (exists("long_tail_b")) & (zgg$kcoremax > 2) ){
     if (nrow(long_tail_b)>5)
       long_kcoremax_tail <- TRUE
-    v<-  draw_edge_tails(p,svg,point_x,point_y,zgg$kcoremax,long_tail_b,zgg$list_dfs_a,zgg$color_guild_b, inverse = "no",
+    tailweight <- 0
+    if (nrow(long_tail_b)>0){
+      for (h in 1:nrow(long_tail_b))
+        tailweight <- tailweight + zgg$result_analysis$matrix[as.numeric(long_tail_b$orph[h]),
+                                                                    as.numeric(long_tail_b$partner[h])]
+      long_tail_b$weightlink <- get_link_weights(tailweight)
+    }
+
+    v <-  draw_edge_tails(p,svg,point_x,point_y,zgg$kcoremax,long_tail_b,zgg$list_dfs_a,zgg$color_guild_b,
+                         inverse = "no",
                          vertical = "no", orientation = "North", revanddrop = "yes",
-                         #pbackground = "no", tspline = "vertical", joinchars=zgg$joinstr)
-                         pbackground = "no", tspline = "arc", joinchars=zgg$joinstr, is_guild_a = FALSE)
+                         pbackground = "no", tspline = "arc", joinchars=zgg$joinstr, is_guild_a = FALSE,
+                         wlink = long_tail_b$weightlink[1])
     p <- v["p"][[1]]
     svg <- v["svg"][[1]]
     zgg$last_xtail_a[zgg$kcoremax] <- v["lastx"][[1]]
@@ -1601,6 +1670,7 @@ strip_isolated_nodes <- function()
 
 read_and_analyze <- function(directorystr,network_file,label_strguilda,label_strguildb)
 {
+
   str_guild_a <- "pl"
   str_guild_b <- "pol"
   name_guild_a <- "Plants"
@@ -1644,7 +1714,7 @@ def_configuration <- function(paintlinks, displaylabelszig , print_to_file, plot
                               corebox_border_size,
                               kcore_species_name_display,kcore_species_name_break,shorten_species_name,
                               label_strguilda, label_strguildb, landscape_plot, backg_color, show_title,
-                              use_spline, spline_points, file_name_append, svg_scale_factor, progress
+                              use_spline, spline_points, file_name_append, svg_scale_factor, weighted_links, progress
                               )
 {
   # ENVIRONMENT CONFIGURATION PARAMETERS
@@ -1702,6 +1772,7 @@ def_configuration <- function(paintlinks, displaylabelszig , print_to_file, plot
   zgg$spline_points <- spline_points
   zgg$file_name_append <- file_name_append
   zgg$svg_scale_factor <- svg_scale_factor
+  zgg$weighted_links <- weighted_links
   zgg$progress <- progress
 }
 
@@ -1731,8 +1802,8 @@ init_working_values <- function()
   zgg$list_dfs_b <- list()
   zgg$df_cores$num_species_guild_a <- 0
   zgg$df_cores$num_species_guild_b <- 0
-  zgg$straight_links <- data.frame(x1=c(), x2 = c(), y1 = c(),  y2 = c())
-  zgg$bent_links <- data.frame(x=c(), y = c(),  number = c())
+  zgg$straight_links <- data.frame(x1=c(), x2 = c(), y1 = c(),  y2 = c(), weightlink = c())
+  zgg$bent_links <- data.frame(x=c(), y = c(),  number = c(), weightlink = c() )
   zgg$count_bent_links <- 0
 }
 
@@ -1903,11 +1974,11 @@ draw_ziggurat_plot <- function(svg_scale_factor, progress)
   if (zgg$paintlinks){
     if (nrow(zgg$straight_links)>0) {
       p <- p+ geom_segment(data=zgg$straight_links, aes(x=x1, y=y1, xend=x2, yend=y2),
-                         size=zgg$size_link, color=zgg$color_link ,alpha=zgg$alpha_link)
+                         size=zgg$straight_links$weightlink, color=zgg$color_link ,alpha=zgg$alpha_link)
       svg$segment(idPrefix="link", data=zgg$straight_links, mapping=aes(x=x1, y=y1, xend=x2, yend=y2), alpha=zgg$alpha_link, color=zgg$color_link, size=zgg$size_link)
     }
     if (nrow(zgg$bent_links)>0) {
-      p <- p + geom_path(data =zgg$bent_links,aes(x,y,group=number), size=zgg$size_link,
+      p <- p + geom_path(data =zgg$bent_links,aes(x,y,group=number), size=zgg$bent_links$weightlink,
                        color=zgg$color_link ,alpha=zgg$alpha_link)
       svg$path(idPrefix="link", data=zgg$bent_links, mapping=aes(x, y, group=number), alpha=zgg$alpha_link, color=zgg$color_link, size=zgg$size_link)
     }
@@ -1988,6 +2059,7 @@ draw_ziggurat_plot <- function(svg_scale_factor, progress)
 #' @param spline_points number of points for each spline
 #' @param file_name_append a label that the user may append to the plot file name for convenience
 #' @param svg_scale_factor only for interactive apps, do not modify
+#' @param weighted_links function to add link weight: 'none', 'log10' or 'ln'
 #' @param progress only for interactive apps, do not modifiy
 #' @export
 #' @examples ziggurat_graph("data/","M_PL_001.csv",plotsdir="grafresults/",print_to_file = TRUE)
@@ -2013,7 +2085,7 @@ ziggurat_graph <- function(datadir,filename,
                            kcore_species_name_display = c(), kcore_species_name_break = c(),
                            shorten_species_name = 0, label_strguilda = "", label_strguildb = "", landscape_plot = TRUE,
                            backg_color = "white", show_title = TRUE, use_spline =TRUE, spline_points = 100,
-                           file_name_append = "", svg_scale_factor=10, progress=NULL
+                           file_name_append = "", svg_scale_factor=10, weighted_links = "none", progress=NULL
                            )
 {
   zgg <<- new.env()
@@ -2040,7 +2112,7 @@ ziggurat_graph <- function(datadir,filename,
                     root_weird_expand, hide_plot_border, rescale_plot_area,kcore1weirds_leafs_vertical_separation,
                     corebox_border_size, kcore_species_name_display,kcore_species_name_break,shorten_species_name,
                     label_strguilda, label_strguildb, landscape_plot, backg_color, show_title,
-                    use_spline, spline_points, file_name_append, svg_scale_factor, progress
+                    use_spline, spline_points, file_name_append, svg_scale_factor, weighted_links, progress
                     )
   strip_isolated_nodes()
   init_working_values()
@@ -2048,7 +2120,12 @@ ziggurat_graph <- function(datadir,filename,
   return(zgg)
 }
 
-# ziggurat_graph("data/","M_PL_008.csv",plotsdir="named/",print_to_file = FALSE,
-#                color_link = "Lavender", show_title = FALSE,
-#                alpha_link = 0.7, size_link = 0.4 )
-
+# ziggurat_graph("data/","M_SD_008.csv", plotsdir = "plot_results/ziggurat",color_link = "slategray3",weighted_links = "log10",
+#                                alpha_link = 0.5,coremax_triangle_width_factor = 1.3,  displace_y_a=c(0,0,0,0,0.5,0.7,0),
+#                                lsize_kcoremax = 6,lsize_zig = 5,lsize_kcore1 = 5,corebox_border_size=1, factor_hop_x = 1.5,
+#                                lsize_legend = 7, lsize_core_box = 6,displace_legend = c(-0.2,0.2), print_to_file = TRUE)
+# ziggurat_graph("data/","M_PL_007.csv", height_box_y_expand = 0.85,use_spline = TRUE, aspect_ratio = 1.2,
+#                lsize_legend = 7, lsize_core_box = 6,corebox_border_size=1,weighted_links = "log10",
+#                plotsdir = "plot_results/ziggurat",color_link = "slategray3", alpha_link = 0.5,
+#                lsize_kcoremax = 6,lsize_zig = 5,lsize_kcore1 = 5, size_link = 0.7,horiz_kcoremax_tails_expand = 2,
+#                displace_legend = c(-0.2,0.2),displace_outside_component = c(-1.2,0.6),print_to_file = TRUE)
