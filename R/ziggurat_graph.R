@@ -7,14 +7,24 @@ library(bipartite)
 library(igraph)
 library(ggplot2)
 
-gen_sq_label <- function(nodes, joinchars = "\n")
+gen_sq_label <- function(nodes, joinchars = "\n", is_guild_a = TRUE)
 {
+  # If kcore1 nodes name are displayed
+  dispname <- is.element(1,zgg$kcore_species_name_display)
+  if (dispname)
+    if (is_guild_a)
+      nspec <- colnames(zgg$result_analysis$matrix)
+    else
+      nspec <- rownames(zgg$result_analysis$matrix)
   nnodes <- length(nodes)
   lrow <- round(sqrt(nnodes))
   ssal <- ""
   for (i in 1:nnodes)
   {
-    ssal <- paste(ssal,nodes[i])
+    if (dispname)
+      ssal <- paste(ssal,nspec[as.integer(nodes[i])])
+    else
+      ssal <- paste(ssal,nodes[i])
     if ((i %% lrow == 0) & (nnodes > 1) & (i<nnodes))
       ssal <- gsub("  "," ",paste(ssal,joinchars))
   }
@@ -25,6 +35,7 @@ gen_sq_label <- function(nodes, joinchars = "\n")
 create_label_species <- function(strent,newline = FALSE){
   strchar <- ifelse(newline,"\n","")
   pieces <- unlist(strsplit(unlist(strent)," "))
+
   if (is.na(pieces[2]))
     pieces[2] = ""
   if (zgg$shorten_species_name>0){
@@ -50,7 +61,8 @@ name_species_preprocess <- function (kcore, list_dfs, kcore_species_name_display
     pnewline <- is.element(kcore,kcore_species_name_break)
     for (j in 1:length(list_dfs$name_species)){
       labelszig[j] <- create_label_species(list_dfs$name_species[j],newline=pnewline)
-      labelszig[j] <- paste(list_dfs$label[j],labelszig[j])
+      if (!zgg$exclude_species_number)
+        labelszig[j] <- paste(list_dfs$label[j],labelszig[j])
     }
   } else {
     kcoremaxlabel_angle <- 0
@@ -105,9 +117,12 @@ draw_rectangle<- function(idPrefix,basex,basey,widthx,widthy,grafo,svg,bordercol
     ds$y2 <- -(ds$y2)
     signo <- -1
   }
-  p <- grafo + geom_rect(data=ds,
+  if (bordersize > 0)
+    p <- grafo + geom_rect(data=ds,
                          mapping=aes(xmin=x1, xmax=x2, ymin=y1, ymax=y2),
                          fill = fillcolor, alpha =palpha, color=bordercolor, size = bordersize, linetype = 3)
+  else
+    p <- grafo
   p <- p +annotate(geom="text", x=x1+(x2-x1)/8, y=signo*(y1+(y2-y1)/2), label=slabel,
                    colour = fillcolor, size=sizelabel, hjust = 0)
   svg$rect(idPrefix=idPrefix, data=ds, mapping=aes(xmin=x1, xmax=x2, ymin=y1, ymax=y2), fill=fillcolor, alpha=palpha, color=bordercolor, size=bordersize, linetype=3)
@@ -319,7 +334,7 @@ draw_edge_tails <- function(p,svg,point_x,point_y,kcoreother,long_tail,list_dfs,
       little_tail$weightlink <- get_link_weights(tailweight)
       v<- draw_tail(paste0(ifelse(is_guild_a, "edge-kcore1-a-", "edge-kcore1-b-"), i),
                     p,svg,little_tail,zgg$lado,color_guild[2],
-                    gen_sq_label(little_tail$orph,joinchars = " "),
+                    gen_sq_label(little_tail$orph,joinchars = " ", is_guild_a = is_guild_a),
                     rxx,ryy,zgg$gap,lxx2 = xx2,
                     lyy2 = yy2, sqinverse = inverse, position = orientation,
                     background = pbackground, spline = tspline, psize = zgg$lsize_kcore1,
@@ -914,9 +929,12 @@ draw_weird_chains <- function(grafo, svg, df_chains, paintsidex)
     hjust <- 0
     vjust <- 0
     labelcolor <- ifelse(length(zgg$labels_color)>0,zgg$labels_color[2-as.numeric(is_guild_a)], bgcolor)
-    f <- draw_square(paste0(ifelse(is_guild_a, "weird-chains-kcore1-a-", "weird-chains-kcore1-b-"), i),p,svg,df_chains[i,]$x1,df_chains[i,]$y1,1.5*paintsidex,bgcolor,zgg$alpha_level,
+    sqlabel = gen_sq_label(df_chains[i,]$orph,is_guild_a = is_guild_a)
+    f <- draw_square(paste0(ifelse(is_guild_a, "weird-chains-kcore1-a-", "weird-chains-kcore1-b-"), i),p,
+                     svg,df_chains[i,]$x1,df_chains[i,]$y1,1.5*paintsidex,bgcolor,zgg$alpha_level,
                      labelcolor,0,hjust,vjust,
-                     slabel=df_chains[i,]$orph,
+                     #slabel=df_chains[i,]$orph,
+                     sqlabel,
                      lbsize = zgg$lsize_kcore1,inverse = "no")
     p <- f["p"][[1]]
     svg <- f["svg"][[1]]
@@ -1147,7 +1165,7 @@ draw_fat_tail<- function(p,svg,fat_tail,nrows,list_dfs,color_guild,pos_tail_x,po
   {
     plyy2 <- ifelse(inverse == "yes", list_dfs[[zgg$kcoremax]][1,]$y1-3*zgg$lado, list_dfs[[zgg$kcoremax]][1,]$y2-3*zgg$lado)
     v<- draw_tail(ifelse(is_guild_a, "fat-kcore1-a", "fat-kcore1-b"), p,svg,
-                  fat_tail,zgg$lado,color_guild,gen_sq_label(fat_tail$orph),
+                  fat_tail,zgg$lado,color_guild,gen_sq_label(fat_tail$orph,is_guild_a = is_guild_a),
                   ppos_tail_x,ppos_tail_y,fgap,
                   lxx2 = list_dfs[[zgg$kcoremax]][1,]$x1,
                   lyy2 = plyy2,
@@ -1278,7 +1296,7 @@ write_annotations <- function(p, svg)
   #svg$text("legend", data=data.frame(x=x_legend, y=y_legend), mapping=aes(x=x, y=y), color=zgg$color_guild_a[1], label=zgg$name_guild_a, size=zgg$lsize_legend, angle=0)
   p <- p + annotate(geom="text", x=x_legend,
                     y=y_legend,
-                    label= paste("            ",zgg$name_guild_b),
+                    label= paste("                 ",zgg$name_guild_b),
                     colour = zgg$color_guild_b[1], size=zgg$lsize_legend,
                     hjust = 0, vjust = 0, angle = 0)
   #svg$text("legend", data=data.frame(x=x_legend, y=y_legend+20), mapping=aes(x=x, y=y), color=zgg$color_guild_b[1], label=zgg$name_guild_b, size=zgg$lsize_legend, angle=0)
@@ -1711,8 +1729,8 @@ def_configuration <- function(paintlinks, displaylabelszig , print_to_file, plot
                               outsiders_separation_expand, outsiders_legend_expand, weirdskcore2_horizontal_dist_rootleaf_expand,
                               weirdskcore2_vertical_dist_rootleaf_expand , weirds_boxes_separation_count,
                               root_weird_expand,hide_plot_border,rescale_plot_area,kcore1weirds_leafs_vertical_separation,
-                              corebox_border_size,
-                              kcore_species_name_display,kcore_species_name_break,shorten_species_name,
+                              corebox_border_size, kcore_species_name_display,kcore_species_name_break,
+                              shorten_species_name,exclude_species_number,
                               label_strguilda, label_strguildb, landscape_plot, backg_color, show_title,
                               use_spline, spline_points, file_name_append, svg_scale_factor, weighted_links, progress
                               )
@@ -1765,6 +1783,7 @@ def_configuration <- function(paintlinks, displaylabelszig , print_to_file, plot
   zgg$kcore_species_name_display <- kcore_species_name_display
   zgg$kcore_species_name_break <- kcore_species_name_break
   zgg$shorten_species_name <- shorten_species_name
+  zgg$exclude_species_number <- exclude_species_number
   zgg$landscape_plot <- landscape_plot
   zgg$backg_color <- backg_color
   zgg$show_title <- show_title
@@ -2050,6 +2069,7 @@ draw_ziggurat_plot <- function(svg_scale_factor, progress)
 #' @param kcore_species_name_display display species names of  shells listed in this vector
 #' @param kcore_species_name_break allow new lines in species names of  shells listed in this vector
 #' @param shorten_species_name number of characters of species name to display
+#' @param exclude_species_number do not include species number in species
 #' @param label_strguilda string labels of guild a
 #' @param label_strguildb string labels of guild b
 #' @param landscape_plot paper landscape configuration
@@ -2083,7 +2103,7 @@ ziggurat_graph <- function(datadir,filename,
                            root_weird_expand = c(1,1), hide_plot_border = TRUE, rescale_plot_area = c(1,1),
                            kcore1weirds_leafs_vertical_separation = 1, corebox_border_size = 0.2,
                            kcore_species_name_display = c(), kcore_species_name_break = c(),
-                           shorten_species_name = 0, label_strguilda = "", label_strguildb = "", landscape_plot = TRUE,
+                           shorten_species_name = 0, exclude_species_number = FALSE, label_strguilda = "", label_strguildb = "", landscape_plot = TRUE,
                            backg_color = "white", show_title = TRUE, use_spline =TRUE, spline_points = 100,
                            file_name_append = "", svg_scale_factor=10, weighted_links = "none", progress=NULL
                            )
@@ -2110,7 +2130,7 @@ ziggurat_graph <- function(datadir,filename,
                     outsiders_separation_expand, outsiders_legend_expand, weirdskcore2_horizontal_dist_rootleaf_expand,
                     weirdskcore2_vertical_dist_rootleaf_expand , weirds_boxes_separation_count,
                     root_weird_expand, hide_plot_border, rescale_plot_area,kcore1weirds_leafs_vertical_separation,
-                    corebox_border_size, kcore_species_name_display,kcore_species_name_break,shorten_species_name,
+                    corebox_border_size, kcore_species_name_display,kcore_species_name_break,shorten_species_name,exclude_species_number,
                     label_strguilda, label_strguildb, landscape_plot, backg_color, show_title,
                     use_spline, spline_points, file_name_append, svg_scale_factor, weighted_links, progress
                     )
