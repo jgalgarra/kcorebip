@@ -260,6 +260,14 @@ polar_graph <- function( red, directorystr = "data/", plotsdir = "plot_results/p
   strip_isolated_nodes()
   numlinks <- result_analysis$links
   an$result_analysis <<- result_analysis
+  if (an$result_analysis$max_core == 1){
+    msg = "Max core is 1. Polar plot only works if max core is bigger than 1"
+    if (!is.null(progress))
+      progress$inc(1/11, detail=strings$value(msg))
+    else
+      print(msg)
+    return(an)
+  }
   if (print_to_file){
     dir.create(plotsdir, showWarnings = FALSE)
     ppi <- 600

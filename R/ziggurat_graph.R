@@ -2117,6 +2117,14 @@ ziggurat_graph <- function(datadir,filename,
   zgg$name_guild_a <- f["name_guild_a"][[1]]
   zgg$name_guild_b <- f["name_guild_b"][[1]]
   zgg$network_name <- f["network_name"][[1]]
+  if (zgg$result_analysis$max_core == 1){
+    msg = "Max core is 1. Ziggurat plot only works if max core is bigger than 1"
+    if (!is.null(progress))
+      progress$inc(1/11, detail=strings$value(msg))
+    else
+      print(msg)
+    return(zgg)
+  }
   def_configuration(paintlinks, displaylabelszig , print_to_file, plotsdir, flip_results, aspect_ratio,
                     alpha_level, color_guild_a, color_guild_b,
                     color_link, alpha_link, size_link,
