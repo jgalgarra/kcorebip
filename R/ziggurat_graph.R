@@ -211,6 +211,7 @@ draw_tail <- function(idPrefix, p,svg,fat_tail,lado,color,sqlabel,basex,basey,ga
   labelcolor <- ifelse(length(zgg$labels_color)>0,zgg$labels_color[2-as.numeric(is_guild_a)],color)
   palpha <- zgg$alpha_link
   sidex <- lado*(0.5+sqrt(nrow(fat_tail)))
+  sidex <- sidex * sqrt(zgg$square_nodes_size_scale)
   paintsidex <- sidex
   signo <- 1
   yy <- abs(basey)
@@ -258,7 +259,8 @@ draw_tail <- function(idPrefix, p,svg,fat_tail,lado,color,sqlabel,basex,basey,ga
   if ((zgg$flip_results) & (langle == 0) & (position!="West") )
     langle <- langle + 70
 
-  f <- draw_square(idPrefix, p,svg, xx,yy,paintsidex,bgcolor,palpha,labelcolor,langle,lhjust,lvjust,
+  f <- draw_square(idPrefix, p,svg, xx,yy,paintsidex*sqrt(zgg$square_nodes_size_scale),
+                   bgcolor,palpha,labelcolor,langle,lhjust,lvjust,
                    slabel=sqlabel,lbsize = psize,inverse = sqinverse,
                    adjustoxy = adjust, edgescolor = ecolor)
   p <- f["p"][[1]]
@@ -416,13 +418,16 @@ draw_sq_outsiders <- function(idPrefix, p,svg,dfo,paintsidex,alpha_level,lsize,i
 handle_outsiders <- function(p,svg,outsiders,df_chains) {
   if (length(zgg$outsider)>0){
     paintsidex <- 2*zgg$height_y*zgg$aspect_ratio
+    paintsidex <- paintsidex * sqrt(zgg$square_nodes_size_scale)
     zgg$outsiders_a <- zgg$outsider$name[grep(zgg$str_guild_a,zgg$outsider$name)]
     zgg$outsiders_b <- zgg$outsider$name[grep(zgg$str_guild_b,zgg$outsider$name)]
     pox <- -(zgg$hop_x/4)+ zgg$tot_width * (zgg$displace_outside_component[1]-1)
     poy <- min(-zgg$last_ytail_b[!is.na(zgg$last_ytail_b)]-4*zgg$lado,df_chains$y1) * zgg$displace_outside_component[2]
-    dfo_a <- conf_outsiders(zgg$outsiders_a,pox,poy,zgg$lado,zgg$color_guild_a[2],zgg$str_guild_a)
-    guild_sep <- poy-max(1,length(zgg$outsider)/10)*4*zgg$lado*zgg$outsiders_separation_expand/zgg$aspect_ratio
-    dfo_b <- conf_outsiders(zgg$outsiders_b,pox,guild_sep,zgg$lado,zgg$color_guild_b[2],zgg$str_guild_b)
+    dfo_a <- conf_outsiders(zgg$outsiders_a,pox,poy,
+                            zgg$lado*sqrt(zgg$square_nodes_size_scale),zgg$color_guild_a[2],zgg$str_guild_a)
+    guild_sep <- poy-max(1,length(zgg$outsider)/10)*6*zgg$lado*sqrt(zgg$square_nodes_size_scale)*zgg$outsiders_separation_expand/zgg$aspect_ratio
+    dfo_b <- conf_outsiders(zgg$outsiders_b,pox,guild_sep,
+                            zgg$lado*sqrt(zgg$square_nodes_size_scale),zgg$color_guild_b[2],zgg$str_guild_b)
     f <- draw_sq_outsiders("outsiders-kcore1-a",p,svg,dfo_a,paintsidex,zgg$alpha_level,zgg$lsize_kcore1)
     p <- f["p"][[1]]
     svg <- f["svg"][[1]]
@@ -774,10 +779,9 @@ weird_analysis <- function(weirds,opposite_weirds,species)
 store_weird_species <- function (row_orph, df_store, strguild, lado, gap, original_weirds_a, original_weirds_b)
 {
 
-  sidex <- 1.6*lado
+  sidex <- lado
   index <- nrow(df_store)+1
   df_store[index,]$kcorepartner <- row_orph$kcore
-
   separation <- (1+zgg$weirds_boxes_separation_count)*sidex
   tot_weirds <- nrow(original_weirds_a)+nrow(original_weirds_b)
   jumpfactor <- (4-min(3,(tot_weirds%/%10)))
@@ -802,11 +806,14 @@ store_weird_species <- function (row_orph, df_store, strguild, lado, gap, origin
         xbase <-  min(zgg$last_xtail_b[[zgg$kcoremax]],edge_row$x1 - 2*gap)- gap
       }
       df_store$x1[index] <- xbase - 2 * gap
+
+
+
       if (zgg$kcoremax > 2)
         df_store$y1[index] <- max(abs(edge_row$y2),abs(edge_row$y1)) + 6*cgap/(zgg$aspect_ratio)
       else{
         xbase <- 0
-        df_store$y1[index] <- max(abs(edge_row$y2),abs(edge_row$y1)) + 4*cgap/(zgg$aspect_ratio)
+        df_store$y1[index] <- max(abs(edge_row$y2),abs(edge_row$y1)) + 6*cgap/(zgg$aspect_ratio)
       }
 
       if (df_store$guild[index] == zgg$str_guild_a){
@@ -895,23 +902,20 @@ store_weird_species <- function (row_orph, df_store, strguild, lado, gap, origin
   }
   else
   {
+    df_store$yy2[index] <- (data_row$y2+data_row$y1)/2
     if (df_store$kcorepartner[index] > 1){
       df_store$xx2[index] <- data_row$x2
-      df_store$yy2[index] <- (data_row$y2+data_row$y1)/2
+      #df_store$yy2[index] <- (data_row$y2+data_row$y1)/2
     }
     else {
-      #if ((data_row$x2-data_row$x1)>0)
-      if (data_row$x2>0)
-        df_store$xx2[index] <- data_row$x1 + sidex/4
-      else
-        df_store$xx2[index] <- data_row$x1
-      df_store$yy2[index] <- data_row$y1
+      df_store$xx2[index] <- data_row$x1 + (data_row$x2>0)*sidex
+      #df_store$yy2[index] <- data_row$y1
     }
   }
   return(df_store)
 }
 
-draw_weird_chains <- function(grafo, svg, df_chains, paintsidex)
+draw_weird_chains <- function(grafo, svg, df_chains, ladosq)
 {
   p <- grafo
   df_chains$weightlink <- 0
@@ -931,43 +935,39 @@ draw_weird_chains <- function(grafo, svg, df_chains, paintsidex)
     labelcolor <- ifelse(length(zgg$labels_color)>0,zgg$labels_color[2-as.numeric(is_guild_a)], bgcolor)
     sqlabel = gen_sq_label(df_chains[i,]$orph,is_guild_a = is_guild_a)
     f <- draw_square(paste0(ifelse(is_guild_a, "weird-chains-kcore1-a-", "weird-chains-kcore1-b-"), i),p,
-                     svg,df_chains[i,]$x1,df_chains[i,]$y1,1.5*paintsidex,bgcolor,zgg$alpha_level,
+                     svg,df_chains[i,]$x1,df_chains[i,]$y1, ladosq,
+                     bgcolor,zgg$alpha_level,
                      labelcolor,0,hjust,vjust,
-                     #slabel=df_chains[i,]$orph,
                      sqlabel,
                      lbsize = zgg$lsize_kcore1,inverse = "no")
     p <- f["p"][[1]]
     svg <- f["svg"][[1]]
     if (zgg$paintlinks){
-      xx2 = df_chains[i,]$xx2
-      if (df_chains[i,]$kcorepartner == zgg$kcoremax){
-        xx1 = df_chains[i,]$x2-paintsidex/2
-        yy1 = df_chains[i,]$y1
-      }
-      else{
-        xx1 = df_chains[i,]$x1
-        yy1 = df_chains[i,]$y1
-        yy1 <-  yy1 + paintsidex/(2*zgg$aspect_ratio)
-      }
+
       yy2 = df_chains[i,]$yy2
-      if (df_chains[i,]$kcorepartner == 1){
-        yy1 = yy1 # + 0.5*paintsidex/zgg$aspect_ratio
-        yy2 = yy2 + 0.5*paintsidex/zgg$aspect_ratio
-        if (xx2>0){
-          xx2 <- xx2 + paintsidex
-        }
-        else{
-          xx1 <- xx1 + paintsidex
-          xx1 <- df_chains[i,]$x2
-        }
+      xx2 = df_chains[i,]$xx2
+      if (df_chains[i,]$x2>0){
+        xx1 = df_chains[i,]$x1
+      } else {
+        xx1 = df_chains[i,]$x2
       }
+      if (df_chains[i,]$y2>0){
+        yy1 <-  (df_chains[i,]$y1+df_chains[i,]$y2)/2
+      } else {
+        if (df_chains[i,]$kcorepartner != zgg$kcoremax)
+          yy1 <-  df_chains[i,]$y2 - ladosq/(2*zgg$aspect_ratio)
+        else
+          yy1 <-  df_chains[i,]$y2
+      }
+
 
       if ( (df_chains[i,]$kcorepartner >1) & (df_chains[i,]$kcorepartner < zgg$kcoremax) )
       {
         splineshape = "lshaped"
       }
       else
-        splineshape = "weirdhorizontal"
+        splineshape = "arc"
+        #splineshape = "weirdhorizontal"
       #color_link = "green"
       tailweight <- 0
       # for (h in 1:nrow(df_chains))
@@ -1003,7 +1003,7 @@ store_root_leaf <- function(weirds,df_chains,strguild,lado, gap, original_weirds
   {
     if (weirds[i,]$kcore > 1){
       #print(weirds[i,])
-      df_chains <- store_weird_species(weirds[i,], df_chains, strguild, lado, gap, original_weirds_a, original_weirds_b)
+      df_chains <- store_weird_species(weirds[i,], df_chains, strguild, lado , gap, original_weirds_a, original_weirds_b)
       #print(df_chains)
       weirds[i,]$drawn = "yes"
     }
@@ -1012,7 +1012,7 @@ store_root_leaf <- function(weirds,df_chains,strguild,lado, gap, original_weirds
   return(calc_vals)
 }
 
-store_branch_leaf <- function(weirds, weirds_opp,df_chains, pstrguild,lado, gap, original_weirds_a, original_weirds_b)
+store_branch_leaf <- function(weirds, weirds_opp,df_chains, pstrguild, plado, gap, original_weirds_a, original_weirds_b)
 {
   for (i in 1:nrow(weirds))
   {
@@ -1020,7 +1020,7 @@ store_branch_leaf <- function(weirds, weirds_opp,df_chains, pstrguild,lado, gap,
       strguild <- pstrguild
       if (sum( ((df_chains$orph == weirds[i,]$orph) & (df_chains$guild == strguild)) )>0 ){
         strguild <- swap_strguild(pstrguild)
-        df_chains <- store_weird_species(weirds[i,], df_chains, strguild, lado, gap, original_weirds_a, original_weirds_b)
+        df_chains <- store_weird_species(weirds[i,], df_chains, strguild, plado, gap, original_weirds_a, original_weirds_b)
         weirds[i,]$drawn = "yes"
         mirror_weird <- which((weirds_opp$partner == weirds[i,]$orph) & (weirds_opp$orph == weirds[i,]$partner))
         if (length(mirror_weird)>0)
@@ -1180,6 +1180,7 @@ draw_fat_tail<- function(p,svg,fat_tail,nrows,list_dfs,color_guild,pos_tail_x,po
 
 handle_weirds <- function(p,svg,weirds_a,weirds_b,lado,gap)
 {
+  ladosq <- 2 * lado * sqrt(zgg$square_nodes_size_scale)
   weirds_a <- data.frame(c())
   weirds_b <- data.frame(c())
   if (exists("df_orph_a", envir = zgg))
@@ -1199,7 +1200,6 @@ handle_weirds <- function(p,svg,weirds_a,weirds_b,lado,gap)
         weirds_b$drawn <- "no"
       }
 
-
   # Create empty df_chains data frame
   zgg$df_chains <- data.frame(x1 = numeric(0), x2 = numeric(0), y1 = numeric(0), y2 = numeric(0),
                           guild = character(0), orph = integer(0), partner = integer(0),
@@ -1211,23 +1211,23 @@ handle_weirds <- function(p,svg,weirds_a,weirds_b,lado,gap)
     while (((nrow(weirds_a)+nrow(weirds_b))>0))
     {
       if (nrow(weirds_a)>0){
-        k <- store_root_leaf(weirds_a, zgg$df_chains, zgg$str_guild_a, zgg$lado, gap, original_weirds_a, original_weirds_b)
+        k <- store_root_leaf(weirds_a, zgg$df_chains, zgg$str_guild_a, ladosq, gap, original_weirds_a, original_weirds_b)
         zgg$df_chains <- k["df_chains"][[1]]
         weirds_a <- k["weirds"][[1]]
       }
       if (nrow(weirds_b)>0){
-        k <- store_root_leaf(weirds_b, zgg$df_chains, zgg$str_guild_b, zgg$lado, gap, original_weirds_a, original_weirds_b)
+        k <- store_root_leaf(weirds_b, zgg$df_chains, zgg$str_guild_b, ladosq, gap, original_weirds_a, original_weirds_b)
         zgg$df_chains <- k["df_chains"][[1]]
         weirds_b <- k["weirds"][[1]]
       }
       if (nrow(weirds_a)>0){
-        k <- store_branch_leaf(weirds_a, weirds_b, zgg$df_chains, zgg$str_guild_a, zgg$lado, gap, original_weirds_a, original_weirds_b)
+        k <- store_branch_leaf(weirds_a, weirds_b, zgg$df_chains, zgg$str_guild_a, ladosq, gap, original_weirds_a, original_weirds_b)
         zgg$df_chains <- k["df_chains"][[1]]
         weirds_a <- k["weirds"][[1]]
         weirds_b <- k["weirds_opp"][[1]]
       }
       if (nrow(weirds_b)>0){
-        k <- store_branch_leaf(weirds_b, weirds_a, zgg$df_chains, zgg$str_guild_b, zgg$lado, gap, original_weirds_a, original_weirds_b)
+        k <- store_branch_leaf(weirds_b, weirds_a, zgg$df_chains, zgg$str_guild_b, ladosq, gap, original_weirds_a, original_weirds_b)
         zgg$df_chains <- k["df_chains"][[1]]
         weirds_b <- k["weirds"][[1]]
         weirds_a <- k["weirds_opp"][[1]]
@@ -1237,7 +1237,7 @@ handle_weirds <- function(p,svg,weirds_a,weirds_b,lado,gap)
       weirds_a <- weirds_a[weirds_a$drawn == "no",]
       weirds_b <- weirds_b[weirds_b$drawn == "no",]
     }
-    f <- draw_weird_chains(p, svg, zgg$df_chains, zgg$lado)
+    f <- draw_weird_chains(p, svg, zgg$df_chains, ladosq)
     p <- f["p"][[1]]
     svg <- f["svg"][[1]]
   }
@@ -1732,7 +1732,8 @@ def_configuration <- function(paintlinks, displaylabelszig , print_to_file, plot
                               corebox_border_size, kcore_species_name_display,kcore_species_name_break,
                               shorten_species_name,exclude_species_number,
                               label_strguilda, label_strguildb, landscape_plot, backg_color, show_title,
-                              use_spline, spline_points, file_name_append, svg_scale_factor, weighted_links, progress
+                              use_spline, spline_points, file_name_append, svg_scale_factor, weighted_links, square_nodes_size_scale,
+                              progress
                               )
 {
   # ENVIRONMENT CONFIGURATION PARAMETERS
@@ -1792,6 +1793,7 @@ def_configuration <- function(paintlinks, displaylabelszig , print_to_file, plot
   zgg$file_name_append <- file_name_append
   zgg$svg_scale_factor <- svg_scale_factor
   zgg$weighted_links <- weighted_links
+  zgg$square_nodes_size_scale <- square_nodes_size_scale
   zgg$progress <- progress
 }
 
@@ -2080,6 +2082,7 @@ draw_ziggurat_plot <- function(svg_scale_factor, progress)
 #' @param file_name_append a label that the user may append to the plot file name for convenience
 #' @param svg_scale_factor only for interactive apps, do not modify
 #' @param weighted_links function to add link weight: 'none', 'log10' or 'ln'
+#' @param square_nodes_size_scale scale nodes area of kcore1 and outsiders
 #' @param progress only for interactive apps, do not modifiy
 #' @export
 #' @examples ziggurat_graph("data/","M_PL_001.csv",plotsdir="grafresults/",print_to_file = TRUE)
@@ -2098,14 +2101,17 @@ ziggurat_graph <- function(datadir,filename,
                            factor_hop_x = 1, displace_legend = c(0,0), fattailjumphoriz = c(1,1), fattailjumpvert = c(1,1),
                            coremax_triangle_height_factor = 1, coremax_triangle_width_factor = 1,
                            paint_outsiders = TRUE, displace_outside_component = c(1,1),
-                           outsiders_separation_expand = 1, outsiders_legend_expand = 1, weirdskcore2_horizontal_dist_rootleaf_expand = 1,
+                           outsiders_separation_expand = 1, outsiders_legend_expand = 1,
+                           weirdskcore2_horizontal_dist_rootleaf_expand = 1,
                            weirdskcore2_vertical_dist_rootleaf_expand = 0, weirds_boxes_separation_count = 1,
                            root_weird_expand = c(1,1), hide_plot_border = TRUE, rescale_plot_area = c(1,1),
                            kcore1weirds_leafs_vertical_separation = 1, corebox_border_size = 0.2,
                            kcore_species_name_display = c(), kcore_species_name_break = c(),
-                           shorten_species_name = 0, exclude_species_number = FALSE, label_strguilda = "", label_strguildb = "", landscape_plot = TRUE,
+                           shorten_species_name = 0, exclude_species_number = FALSE, label_strguilda = "",
+                           label_strguildb = "", landscape_plot = TRUE,
                            backg_color = "white", show_title = TRUE, use_spline =TRUE, spline_points = 100,
-                           file_name_append = "", svg_scale_factor=10, weighted_links = "none", progress=NULL
+                           file_name_append = "", svg_scale_factor=10, weighted_links = "none",
+                           square_nodes_size_scale = 1, progress=NULL
                            )
 {
   zgg <<- new.env()
@@ -2140,7 +2146,8 @@ ziggurat_graph <- function(datadir,filename,
                     root_weird_expand, hide_plot_border, rescale_plot_area,kcore1weirds_leafs_vertical_separation,
                     corebox_border_size, kcore_species_name_display,kcore_species_name_break,shorten_species_name,exclude_species_number,
                     label_strguilda, label_strguildb, landscape_plot, backg_color, show_title,
-                    use_spline, spline_points, file_name_append, svg_scale_factor, weighted_links, progress
+                    use_spline, spline_points, file_name_append, svg_scale_factor, weighted_links,
+                    square_nodes_size_scale, progress
                     )
   strip_isolated_nodes()
   init_working_values()
