@@ -1435,7 +1435,6 @@ draw_all_ziggurats <- function(p, svg)
   {
     for (kc in seq(from = zgg$kcoremax-1, to = 2))
     {
-
       if (sum(zgg$df_cores$num_species_guild_a[kc],zgg$df_cores$num_species_guild_b[kc])>0)
       {
         zgg$pointer_x <- (zgg$kcoremax-kc)*zgg$hop_x
@@ -1560,6 +1559,7 @@ draw_maxcore <- function(svg)
     scale_y_continuous(name="y") +
     geom_rect(data=zgg$list_dfs_a[[zgg$kcoremax]], mapping=aes(xmin=x1, xmax=x2, ymin=y1, ymax=y2), fill = zgg$list_dfs_a[[zgg$kcoremax]]$col_row,  color="transparent",alpha=zgg$alpha_level)
 
+
   svg$rect(paste0("kcore", zgg$kcoremax, "-a"), data=zgg$list_dfs_a[[zgg$kcoremax]], mapping=aes(xmin=x1, xmax=x2, ymin=y1, ymax=y2), fill=zgg$list_dfs_a[[zgg$kcoremax]]$col_row, alpha=zgg$alpha_level, color=zgg$list_dfs_a[[zgg$kcoremax]]$col_row, size=0.5)
   f <- kcoremax_label_display(paste0("kcore", zgg$kcoremax, "-a"),p,svg,kcoremaxlabel_angle,zgg$list_dfs_a[[zgg$kcoremax]],labelszig,zgg$lsize_kcoremax)
   p <- f["p"][[1]]
@@ -1615,7 +1615,10 @@ draw_coremax_tails <- function(p, svg)
     p <- v["p"][[1]]
     svg <- v["svg"][[1]]
     zgg$last_xtail_b[zgg$kcoremax] <- v["lastx"][[1]]
-    zgg$last_ytail_b[zgg$kcoremax] <- v["lasty"][[1]]
+    if (length(v["lasty"][[1]])>0)
+      zgg$last_ytail_b[zgg$kcoremax] <- v["lasty"][[1]]
+    else                                                   # only for degenerate networks with all nodes in kcoremax
+      zgg$last_ytail_b[zgg$kcoremax] <- zgg$toopy
   }
   leftjump <- (1.2-0.02*nrow(zgg$list_dfs_b[[zgg$kcoremax]]))* zgg$hop_x
   point_x <- zgg$list_dfs_b[[zgg$kcoremax]][nrow(zgg$list_dfs_b[[zgg$kcoremax]]),]$x2 - leftjump
@@ -1641,7 +1644,10 @@ draw_coremax_tails <- function(p, svg)
     p <- v["p"][[1]]
     svg <- v["svg"][[1]]
     zgg$last_xtail_a[zgg$kcoremax] <- v["lastx"][[1]]
-    zgg$last_ytail_a[zgg$kcoremax] <- v["lasty"][[1]]
+    if (length(v["lasty"][[1]])>0)
+      zgg$last_ytail_b[zgg$kcoremax] <- v["lasty"][[1]]
+    else                                                   # only for degenerate networks with all nodes in kcoremax
+      zgg$last_ytail_b[zgg$kcoremax] <- zgg$toopy
   }
   calc_vals <- list("p" = p, "svg" = svg,
                     "last_xtail_a" = zgg$last_xtail_a, "last_ytail_a" = zgg$last_ytail_a,
@@ -1849,7 +1855,7 @@ draw_ziggurat_plot <- function(svg_scale_factor, progress)
   zgg$species_in_core2_b <- sum(zgg$df_cores[2,]$num_species_guild_b)
   zgg$species_in_almond_a <- sum(zgg$df_cores[2:(zgg$kcoremax-1),]$num_species_guild_a)
   zgg$species_in_almond_b <- sum(zgg$df_cores[2:(zgg$kcoremax-1),]$num_species_guild_b)
-  zgg$height_y <- zgg$ymax/(1.3*max(zgg$species_in_almond_a,zgg$species_in_almond_b))
+  zgg$height_y <- zgg$ymax/max(1.3,(1.3*max(zgg$species_in_almond_a,zgg$species_in_almond_b)))
   maxincore2 <- max(zgg$species_in_core2_a,zgg$species_in_core2_b)
   if (zgg$kcoremax < 4)
     if (zgg$species_in_core2_a+zgg$species_in_core2_b < 6)
