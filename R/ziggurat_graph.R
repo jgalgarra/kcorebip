@@ -810,8 +810,6 @@ store_weird_species <- function (row_orph, df_store, strguild, lado, gap, origin
       }
       df_store$x1[index] <- xbase - 2 * gap
 
-
-
       if (zgg$kcoremax > 2)
         df_store$y1[index] <- max(abs(edge_row$y2),abs(edge_row$y1)) + 6*cgap/(zgg$aspect_ratio)
       else{
@@ -830,7 +828,7 @@ store_weird_species <- function (row_orph, df_store, strguild, lado, gap, origin
       }
       repetitions_root <- sum((df_store$kcorepartner == zgg$kcoremax) & (df_store$guild == strguild))
       if (repetitions_root > 1){
-        df_store$x1[index] <- df_store$x1[index] +  3* (repetitions_root) * (zgg$kcoremax) * sidex
+        df_store$x1[index] <- df_store$x1[index] +  2 * (repetitions_root) * (zgg$kcoremax) * sidex
         df_store$y1[index] <- df_store$y1[index] +  sign(df_store$y1[index])*(1/jumpfactor)*((repetitions_root+ 0.7*index) * 3* sidex/zgg$aspect_ratio)
       }
 
@@ -863,7 +861,7 @@ store_weird_species <- function (row_orph, df_store, strguild, lado, gap, origin
       df_store$x1[index] <- df_store$x1[index]* zgg$root_weird_expand[1]
     else if (row_orph$kcore > 2)
       df_store$x1[index] <- df_store$x1[index]* (9+zgg$root_weird_expand[1])/10
-    df_store$y1[index] <- df_store$y1[index]* zgg$root_weird_expand[2]
+    df_store$y1[index] <- df_store$y1[index]* zgg$root_weird_expand[2] * zgg$aspect_ratio
   }
   else {                                          # Branch leaves
     df_store$partner[index] <- row_orph$orph
