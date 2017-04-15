@@ -163,7 +163,10 @@ draw_core_box <- function(grafo, svg, kcore)
     position_x_text <- x_inf-marginx+widthx/2
     corelabel <- paste0(kcore,"-shell")
   }
-  position_y_text <- y_inf+widthy - marginy
+  if (!is.null(nrow(zgg$list_dfs_b[[kcore]])))
+    position_y_text <- y_inf+widthy - marginy
+  else
+    position_y_text <- y_inf - marginy
   zgg$max_position_y_text_core <- max(zgg$max_position_y_text_core,position_y_text)
   if (kcore != zgg$kcoremax){
     px <- position_x_text
