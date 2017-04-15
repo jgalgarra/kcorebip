@@ -118,7 +118,9 @@ paint_kdegree_kradius <- function(graph, num_guild_a, num_guild_b,
                                                axis.text.x = element_blank(),
                                                legend.text = element_text(size=lsize_legend),
                                                legend.title = element_text(size=lsize_legend_title),
-                                               plot.title = element_text(size=lsize_title,lineheight=.8, face="bold")
+                                               plot.title = element_text(size=lsize_title,
+                                                                         hjust = 0.5,lineheight=.8, face="bold")
+
                                         )
   ylab <- seq(0,extreme)
   pylab <- ylab
