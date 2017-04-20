@@ -92,7 +92,7 @@ paint_kdegree_kradius <- function(graph, num_guild_a, num_guild_b,
   indtop <- 0
   indvulg <-c("A"=0,"B"=0)
   dfaux$posx[1] <- primemove%%(pi-guarda)
-  saltovert <- 1.75
+  saltovert <- 1.5
   for (j in 2:nrow(dfaux))
   {
     if (dfaux$kradius[j] == topradius){
@@ -111,7 +111,7 @@ paint_kdegree_kradius <- function(graph, num_guild_a, num_guild_b,
     if (dfaux$kcore[j] == dfaux$kcore[j-1])
       dfaux$orderincore[j] <- dfaux$orderincore[j-1] + 1
     if ((dfaux$kcorenum[j] == 1) | (dfaux$kradius[j] == topradius))
-      dfaux$vjust[j] <- (maxcore>2)*(-saltovert*(1+0.25*(dfaux$kcorenum[j]-1)))
+      dfaux$vjust[j] <- (maxcore>2)*(-saltovert*(1+0.2*(dfaux$kcorenum[j]-1)))
   }
 
   dfaux[dfaux$classe == "B",]$posx <- dfaux[dfaux$classe == "B",]$posx + offset
