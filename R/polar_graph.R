@@ -22,6 +22,7 @@ paint_kdegree_kradius <- function(graph, num_guild_a, num_guild_b,
   g <- V(graph)
   nga <- sum(g[1:num_guild_a]$kradius != Inf)
   ngb <- sum(g[as.numeric(num_guild_a+1):length(g)]$kradius != Inf)
+  numspecies <- nga + ngb
   g <- g[g$kradius != Inf]
   dfaux <- data.frame(g$kradius,g$kdegree,g$kcorenum,(g$kdegree/max(g$kdegree))^1.5)
   names(dfaux) <- c("kradius","kdegree","kcorenum","normdegree")
@@ -40,6 +41,7 @@ paint_kdegree_kradius <- function(graph, num_guild_a, num_guild_b,
   tot_species <- nrow(dfaux)
   dfaux <- dfaux[dfaux$symbolradius != Inf,]
   maxcore <- max(dfaux$kcorenum)
+  numkcores <- length(unique(dfaux$kcorenum))
   extreme <- ceiling(max(dfaux[dfaux$symbolradius != Inf,]$kradius))
   num_central <- (nga+ngb)%/%5
   more_central_nodes <- head(dfaux[order(dfaux$kradius),]$name, num_central)
@@ -47,7 +49,7 @@ paint_kdegree_kradius <- function(graph, num_guild_a, num_guild_b,
   rnd_central <- seq(guarda,pi-guarda,length.out = num_central*slice_multiplier)
   pal <-colorRampPalette(c("cadetblue","darkorchid4"))
   jet.colors <- colorRampPalette(c("red","blue"))
-  vcols <- jet.colors(min(8,maxcore))
+  vcols <- jet.colors(maxcore)
   alpha_level <- 0.5
   k <- 1
   symbol_a <- 22
@@ -93,6 +95,8 @@ paint_kdegree_kradius <- function(graph, num_guild_a, num_guild_b,
   indvulg <-c("A"=0,"B"=0)
   dfaux$posx[1] <- primemove%%(pi-guarda)
   saltovert <- 1.5
+  shift <- 0
+  denom <- pi-guarda
   for (j in 2:nrow(dfaux))
   {
     if (dfaux$kradius[j] == topradius){
@@ -100,27 +104,28 @@ paint_kdegree_kradius <- function(graph, num_guild_a, num_guild_b,
       indtop <- indtop + 1
     }
     else{
-      dfaux$posx[j] <- (indvulg[dfaux$classe[j]]*primemove)%%(pi-guarda)
+      if ((numspecies > 75) & (dfaux$kcorenum[j] < 3))
+        shift <- (shift + 0.007)
+      else
+        shift <- 0
+      dfaux$posx[j] <- ((1+shift)*(indvulg[dfaux$classe[j]]*primemove))%%denom
       if (sum( (dfaux$posx == dfaux$posx[j])& (dfaux$posy == dfaux$posy[j]))>1){
         indvulg[dfaux$classe[j]] <- indvulg[dfaux$classe[j]] + 0.7
-        dfaux$posx[j] <- (indvulg[dfaux$classe[j]]*primemove)%%(pi-guarda)
+        dfaux$posx[j] <- (indvulg[dfaux$classe[j]]*primemove)%%denom
       }
-
       indvulg[dfaux$classe[j]] <- indvulg[dfaux$classe[j]] + 1
     }
     if (dfaux$kcore[j] == dfaux$kcore[j-1])
       dfaux$orderincore[j] <- dfaux$orderincore[j-1] + 1
     if ((dfaux$kcorenum[j] == 1) | (dfaux$kradius[j] == topradius))
-      dfaux$vjust[j] <- (maxcore>2)*(-saltovert*(1+0.2*(dfaux$kcorenum[j]-1)))
+      if ((maxcore>2) & (numkcores > 1))
+        dfaux$vjust[j] <- (-saltovert*(1+0.2*(dfaux$kcorenum[j]-1)))
+      else
+        dfaux$vjust[j] <- 0
   }
-
   dfaux[dfaux$classe == "B",]$posx <- dfaux[dfaux$classe == "B",]$posx + offset
   dfaux$sizelabel <- 3+min(3,dfaux$kcorenum)
 
-  # if (sum(dfaux$kcorenum>4)>0)
-  #   dfaux[dfaux$kcorenum>4,]$sizelabel <- 5+min(2,dfaux[dfaux$kcorenum>4,]$kcorenum*0.1)
-  # if (sum(dfaux$kcorenum<3)>0)
-  #   dfaux[dfaux$kcorenum<3,]$sizelabel <- 3+min(1,dfaux[dfaux$kcorenum<3,]$kcorenum*0.1)
   polar_plot <- ggplot(dfaux, aes(x=posx,y=posy),legendTextFont=c(15, "bold.italic", "red")) +
     scale_size_area(max_size=scale_factor,name="k-degree") +
     scale_colour_manual(values = vcols,name="k-shell") +
@@ -136,14 +141,14 @@ paint_kdegree_kradius <- function(graph, num_guild_a, num_guild_b,
   else{
     if (filln)
        polar_plot <- polar_plot + geom_point(aes(size=kdegree, colour = factor(kcorenum),
-                                              shape = factor(symbol),fill=factor(kcorenum)),
-                                              alpha = alphal, stroke = 2)+
-                  scale_shape_manual(values=c(symbol_a,symbol_b),name="Guild",labels=rev(slabels))
-    else
-      polar_plot <- polar_plot + geom_point(aes(size=kdegree, colour = factor(kcorenum),
-                                                shape = factor(symbol)),
+                                            shape = factor(symbol),fill=factor(kcorenum)),
                                             alpha = alphal, stroke = 2)+
-        scale_shape_manual(values=c(symbol_a,symbol_b),name="Guild",labels=rev(slabels))
+                     scale_shape_manual(values=c(symbol_a,symbol_b),name="Guild",labels=rev(slabels))
+    else
+       polar_plot <- polar_plot + geom_point(aes(size=kdegree, colour = factor(kcorenum),
+                                            shape = factor(symbol)),
+                                            alpha = alphal, stroke = 2)+
+                     scale_shape_manual(values=c(symbol_a,symbol_b),name="Guild",labels=rev(slabels))
   }
 
     polar_plot <- polar_plot +annotate(geom="text", x=dfaux$posx, y=dfaux$posy, label=dfaux$num,
@@ -185,7 +190,7 @@ paint_kdegree_kradius <- function(graph, num_guild_a, num_guild_b,
     polar_plot <- polar_plot + ggtitle(sprintf("Network %s NODF: %.02f Modularity: %.04f\n\n Avg k-radius: %.02f Avg k-degree: %.02f", network_name, NODF, Modularity, MeanKradius, MeanKdegree)) +
     guides(row = guide_legend(nrow = 1))
   histo_kradius <- ggplot(dfaux, aes(kradius)) + geom_histogram(alpha = alpha_level,position='dodge',
-                                                             binwidth=extreme/10,
+                                                             binwidth=(extreme+1)/10,
                                                              color="white",fill = "forestgreen") +
     scale_x_continuous(breaks=seq(0, extreme+1, by=1), labels=seq(0, extreme+1, by=1), lim=c(0,extreme+1)) +
     theme_bw() +
@@ -224,14 +229,15 @@ paint_kdegree_kradius <- function(graph, num_guild_a, num_guild_b,
           axis.title.x = element_blank()
     ) +
     ggtitle("k-shell")+ ylab("Species")
-  if (max(dfaux$kdegree) > 10)
-    salto <- 2
-  else
-    salto <- 1
+
+
+  salto <- (1+ceiling(max(dfaux$kdegree))) %/% 8
   histo_kdegree <- ggplot(dfaux, aes(kdegree)) +
     geom_histogram(alpha = alpha_level,binwidth=(1+ceiling(max(dfaux$kdegree)))/8,
                    position='dodge',color="white",fill = "grey20") +
-    scale_x_continuous(breaks=seq(0, 1+ceiling(max(dfaux$kdegree)), by=salto), labels=seq(0, 1+ceiling(max(dfaux$kdegree)), by=salto), lim=c(0,1+ceiling(max(dfaux$kdegree)))) +
+    # scale_x_continuous(breaks=seq(0, 1+ceiling(max(dfaux$kdegree)), by=salto),
+    #                    labels=seq(0, 1+ceiling(max(dfaux$kdegree)), by=salto),
+    #                    lim=c(0,1+ceiling(max(dfaux$kdegree)))) +
     theme_bw() +
     theme(panel.border = element_blank(),
           legend.key = element_blank(),
@@ -354,7 +360,12 @@ polar_graph <- function( red, directorystr = "data/", plotsdir = "plot_results/p
   if (is.null(progress))
   {
     if (show_histograms)
-      grid.arrange(r["polar_plot"][[1]], nrow=2, heights=c(4/5,1/5),arrangeGrob(r["histo_kradius"][[1]], r["histo_kdegree"][[1]], r["histo_core"][[1]],ncol=3, nrow=1, widths=c(1/3,1/3,1/3)))
+      grid.arrange(r["polar_plot"][[1]], nrow=2, heights=c(4/5,1/5),
+                   arrangeGrob(r["histo_kradius"][[1]],
+                               r["histo_kdegree"][[1]],
+                               r["histo_core"][[1]],ncol=3, nrow=1, widths=c(1/3,1/3,1/3))
+                   )
+
     else
       print(r["polar_plot"][[1]])
     if (print_to_file)
