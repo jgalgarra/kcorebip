@@ -292,7 +292,7 @@ polar_graph <- function( red, directorystr = "data/", plotsdir = "plot_results/p
                          lsize_title = 22, lsize_axis = 16,
                          lsize_legend = 16,lsize_axis_title = 16, lsize_legend_title = 16,
                          file_name_append = "", print_title = TRUE,
-                         progress=NULL, printable_labels = 0, fill_nodes = FALSE, alpha_nodes = 0.5)
+                         progress=NULL, printable_labels = 0, fill_nodes = TRUE, alpha_nodes = 0.5)
 {
 
   strip_isolated_nodes <- function()
