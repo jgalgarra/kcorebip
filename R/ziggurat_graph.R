@@ -97,8 +97,10 @@ draw_square<- function(idPrefix, grafo,svg,basex,basey,side,fillcolor,alphasq,la
   p <- p +annotate(geom="text", x=pxx, y=pyy, label=slabel,
                    colour = labelcolor, size=lbsize, hjust = hjust,
                    vjust = vjust, angle = langle)
-  svg$rect(idPrefix=idPrefix, data=ds, mapping=aes(xmin=x1, xmax=x2, ymin=y1, ymax=y2), fill = fillcolor, alpha=alphasq, size=0.5, color=fillcolor)
-  svg$text(idPrefix=idPrefix, data=data.frame(x=c(x1+(x2-x1)/2), y=c(ifelse(signo==1, max(y1,y2), min(-y1,-y2)))), mapping=aes(x=x, y=y), color=labelcolor, label=slabel, size=lbsize, angle=langle)
+  svg$rect(idPrefix=idPrefix, data=ds, mapping=aes(xmin=x1, xmax=x2, ymin=y1, ymax=y2),
+           fill = fillcolor, alpha=alphasq, size=0.5, color="transparent")
+  svg$text(idPrefix=idPrefix, data=data.frame(x=x1+(x2-x1)/2,y=pyy),
+                                              mapping=aes(x=x, y=y),color=labelcolor, label=slabel, size=lbsize, angle=langle)
   calc_vals <- list("p" = p, "svg" = svg)
   return(calc_vals)
 }
@@ -125,7 +127,8 @@ draw_rectangle<- function(idPrefix,basex,basey,widthx,widthy,grafo,svg,bordercol
     p <- grafo
   p <- p +annotate(geom="text", x=x1+(x2-x1)/8, y=signo*(y1+(y2-y1)/2), label=slabel,
                    colour = fillcolor, size=sizelabel, hjust = 0)
-  svg$rect(idPrefix=idPrefix, data=ds, mapping=aes(xmin=x1, xmax=x2, ymin=y1, ymax=y2), fill=fillcolor, alpha=palpha, color=bordercolor, size=bordersize, linetype=3)
+  svg$rect(idPrefix=idPrefix, data=ds, mapping=aes(xmin=x1, xmax=x2, ymin=y1, ymax=y2),
+           fill=fillcolor, alpha=palpha, color="transparent", size=bordersize, linetype=3)
   svg$text(idPrefix=idPrefix, data=data.frame(x=c(x1+(x2-x1)/8), y=c(signo*(y1+(y2-y1)/2))), mapping=aes(x=x, y=y), color=fillcolor, label=slabel, size=sizelabel)
 
   calc_vals <- list("p" = p, "svg" = svg)
@@ -182,7 +185,8 @@ draw_core_box <- function(grafo, svg, kcore)
   }
   p <- p +annotate(geom="text", x=px, y=py, label=corelabel, colour = divcolor,  fontface="italic",
                    size=zgg$lsize_core_box, hjust = phjust, vjust = 0, angle = pangle)
-  svg$text(idPrefix=paste0("kcore", kcore), data=data.frame(x=c(px), y=c(py)), mapping=aes(x=x, y=y), color=divcolor, label=corelabel, size=zgg$lsize_core_box, angle=pangle)
+  svg$text(idPrefix=paste0("kcore", kcore), data=data.frame(x=c(px), y=c(py)),
+           mapping=aes(x=x, y=y), color=divcolor, label=corelabel, size=zgg$lsize_core_box, angle=pangle)
 
   calc_vals <- list("p" = p, "svg" = svg, "max_position_y_text_core" = zgg$max_position_y_text_core)
   return(calc_vals)
@@ -412,7 +416,8 @@ draw_sq_outsiders <- function(idPrefix, p,svg,dfo,paintsidex,alpha_level,lsize,i
                      fill = dfo$col_row, alpha = alpha_level,color="transparent") +
        geom_text(data=dfo, aes(x=(x2+x1)/2, y= (y2+y1)/2), color=labelscolor,
               label = dfo$label, size=lsize, vjust=0.5)
-  svg$rect(idPrefix=idPrefix, data=dfo, mapping=aes(xmin=x1, xmax=x2, ymin=y1, ymax=y2), fill=dfo$col_row, alpha=alpha_level, color=dfo$col_row, size=0.5)
+  svg$rect(idPrefix=idPrefix, data=dfo, mapping=aes(xmin=x1, xmax=x2, ymin=y1, ymax=y2), fill=dfo$col_row, alpha=alpha_level,
+           color="transparent", size=0.5)
   svg$text(idPrefix=idPrefix, data=dfo, mapping=aes(x=(x2+x1)/2, y= (y2+y1)/2), color=labelscolor, label=dfo$label, size=lsize)
   calc_vals <- list("p" = p, "svg" = svg)
   return(calc_vals)
@@ -663,7 +668,8 @@ draw_individual_ziggurat <- function(idPrefix, igraphnet, kc, basex = 0, widthx 
   p <- grafo + geom_rect(data=dr, mapping=aes(xmin=x1, xmax=x2, ymin=y1, ymax=y2),
                          fill = dr$col_row, alpha = zgg$alpha_level,color="transparent")
 
-  svg$rect(idPrefix=idPrefix, data=dr, mapping=aes(xmin=x1, xmax=x2, ymin=y1, ymax=y2), fill=dr$col_row, alpha=zgg$alpha_level, color=dr$col_row, size=0.5)
+  svg$rect(idPrefix=idPrefix, data=dr, mapping=aes(xmin=x1, xmax=x2, ymin=y1, ymax=y2), fill=dr$col_row, alpha=zgg$alpha_level,
+           color="transparent", size=0.5)
   labelcolor <- ifelse(length(zgg$labels_color)>0,zgg$labels_color[2-as.numeric(strguild == zgg$str_guild_a)],dr$col_row)
   if (zgg$displaylabelszig){
     if (is.element(kc,zgg$kcore_species_name_display)){
@@ -1561,7 +1567,9 @@ draw_maxcore <- function(svg)
     geom_rect(data=zgg$list_dfs_a[[zgg$kcoremax]], mapping=aes(xmin=x1, xmax=x2, ymin=y1, ymax=y2), fill = zgg$list_dfs_a[[zgg$kcoremax]]$col_row,  color="transparent",alpha=zgg$alpha_level)
 
 
-  svg$rect(paste0("kcore", zgg$kcoremax, "-a"), data=zgg$list_dfs_a[[zgg$kcoremax]], mapping=aes(xmin=x1, xmax=x2, ymin=y1, ymax=y2), fill=zgg$list_dfs_a[[zgg$kcoremax]]$col_row, alpha=zgg$alpha_level, color=zgg$list_dfs_a[[zgg$kcoremax]]$col_row, size=0.5)
+  svg$rect(paste0("kcore", zgg$kcoremax, "-a"), data=zgg$list_dfs_a[[zgg$kcoremax]],
+           mapping=aes(xmin=x1, xmax=x2, ymin=y1, ymax=y2), fill=zgg$list_dfs_a[[zgg$kcoremax]]$col_row, alpha=zgg$alpha_level,
+           color="transparent", size=0.5)
   f <- kcoremax_label_display(paste0("kcore", zgg$kcoremax, "-a"),p,svg,kcoremaxlabel_angle,zgg$list_dfs_a[[zgg$kcoremax]],labelszig,zgg$lsize_kcoremax)
   p <- f["p"][[1]]
   svg <- f["svg"][[1]]
@@ -1584,7 +1592,9 @@ draw_maxcore <- function(svg)
   p <- p + geom_rect(data=zgg$list_dfs_b[[zgg$kcoremax]] , mapping=aes(xmin=x1, xmax=x2, ymin=y1, ymax=y2),
                      fill = zgg$list_dfs_b[[zgg$kcoremax]]$col_row, color="transparent", alpha=zgg$alpha_level)
 
-  svg$rect(paste0("kcore", zgg$kcoremax, "-b"), zgg$list_dfs_b[[zgg$kcoremax]] , mapping=aes(xmin=x1, xmax=x2, ymin=y1, ymax=y2), fill=zgg$list_dfs_b[[zgg$kcoremax]]$col_row, alpha=zgg$alpha_level, color=zgg$list_dfs_b[[zgg$kcoremax]]$col_row, size=0.5)
+  svg$rect(paste0("kcore", zgg$kcoremax, "-b"), zgg$list_dfs_b[[zgg$kcoremax]] , mapping=aes(xmin=x1, xmax=x2, ymin=y1, ymax=y2),
+           fill=zgg$list_dfs_b[[zgg$kcoremax]]$col_row, alpha=zgg$alpha_level,
+           color="transparent", size=0.5)
   f <- kcoremax_label_display(paste0("kcore", zgg$kcoremax, "-b"),p,svg,kcoremaxlabel_angle,zgg$list_dfs_b[[zgg$kcoremax]],labelszig,
                               zgg$lsize_kcoremax, phjust = 1, is_guild_a = FALSE)
   p <- f["p"][[1]]
