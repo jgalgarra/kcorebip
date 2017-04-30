@@ -1300,18 +1300,11 @@ write_annotations <- function(p, svg)
                     label=zgg$name_guild_a,
                     colour = zgg$color_guild_a[1], size=zgg$lsize_legend,
                     hjust = 0, vjust = 0, angle = 0)
-  # svg$text("legend", data=data.frame(x=x_legend, y=y_legend), mapping=aes(x=x, y=y),
-  #          color=zgg$color_guild_a[1], label=zgg$name_guild_a, size=zgg$lsize_legend, angle=0)
   p <- p + annotate(geom="text", x=x_legend,
                     y=y_legend,
                     label= paste("                 ",zgg$name_guild_b),
                     colour = zgg$color_guild_b[1], size=zgg$lsize_legend,
                     hjust = 0, vjust = 0, angle = 0)
-  # svg$text("legend", data=data.frame(x=landmark_left, y=y_legend), mapping=aes(x=x, y=y),
-  #          color=zgg$color_guild_b[1],
-  #          #label=paste("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;",zgg$name_guild_b),
-  #          label = "cocofunk",
-  #          size=zgg$lsize_legend, angle=0)
   p <- p +annotate(geom="text", x=landmark_left,
                    y = y_legend,
                    label="1-shell",
@@ -1763,7 +1756,7 @@ def_configuration <- function(paintlinks, displaylabelszig , print_to_file, plot
                               shorten_species_name,exclude_species_number,
                               label_strguilda, label_strguildb, landscape_plot, backg_color, show_title,
                               use_spline, spline_points, file_name_append, svg_scale_factor, weighted_links, square_nodes_size_scale,
-                              progress
+                              move_all_SVG_up, progress
                               )
 {
   # ENVIRONMENT CONFIGURATION PARAMETERS
@@ -1824,6 +1817,7 @@ def_configuration <- function(paintlinks, displaylabelszig , print_to_file, plot
   zgg$svg_scale_factor <- svg_scale_factor
   zgg$weighted_links <- weighted_links
   zgg$square_nodes_size_scale <- square_nodes_size_scale
+  zgg$move_all_SVG_up <- move_all_SVG_up
   zgg$progress <- progress
 }
 
@@ -2113,6 +2107,7 @@ draw_ziggurat_plot <- function(svg_scale_factor, progress)
 #' @param svg_scale_factor only for interactive apps, do not modify
 #' @param weighted_links function to add link weight: 'none', 'log10' or 'ln'
 #' @param square_nodes_size_scale scale nodes area of kcore1 and outsiders
+#' @param move_all_SVG_up move up all the SVG plot by this fraction, useful to crop upper white space
 #' @param progress only for interactive apps, do not modifiy
 #' @export
 #' @examples ziggurat_graph("data/","M_PL_001.csv",plotsdir="grafresults/",print_to_file = TRUE)
@@ -2141,7 +2136,7 @@ ziggurat_graph <- function(datadir,filename,
                            label_strguildb = "", landscape_plot = TRUE,
                            backg_color = "white", show_title = TRUE, use_spline =TRUE, spline_points = 100,
                            file_name_append = "", svg_scale_factor=10, weighted_links = "none",
-                           square_nodes_size_scale = 1, progress=NULL
+                           square_nodes_size_scale = 1, move_all_SVG_up = 0, progress=NULL
                            )
 {
   zgg <<- new.env()
@@ -2177,7 +2172,7 @@ ziggurat_graph <- function(datadir,filename,
                     corebox_border_size, kcore_species_name_display,kcore_species_name_break,shorten_species_name,exclude_species_number,
                     label_strguilda, label_strguildb, landscape_plot, backg_color, show_title,
                     use_spline, spline_points, file_name_append, svg_scale_factor, weighted_links,
-                    square_nodes_size_scale, progress
+                    square_nodes_size_scale, move_all_SVG_up, progress
                     )
   strip_isolated_nodes()
   init_working_values()

@@ -39,7 +39,7 @@ SVG<-function(scale_factor) {
     # redondea el viewBox a la decena mas cercana
     minx  <- floor(this$minx/10)*10
     maxx  <- ceiling(this$maxx/10)*10
-    miny  <- floor(this$miny/10)*10
+    miny  <- (1-zgg$move_all_SVG_up)*floor(this$miny/10)*10
     maxy  <- ceiling(this$maxy/10)*10
     viewBox<-paste0(minx, " ", miny, " ", maxx-minx, " ", maxy-miny)
     #svg0<-paste0("<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"", viewBox, "\" width=\"", maxx-minx, "\" height=\"", maxy-miny, "\">")
