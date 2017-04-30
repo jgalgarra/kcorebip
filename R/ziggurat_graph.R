@@ -1300,20 +1300,33 @@ write_annotations <- function(p, svg)
                     label=zgg$name_guild_a,
                     colour = zgg$color_guild_a[1], size=zgg$lsize_legend,
                     hjust = 0, vjust = 0, angle = 0)
-  #svg$text("legend", data=data.frame(x=x_legend, y=y_legend), mapping=aes(x=x, y=y), color=zgg$color_guild_a[1], label=zgg$name_guild_a, size=zgg$lsize_legend, angle=0)
+  # svg$text("legend", data=data.frame(x=x_legend, y=y_legend), mapping=aes(x=x, y=y),
+  #          color=zgg$color_guild_a[1], label=zgg$name_guild_a, size=zgg$lsize_legend, angle=0)
   p <- p + annotate(geom="text", x=x_legend,
                     y=y_legend,
                     label= paste("                 ",zgg$name_guild_b),
                     colour = zgg$color_guild_b[1], size=zgg$lsize_legend,
                     hjust = 0, vjust = 0, angle = 0)
-  #svg$text("legend", data=data.frame(x=x_legend, y=y_legend+20), mapping=aes(x=x, y=y), color=zgg$color_guild_b[1], label=zgg$name_guild_b, size=zgg$lsize_legend, angle=0)
+  # svg$text("legend", data=data.frame(x=landmark_left, y=y_legend), mapping=aes(x=x, y=y),
+  #          color=zgg$color_guild_b[1],
+  #          #label=paste("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;",zgg$name_guild_b),
+  #          label = "cocofunk",
+  #          size=zgg$lsize_legend, angle=0)
   p <- p +annotate(geom="text", x=landmark_left,
                    y = y_legend,
                    label="1-shell",
                    colour = zgg$corecols[2], size=zgg$lsize_core_box, hjust = 0, vjust = 0,
                    angle = 0,
                    fontface="italic")
-  svg$text("core-1", data=data.frame(x=landmark_left, y=y_legend), mapping=aes(x=x, y=y), color=zgg$corecols[2], label="1-shell", size=zgg$lsize_core_box, angle=0)
+  svg$text("core-1", data=data.frame(x=landmark_left, y=y_legend), mapping=aes(x=x, y=y), color=zgg$corecols[2],
+           label="1-shell",
+           size=zgg$lsize_core_box, angle=0)
+  svg$text("core-1", data=data.frame(x=0.85*x_legend, y=y_legend), mapping=aes(x=x, y=y), size=zgg$lsize_legend,
+           label=zgg$name_guild_a, color=zgg$color_guild_a[1], angle=0)
+  svg$text("core-1", data=data.frame(x=x_legend, y=y_legend), mapping=aes(x=x, y=y), size=zgg$lsize_legend,
+           label=zgg$name_guild_b, color=zgg$color_guild_b[1], angle=0)
+  svg$text("core-1", data=data.frame(x=0.85*x_legend, y=max(0.9*landmark_top, y_legend*1.05)), mapping=aes(x=x, y=y),
+           size=zgg$lsize_legend, label=paste("Network",zgg$network_name), color="black", angle=0)
 
   calc_vals <- list("p" = p, "svg" = svg)
   return(calc_vals)
