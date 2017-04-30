@@ -429,8 +429,8 @@ handle_outsiders <- function(p,svg,outsiders,df_chains) {
     paintsidex <- paintsidex * sqrt(zgg$square_nodes_size_scale)
     zgg$outsiders_a <- zgg$outsider$name[grep(zgg$str_guild_a,zgg$outsider$name)]
     zgg$outsiders_b <- zgg$outsider$name[grep(zgg$str_guild_b,zgg$outsider$name)]
-    pox <- -(zgg$hop_x/4)+ zgg$tot_width * (zgg$displace_outside_component[1]-1)
-    poy <- min(-zgg$last_ytail_b[!is.na(zgg$last_ytail_b)]-4*zgg$lado,df_chains$y1) * zgg$displace_outside_component[2]
+    pox <- -(zgg$hop_x/4)+ zgg$tot_width * (zgg$displace_outside_component[1])
+    poy <- min(-zgg$last_ytail_b[!is.na(zgg$last_ytail_b)]-4*zgg$lado,df_chains$y1) * (1+zgg$displace_outside_component[2])
     dfo_a <- conf_outsiders(zgg$outsiders_a,pox,poy,
                             zgg$lado*sqrt(zgg$square_nodes_size_scale),zgg$color_guild_a[2],zgg$str_guild_a)
     guild_sep <- poy-max(1,length(zgg$outsider)/10)*6*zgg$lado*sqrt(zgg$square_nodes_size_scale)*zgg$outsiders_separation_expand/zgg$aspect_ratio
@@ -2125,7 +2125,7 @@ ziggurat_graph <- function(datadir,filename,
                            innertail_vertical_separation = 1, horiz_kcoremax_tails_expand = 1,
                            factor_hop_x = 1, displace_legend = c(0,0), fattailjumphoriz = c(1,1), fattailjumpvert = c(1,1),
                            coremax_triangle_height_factor = 1, coremax_triangle_width_factor = 1,
-                           paint_outsiders = TRUE, displace_outside_component = c(1,1),
+                           paint_outsiders = TRUE, displace_outside_component = c(0,0),
                            outsiders_separation_expand = 1, outsiders_legend_expand = 1,
                            weirdskcore2_horizontal_dist_rootleaf_expand = 1,
                            weirdskcore2_vertical_dist_rootleaf_expand = 0, weirds_boxes_separation_count = 1,
