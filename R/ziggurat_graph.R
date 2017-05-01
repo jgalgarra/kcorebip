@@ -1740,7 +1740,7 @@ read_and_analyze <- function(directorystr,network_file,label_strguilda,label_str
 def_configuration <- function(paintlinks, print_to_file, plotsdir, flip_results, aspect_ratio,
                               alpha_level, color_guild_a, color_guild_b,
                               color_link, alpha_link, size_link,
-                              displace_y_b, displace_y_a, labels_size, lsize_kcoremax, lsize_zig, lsize_kcore1,
+                              displace_y_b, displace_y_a, lsize_kcoremax, lsize_zig, lsize_kcore1,
                               lsize_legend, lsize_core_box, labels_color,
                               height_box_y_expand, kcore2tail_vertical_separation,  kcore1tail_disttocore,
                               innertail_vertical_separation , horiz_kcoremax_tails_expand,
@@ -1771,7 +1771,7 @@ def_configuration <- function(paintlinks, print_to_file, plotsdir, flip_results,
   zgg$displace_y_b <- displace_y_b
   zgg$displace_y_a <- displace_y_a
   zgg$aspect_ratio <- aspect_ratio
-  zgg$labels_size <- labels_size
+  zgg$labels_size <- 3.5
   zgg$lsize_kcoremax <- lsize_kcoremax
   zgg$lsize_zig <- lsize_zig
   zgg$lsize_kcore1 <- lsize_kcore1
@@ -2059,7 +2059,6 @@ draw_ziggurat_plot <- function(svg_scale_factor, progress)
 #' @param size_link width of the links
 #' @param displace_y_b relative vertical displacement of guild_b inner ziggurats
 #' @param displace_y_a relative vertical displacement of guild_a inner ziggurats
-#' @param labels_size default nodes labels size
 #' @param lsize_kcoremax nodes in kshell max label size
 #' @param lsize_zig nodes in inner ziggurats label size
 #' @param lsize_kcore1 labels of nodes in kshell 1
@@ -2116,7 +2115,7 @@ ziggurat_graph <- function(datadir,filename,
                            color_link = "slategray3", alpha_link = 0.5, size_link = 0.5,
                            displace_y_b = rep(0,20),
                            displace_y_a = rep(0,20),
-                           labels_size = 3.5, lsize_kcoremax = 3.5, lsize_zig = 3, lsize_kcore1 = 2.5, lsize_legend = 4, lsize_core_box = 2.5,
+                           lsize_kcoremax = 3.5, lsize_zig = 3, lsize_kcore1 = 2.5, lsize_legend = 4, lsize_core_box = 2.5,
                            labels_color = c(),
                            height_box_y_expand = 1, kcore2tail_vertical_separation = 1,  kcore1tail_disttocore = c(1,1),
                            innertail_vertical_separation = 1, horiz_kcoremax_tails_expand = 1,
@@ -2156,7 +2155,7 @@ ziggurat_graph <- function(datadir,filename,
   def_configuration(paintlinks, print_to_file, plotsdir, flip_results, aspect_ratio,
                     alpha_level, color_guild_a, color_guild_b,
                     color_link, alpha_link, size_link,
-                    displace_y_b, displace_y_a, labels_size, lsize_kcoremax, lsize_zig, lsize_kcore1,
+                    displace_y_b, displace_y_a, lsize_kcoremax, lsize_zig, lsize_kcore1,
                     lsize_legend, lsize_core_box, labels_color,
                     height_box_y_expand, kcore2tail_vertical_separation,  kcore1tail_disttocore,
                     innertail_vertical_separation , horiz_kcoremax_tails_expand,
