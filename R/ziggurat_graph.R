@@ -128,8 +128,9 @@ draw_rectangle<- function(idPrefix,basex,basey,widthx,widthy,grafo,svg,bordercol
   p <- p +annotate(geom="text", x=x1+(x2-x1)/8, y=signo*(y1+(y2-y1)/2), label=slabel,
                    colour = fillcolor, size=sizelabel, hjust = 0)
   svg$rect(idPrefix=idPrefix, data=ds, mapping=aes(xmin=x1, xmax=x2, ymin=y1, ymax=y2),
-           fill=fillcolor, alpha=palpha, color="transparent", size=bordersize, linetype=3)
-  svg$text(idPrefix=idPrefix, data=data.frame(x=c(x1+(x2-x1)/8), y=c(signo*(y1+(y2-y1)/2))), mapping=aes(x=x, y=y), color=fillcolor, label=slabel, size=sizelabel)
+           fill=fillcolor, alpha=palpha, color=bordercolor, size=bordersize, linetype=3)
+  svg$text(idPrefix=idPrefix, data=data.frame(x=c(x1+(x2-x1)/8), y=c(signo*(y1+(y2-y1)/2))),
+           mapping=aes(x=x, y=y), color=fillcolor, label=slabel, size=sizelabel)
 
   calc_vals <- list("p" = p, "svg" = svg)
   return(calc_vals)
@@ -265,7 +266,6 @@ draw_tail <- function(idPrefix, p,svg,fat_tail,lado,color,sqlabel,basex,basey,ga
   }
   if ((zgg$flip_results) & (langle == 0) & (position!="West") )
     langle <- langle + 70
-
   f <- draw_square(idPrefix, p,svg, xx,yy,paintsidex*sqrt(zgg$square_nodes_size_scale),
                    bgcolor,palpha,labelcolor,langle,lhjust,lvjust,
                    slabel=sqlabel,lbsize = psize,inverse = sqinverse,
@@ -671,19 +671,17 @@ draw_individual_ziggurat <- function(idPrefix, igraphnet, kc, basex = 0, widthx 
   svg$rect(idPrefix=idPrefix, data=dr, mapping=aes(xmin=x1, xmax=x2, ymin=y1, ymax=y2), fill=dr$col_row, alpha=zgg$alpha_level,
            color="transparent", size=0.5)
   labelcolor <- ifelse(length(zgg$labels_color)>0,zgg$labels_color[2-as.numeric(strguild == zgg$str_guild_a)],dr$col_row)
-  if (zgg$displaylabelszig){
-    if (is.element(kc,zgg$kcore_species_name_display)){
-      pangle <- ifelse(zgg$flip_results,90,0)
-      p <- p + geom_text(data=dr, aes(x=x1, y= (y2+y1)/2), color=labelcolor,
-                         label = nsp$labelszig, size=zgg$lsize_zig, vjust=0.3, angle = pangle,
-                         hjust = 0)
-      svg$text(idPrefix=idPrefix, data=dr, mapping=aes(x=x1, y= (y2+y1)/2), color=labelcolor, label = nsp$labelszig, size=zgg$lsize_zig, angle=pangle)
-    } else {
-      p <- p + geom_text(data=dr, aes(x=x1+0.3*(x2-x1)/2+0.65*((max(r)-r)%%2)*(x2-x1),
-                                  y= (y2+y1)/2), color=labelcolor,
-                     label = nsp$labelszig, size=zgg$lsize_zig, vjust=0.3)
-      svg$text(idPrefix=idPrefix, data=dr, mapping=aes(x=x1+0.3*(x2-x1)/2+0.65*((max(r)-r)%%2)*(x2-x1), y=(y2+y1)/2), color=labelcolor, label=nsp$labelszig, size=zgg$lsize_zig)
-    }
+  if (is.element(kc,zgg$kcore_species_name_display)){
+    pangle <- ifelse(zgg$flip_results,90,0)
+    p <- p + geom_text(data=dr, aes(x=x1, y= (y2+y1)/2), color=labelcolor,
+                       label = nsp$labelszig, size=zgg$lsize_zig, vjust=0.3, angle = pangle,
+                       hjust = 0)
+    svg$text(idPrefix=idPrefix, data=dr, mapping=aes(x=x1, y= (y2+y1)/2), color=labelcolor, label = nsp$labelszig, size=zgg$lsize_zig, angle=pangle)
+  } else {
+    p <- p + geom_text(data=dr, aes(x=x1+0.3*(x2-x1)/2+0.65*((max(r)-r)%%2)*(x2-x1),
+                                y= (y2+y1)/2), color=labelcolor,
+                   label = nsp$labelszig, size=zgg$lsize_zig, vjust=0.3)
+    svg$text(idPrefix=idPrefix, data=dr, mapping=aes(x=x1+0.3*(x2-x1)/2+0.65*((max(r)-r)%%2)*(x2-x1), y=(y2+y1)/2), color=labelcolor, label=nsp$labelszig, size=zgg$lsize_zig)
   }
 
   calc_grafs <- list("p" = p, "svg" = svg, "dr" = dr)
@@ -1739,7 +1737,7 @@ read_and_analyze <- function(directorystr,network_file,label_strguilda,label_str
   return(calc_vals)
 }
 
-def_configuration <- function(paintlinks, displaylabelszig , print_to_file, plotsdir, flip_results, aspect_ratio,
+def_configuration <- function(paintlinks, print_to_file, plotsdir, flip_results, aspect_ratio,
                               alpha_level, color_guild_a, color_guild_b,
                               color_link, alpha_link, size_link,
                               displace_y_b, displace_y_a, labels_size, lsize_kcoremax, lsize_zig, lsize_kcore1,
@@ -1761,7 +1759,6 @@ def_configuration <- function(paintlinks, displaylabelszig , print_to_file, plot
 {
   # ENVIRONMENT CONFIGURATION PARAMETERS
   zgg$paintlinks <- paintlinks
-  zgg$displaylabelszig <- displaylabelszig
   zgg$print_to_file <- print_to_file
   zgg$plotsdir <- plotsdir
   zgg$flip_results <- flip_results
@@ -2113,7 +2110,7 @@ draw_ziggurat_plot <- function(svg_scale_factor, progress)
 #' @examples ziggurat_graph("data/","M_PL_001.csv",plotsdir="grafresults/",print_to_file = TRUE)
 
 ziggurat_graph <- function(datadir,filename,
-                           paintlinks = TRUE, displaylabelszig = TRUE, print_to_file = FALSE, plotsdir ="plot_results/ziggurat/", flip_results = FALSE,
+                           paintlinks = TRUE, print_to_file = FALSE, plotsdir ="plot_results/ziggurat/", flip_results = FALSE,
                            aspect_ratio = 1,
                            alpha_level = 0.2, color_guild_a = c("#4169E1","#00008B"), color_guild_b = c("#F08080","#FF0000"),
                            color_link = "slategray3", alpha_link = 0.5, size_link = 0.5,
@@ -2135,7 +2132,7 @@ ziggurat_graph <- function(datadir,filename,
                            shorten_species_name = 0, exclude_species_number = FALSE, label_strguilda = "",
                            label_strguildb = "", landscape_plot = TRUE,
                            backg_color = "white", show_title = TRUE, use_spline =TRUE, spline_points = 100,
-                           file_name_append = "", svg_scale_factor=1, weighted_links = "none",
+                           file_name_append = "", svg_scale_factor= 10, weighted_links = "none",
                            square_nodes_size_scale = 1, move_all_SVG_up = 0, progress=NULL
                            )
 {
@@ -2156,7 +2153,7 @@ ziggurat_graph <- function(datadir,filename,
       print(msg)
     return(zgg)
   }
-  def_configuration(paintlinks, displaylabelszig , print_to_file, plotsdir, flip_results, aspect_ratio,
+  def_configuration(paintlinks, print_to_file, plotsdir, flip_results, aspect_ratio,
                     alpha_level, color_guild_a, color_guild_b,
                     color_link, alpha_link, size_link,
                     displace_y_b, displace_y_a, labels_size, lsize_kcoremax, lsize_zig, lsize_kcore1,
