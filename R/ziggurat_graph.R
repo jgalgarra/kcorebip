@@ -2132,7 +2132,9 @@ ziggurat_graph <- function(datadir,filename,
                            label_strguildb = "", landscape_plot = TRUE,
                            backg_color = "white", show_title = TRUE, use_spline =TRUE, spline_points = 100,
                            file_name_append = "", svg_scale_factor= 10, weighted_links = "none",
-                           square_nodes_size_scale = 1, move_all_SVG_up = 0, progress=NULL
+                           square_nodes_size_scale = 1, move_all_SVG_up = 0,
+                           displaylabelszig = TRUE, labels_size = 1,   # dummy parameters for backward compatibility
+                           progress=NULL
                            )
 {
   zgg <<- new.env()
