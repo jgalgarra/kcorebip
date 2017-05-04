@@ -16,6 +16,7 @@ paint_kdegree_kradius <- function(graph, num_guild_a, num_guild_b,
                                   ptitle = "",
                                   filln = FALSE,
                                   alphal = 0.5,
+                                  nfsal = "",
                                   progress
                                   )
 {
@@ -255,7 +256,7 @@ paint_kdegree_kradius <- function(graph, num_guild_a, num_guild_b,
     )+
     ggtitle("k-degree")+ ylab("Species")
   calc_grafs <- list("polar_plot" = polar_plot, "histo_kradius" = histo_kradius, "histo_core" = histo_core,
-                     "histo_kdegree" = histo_kdegree)
+                     "histo_kdegree" = histo_kdegree, "polar_file" = nfsal)
   return(calc_grafs)
 }
 
@@ -334,19 +335,23 @@ polar_graph <- function( red, directorystr = "data/", plotsdir = "plot_results/p
       print(msg)
     return(an)
   }
-  if (print_to_file){
+  fsal=""
+  if (print_to_file) {
     dir.create(plotsdir, showWarnings = FALSE)
     ppi <- 600
     if (file_name_append != "")
       ftname_append <- paste0("_",file_name_append)
     else
       ftname_append <- file_name_append
+    dir.create(plotsdir, showWarnings = FALSE)
+    fsal <- paste0(plotsdir,red_name,"_polar",ftname_append,".png")
     if (show_histograms)
-      png(paste0(plotsdir,red_name,"_polar",ftname_append,".png"), width=12*ppi, height=12*ppi, res=ppi)
+      png(fsal, width=12*ppi, height=12*ppi, res=ppi)
     else
-      png(paste0(plotsdir,red_name,"_polar",ftname_append,".png"), width=9*ppi, height=9*ppi, res=ppi)
+      png(fsal, width=9*ppi, height=9*ppi, res=ppi)
   }
-
+  if (exists("zgg"))
+    zgg$polar_file = fsal
   r <- paint_kdegree_kradius(result_analysis$graph, result_analysis$num_guild_a,result_analysis$num_guild_b,
                              lsize_title , lsize_axis, lsize_legend, lsize_axis_title , lsize_legend_title,
                              network_name = red_name, NODF = result_analysis$nested_values["NODF"],
@@ -354,11 +359,11 @@ polar_graph <- function( red, directorystr = "data/", plotsdir = "plot_results/p
                              MeanKradius = result_analysis$meandist, MeanKdegree = result_analysis$meankdegree,
                              showtext = pshowtext, fname_append = ftname_append,
                              printable_range = printable_labels, ptitle = print_title,
-                             filln = fill_nodes, alphal = alpha_nodes, progress
+                             filln = fill_nodes, alphal = alpha_nodes, nfsal = fsal, progress
                               )
-  # Non interactive mode. Plots stored in file or displayer in R window
-  if (is.null(progress))
-  {
+  #Non interactive mode. Plots stored in file or displayer in R window
+  # if (is.null(progress))
+  # {
     if (show_histograms)
       grid.arrange(r["polar_plot"][[1]], nrow=2, heights=c(4/5,1/5),
                    arrangeGrob(r["histo_kradius"][[1]],
@@ -370,12 +375,12 @@ polar_graph <- function( red, directorystr = "data/", plotsdir = "plot_results/p
       print(r["polar_plot"][[1]])
     if (print_to_file)
       dev.off()
-  }
+  # }
   # Message for interactive apps.
   if (!is.null(progress)) {
     progress$inc(0, detail=strings$value("MESSAGE_POLAR_PROGRESS_DONE"))
-    return(r)
   }
+  return(r)
 }
 
 #polar_graph("pl017-minus6plants.csv","datanetworks2015/",print_to_file=TRUE, lsize_title = 24, lsize_axis = 18, lsize_legend = 18, lsize_axis_title = 18, lsize_legend_title = 20)

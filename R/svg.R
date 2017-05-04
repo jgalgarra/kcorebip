@@ -24,7 +24,7 @@ library(ggplot2)
 
 SVG<-function(scale_factor) {
   # crea el objeto SVG
-  this<-list(content=c(""), minx=0, miny=0, maxx=0, maxy=0, scale_factor=scale_factor, font_scale_factor=2.5)
+  this<-list(content=c(""), minx=0, miny=0, maxx=0, maxy=0, scale_factor=scale_factor, font_scale_factor=3.75)
 
   # guarda el contenido del svg en un fichero
   this$save <- function(fileName, svg) {
