@@ -1782,7 +1782,7 @@ def_configuration <- function(paintlinks, print_to_file, plotsdir, flip_results,
   zgg$kcore2tail_vertical_separation <- kcore2tail_vertical_separation                 # Vertical separation of orphan boxes linked to core 2 in number of heights_y
   zgg$kcore1tail_disttocore <- kcore1tail_disttocore                            # Horizontal & Vertical distances of edge/weird tails linked to core 1 North & South
   zgg$innertail_vertical_separation <- innertail_vertical_separation                  # Vertical separation of orphan boxes linked to inner cores in number of heights_y
-  zgg$horiz_kcoremax_tails_expand <- horiz_kcoremax_tails_expand                  # horizontal separation of edge tails connected to kcoremax
+  zgg$horiz_kcoremax_tails_expand <- horiz_kcoremax_tails_expand                  # horizontal separation of edge tails connected to kcoremax.
   zgg$factor_hop_x <- factor_hop_x
   zgg$displace_legend <- displace_legend
   zgg$fattailjumphoriz <- fattailjumphoriz
