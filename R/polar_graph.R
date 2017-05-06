@@ -296,6 +296,11 @@ polar_graph <- function( red, directorystr = "data/", plotsdir = "plot_results/p
                          progress=NULL, printable_labels = 0, fill_nodes = TRUE, alpha_nodes = 0.5)
 {
 
+  # This assignment stores the call parameters in polar_argg as a list. This list is useful
+  # to save plotting parameters for a future simulation
+
+  polar_argg <- c(as.list(environment()))
+
   strip_isolated_nodes <- function()
   {
     lgrados <- igraph::degree(result_analysis$graph)
@@ -311,7 +316,6 @@ polar_graph <- function( red, directorystr = "data/", plotsdir = "plot_results/p
         }
       }
   }
-
 
   red_name <- strsplit(red,".csv")[[1]][1]
   sguild_a <<- gshortened[1]
@@ -380,6 +384,7 @@ polar_graph <- function( red, directorystr = "data/", plotsdir = "plot_results/p
   if (!is.null(progress)) {
     progress$inc(0, detail=strings$value("MESSAGE_POLAR_PROGRESS_DONE"))
   }
+  r$polar_argg <- polar_argg
   return(r)
 }
 

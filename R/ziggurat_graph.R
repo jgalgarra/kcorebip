@@ -2139,6 +2139,11 @@ ziggurat_graph <- function(datadir,filename,
                            progress=NULL
                            )
 {
+  # This assignment stores the call parameters in polar_argg as a list. This list is useful
+  # to save plotting parameters for a future simulation
+
+  ziggurat_argg <- c(as.list(environment()))
+
   zgg <<- new.env()
   if (!is.null(progress)) progress$inc(1/11, detail=strings$value("MESSAGE_ZIGGURAT_PROGRESS_ANALYZING_NETWORK"))
   f <- read_and_analyze(datadir,filename,label_strguilda, label_strguildb)
@@ -2177,6 +2182,7 @@ ziggurat_graph <- function(datadir,filename,
   strip_isolated_nodes()
   init_working_values()
   draw_ziggurat_plot(svg_scale_factor, progress)
+  zgg$ziggurat_argg <- ziggurat_argg
   return(zgg)
 }
 
