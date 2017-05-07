@@ -365,7 +365,7 @@ draw_edge_tails <- function(p,svg,point_x,point_y,kcoreother,long_tail,list_dfs,
           salto <- 0
         else
           salto <- 0.4*v["sidex"][[1]]/zgg$aspect_ratio
-        point_x <- point_x - zgg$horiz_kcoremax_tails_expand*separacion - v["sidex"][[1]]
+        point_x <- point_x - separacion - v["sidex"][[1]]
         point_y <- point_y - 1.4*signo*salto
         ryy <- point_y
         rxx <- point_x
@@ -1743,7 +1743,7 @@ def_configuration <- function(paintlinks, print_to_file, plotsdir, flip_results,
                               displace_y_b, displace_y_a, lsize_kcoremax, lsize_zig, lsize_kcore1,
                               lsize_legend, lsize_core_box, labels_color,
                               height_box_y_expand, kcore2tail_vertical_separation,  kcore1tail_disttocore,
-                              innertail_vertical_separation , horiz_kcoremax_tails_expand,
+                              innertail_vertical_separation , 
                               factor_hop_x, displace_legend, fattailjumphoriz, fattailjumpvert,
                               coremax_triangle_height_factor, coremax_triangle_width_factor,
                               paint_outsiders, displace_outside_component,
@@ -1782,7 +1782,7 @@ def_configuration <- function(paintlinks, print_to_file, plotsdir, flip_results,
   zgg$kcore2tail_vertical_separation <- kcore2tail_vertical_separation                 # Vertical separation of orphan boxes linked to core 2 in number of heights_y
   zgg$kcore1tail_disttocore <- kcore1tail_disttocore                            # Horizontal & Vertical distances of edge/weird tails linked to core 1 North & South
   zgg$innertail_vertical_separation <- innertail_vertical_separation                  # Vertical separation of orphan boxes linked to inner cores in number of heights_y
-  zgg$horiz_kcoremax_tails_expand <- horiz_kcoremax_tails_expand                  # horizontal separation of edge tails connected to kcoremax.
+  #zgg$horiz_kcoremax_tails_expand <- horiz_kcoremax_tails_expand                  # horizontal separation of edge tails connected to kcoremax.
   zgg$factor_hop_x <- factor_hop_x
   zgg$displace_legend <- displace_legend
   zgg$fattailjumphoriz <- fattailjumphoriz
@@ -2071,7 +2071,6 @@ draw_ziggurat_plot <- function(svg_scale_factor, progress)
 #' @param kcore2tail_vertical_separation expand vertical of kshell 1 species linked to kshell 2 by this factor
 #' @param kcore1tail_disttocore expand vertical separation of kshell 1 species from kshell max (guild_a, guild,b)
 #' @param innertail_vertical_separation expand vertical separation of kshell species connected to khsell > 2 & < kshell max
-#' @param horiz_kcoremax_tails_expand expand horizontal separation of weird tails connected to kshell max
 #' @param factor_hop_x expand inner ziggurats horizontal distance
 #' @param displace_legend modify legend position by these fractions
 #' @param fattailjumphoriz displace kshell 1 species linked to leftmost kshell max species
@@ -2120,7 +2119,7 @@ ziggurat_graph <- function(datadir,filename,
                            lsize_kcoremax = 3.5, lsize_zig = 3, lsize_kcore1 = 2.5, lsize_legend = 4, lsize_core_box = 2.5,
                            labels_color = c(),
                            height_box_y_expand = 1, kcore2tail_vertical_separation = 1,  kcore1tail_disttocore = c(1,1),
-                           innertail_vertical_separation = 1, horiz_kcoremax_tails_expand = 1,
+                           innertail_vertical_separation = 1,
                            factor_hop_x = 1, displace_legend = c(0,0), fattailjumphoriz = c(1,1), fattailjumpvert = c(1,1),
                            coremax_triangle_height_factor = 1, coremax_triangle_width_factor = 1,
                            paint_outsiders = TRUE, displace_outside_component = c(0,0),
@@ -2167,7 +2166,7 @@ ziggurat_graph <- function(datadir,filename,
                     displace_y_b, displace_y_a, lsize_kcoremax, lsize_zig, lsize_kcore1,
                     lsize_legend, lsize_core_box, labels_color,
                     height_box_y_expand, kcore2tail_vertical_separation,  kcore1tail_disttocore,
-                    innertail_vertical_separation , horiz_kcoremax_tails_expand,
+                    innertail_vertical_separation,
                     factor_hop_x, displace_legend, fattailjumphoriz, fattailjumpvert,
                     coremax_triangle_height_factor, coremax_triangle_width_factor,
                     paint_outsiders, displace_outside_component,
@@ -2193,5 +2192,5 @@ ziggurat_graph <- function(datadir,filename,
 # ziggurat_graph("data/","M_PL_007.csv", height_box_y_expand = 0.85,use_spline = TRUE, aspect_ratio = 1.2,
 #                lsize_legend = 7, lsize_core_box = 6,corebox_border_size=1,weighted_links = "log10",
 #                plotsdir = "plot_results/ziggurat",color_link = "slategray3", alpha_link = 0.5,
-#                lsize_kcoremax = 6,lsize_zig = 5,lsize_kcore1 = 5, size_link = 0.7,horiz_kcoremax_tails_expand = 2,
+#                lsize_kcoremax = 6,lsize_zig = 5,lsize_kcore1 = 5, size_link = 0.7,
 #                displace_legend = c(-0.2,0.2),displace_outside_component = c(-1.2,0.6),print_to_file = TRUE)
