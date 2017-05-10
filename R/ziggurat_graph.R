@@ -1316,8 +1316,8 @@ write_annotations <- function(p, svg)
            label=zgg$name_guild_a, color=zgg$color_guild_a[1], angle=0)
   svg$text("core-1", data=data.frame(x=x_legend, y=y_legend), mapping=aes(x=x, y=y), size=zgg$lsize_legend,
            label=zgg$name_guild_b, color=zgg$color_guild_b[1], angle=0)
-  svg$text("core-1", data=data.frame(x=(0.85+(0.3*zgg$displace_legend[1]))*x_legend, y=max(0.9*landmark_top, y_legend*1.05)), mapping=aes(x=x, y=y),
-           size=zgg$lsize_legend, label=paste("Network",zgg$network_name), color="black", angle=0)
+  # svg$text("core-1", data=data.frame(x=(0.85+(0.3*zgg$displace_legend[1]))*x_legend, y=max(0.9*landmark_top, y_legend*1.05)), mapping=aes(x=x, y=y),
+  #          size=zgg$lsize_legend, label=paste("Network",zgg$network_name), color="black", angle=0)
 
   calc_vals <- list("p" = p, "svg" = svg)
   return(calc_vals)
@@ -1743,7 +1743,7 @@ def_configuration <- function(paintlinks, print_to_file, plotsdir, flip_results,
                               displace_y_b, displace_y_a, lsize_kcoremax, lsize_zig, lsize_kcore1,
                               lsize_legend, lsize_core_box, labels_color,
                               height_box_y_expand, kcore2tail_vertical_separation,  kcore1tail_disttocore,
-                              innertail_vertical_separation , 
+                              innertail_vertical_separation ,
                               factor_hop_x, displace_legend, fattailjumphoriz, fattailjumpvert,
                               coremax_triangle_height_factor, coremax_triangle_width_factor,
                               paint_outsiders, displace_outside_component,
@@ -2018,13 +2018,13 @@ draw_ziggurat_plot <- function(svg_scale_factor, progress)
       p <- p+ geom_segment(data=zgg$straight_links, aes(x=x1, y=y1, xend=x2, yend=y2),
                          size=zgg$straight_links$weightlink, color=zgg$color_link ,alpha=zgg$alpha_link)
       svg$segment(idPrefix="link", data=zgg$straight_links, mapping=aes(x=x1, y=y1, xend=x2, yend=y2),
-                  alpha=zgg$alpha_link, color=zgg$color_link, size=zgg$straight_links$weightlink)
+                  alpha=zgg$alpha_link, color=zgg$color_link, size=paste(svg_scale_factor*zgg$straight_links$weightlink,"px"))
     }
     if (nrow(zgg$bent_links)>0) {
       p <- p + geom_path(data =zgg$bent_links,aes(x,y,group=number), size=zgg$bent_links$weightlink,
                        color=zgg$color_link ,alpha=zgg$alpha_link)
       svg$path(idPrefix="link", data=zgg$bent_links, mapping=aes(x, y, group=number), alpha=zgg$alpha_link,
-                      color=zgg$color_link, size=zgg$bent_links$weightlink)
+                      color=zgg$color_link, size=paste(svg_scale_factor*zgg$bent_links$weightlink,"px"))
     }
   }
   if (is.null(progress))
@@ -2102,7 +2102,7 @@ draw_ziggurat_plot <- function(svg_scale_factor, progress)
 #' @param spline_points number of points for each spline
 #' @param file_name_append a label that the user may append to the plot file name for convenience
 #' @param svg_scale_factor only for interactive apps, do not modify
-#' @param weighted_links function to add link weight: 'none', 'log10' or 'ln'
+#' @param weighted_links function to add link weight: 'none', 'log10' , 'ln'
 #' @param square_nodes_size_scale scale nodes area of kcore1 and outsiders
 #' @param move_all_SVG_up move up all the SVG plot by this fraction, useful to crop upper white space
 #' @param progress only for interactive apps, do not modifiy
