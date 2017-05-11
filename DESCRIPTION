@@ -1,11 +1,11 @@
 Package: kcorebip
 Title: Bipartite networks kcore decomposition and visualization
-Version: 0.1
-Date: 2015-05-13
+Version: 0.4
+Date: 2017-05-13
 Author: Javier Garcia-Algarra [aut, cre], Juan Manuel Garcia Santi [ctb]
 Maintainer: Javier Garcia-Algarra <jgalgarra@coit.es>
 Description: Functions for k-core decomposing a bipartite graph and visualizing it with two original kind of plots, polar and ziggurat. This package is specially suited for ecological networks.
-Depends: gridExtra, scales, ggplot2, igraph, bipartite, stringr, R (>= 3.0.0)
+Depends:  ggplot2, stringr, grid, gridExtra, igraph, bipartite, R (>= 3.0.0)
 License: See LICENSE file
 Encoding: UTF-8
 LazyData: true
