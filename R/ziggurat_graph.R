@@ -1,7 +1,7 @@
 library(scales)
 library(grid)
 library(gridExtra)
-library(stringr)
+#library(stringr)
 library(bipartite)
 library(igraph)
 library(ggplot2)
