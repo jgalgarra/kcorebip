@@ -580,7 +580,7 @@ conf_outsiders_info <- function(strguild)
   for (j in listspecies)
   {
     #ind <- paste0(strguild,j)
-    auxlistdf$label <- str_replace(j,strguild,"")
+    auxlistdf$label <- gsub(strguild,"",j)
     auxlistdf$kdegree <-  V(zgg$result_analysis$graph)[j]$kdegree
     auxlistdf$kradius <-  V(zgg$result_analysis$graph)[j]$kradius
     auxlistdf$name_species <-  V(zgg$result_analysis$graph)[j]$name_species
