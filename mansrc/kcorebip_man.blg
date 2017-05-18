@@ -2,15 +2,4 @@ This is BibTeX, Version 0.99dThe top-level auxiliary file: kcorebip_man.aux
 The style file: biblatex.bst
 Database file #1: kcorebip_man-blx.bib
 Database file #2: kcorebip.bib
-I was expecting a `,' or a `}'---line 361 of file kcorebip.bib
- :     
- :     url = {http://igraph.org},
-(Error may have been on previous line)
-I'm skipping whatever remains of this entry
-I was expecting a `,' or a `}'---line 390 of file kcorebip.bib
- :   
- :   publisher={The Royal Society}
-(Error may have been on previous line)
-I'm skipping whatever remains of this entry
 Biblatex version: 3.3
-(There were 2 error messages)

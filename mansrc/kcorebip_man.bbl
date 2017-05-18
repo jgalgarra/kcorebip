@@ -206,6 +206,58 @@
     \field{year}{2014}
   \endentry
 
+  \entry{Garcia-Algarra2017}{article}{}
+    \name{author}{4}{}{%
+      {{hash=GAJ}{%
+         family={García-Algarra},
+         familyi={G\bibinitperiod-A\bibinitperiod},
+         given={Javier},
+         giveni={J\bibinitperiod},
+      }}%
+      {{hash=PJM}{%
+         family={Pastor},
+         familyi={P\bibinitperiod},
+         given={Juan\bibnamedelima Manuel},
+         giveni={J\bibinitperiod\bibinitdelim M\bibinitperiod},
+      }}%
+      {{hash=IJM}{%
+         family={Iriondo},
+         familyi={I\bibinitperiod},
+         given={José\bibnamedelima María},
+         giveni={J\bibinitperiod\bibinitdelim M\bibinitperiod},
+      }}%
+      {{hash=GJ}{%
+         family={Galeano},
+         familyi={G\bibinitperiod},
+         given={Javier},
+         giveni={J\bibinitperiod},
+      }}%
+    }
+    \list{publisher}{1}{%
+      {PeerJ}%
+    }
+    \strng{namehash}{GAJ+1}
+    \strng{fullhash}{GAJPJMIJMGJ1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{labelalpha}{GA+17}
+    \field{sortinit}{G}
+    \field{sortinithash}{G}
+    \verb{doi}
+    \verb 10.7717/peerj.3321
+    \endverb
+    \field{pages}{e3321}
+    \field{title}{Ranking of critical species to preserve the functionality of
+  mutualistic networks using the k-core decomposition}
+    \verb{url}
+    \verb http://dx.doi.org/10.7717/peerj.3321
+    \endverb
+    \field{volume}{5}
+    \field{journaltitle}{PeerJ}
+    \field{year}{2017}
+    \warn{\item Invalid format of field 'month'}
+  \endentry
+
   \entry{ramirez1989biologia}{article}{}
     \name{author}{1}{}{%
       {{hash=RN}{%
