@@ -2016,18 +2016,22 @@ draw_ziggurat_plot <- function(svg_scale_factor, progress)
     if (nrow(zgg$straight_links)>0) {
       p <- p+ geom_segment(data=zgg$straight_links, aes(x=x1, y=y1, xend=x2, yend=y2),
                          size=zgg$straight_links$weightlink, color=zgg$color_link ,alpha=zgg$alpha_link)
+      factormult <- 0.1*svg_scale_factor
       svg$segment(idPrefix="link", data=zgg$straight_links, mapping=aes(x=x1, y=y1, xend=x2, yend=y2),
-                  alpha=zgg$alpha_link, color=zgg$color_link, size=0.1*svg_scale_factor*zgg$straight_links$weightlink)
+                  alpha=zgg$alpha_link, color=zgg$color_link,
+                  size=factormult*zgg$straight_links$weightlink)
     }
     if (nrow(zgg$bent_links)>0) {
       p <- p + geom_path(data =zgg$bent_links,aes(x,y,group=number), size=zgg$bent_links$weightlink,
                        color=zgg$color_link ,alpha=zgg$alpha_link)
       svg$path(idPrefix="link", data=zgg$bent_links, mapping=aes(x, y, group=number), alpha=zgg$alpha_link,
-                      color=zgg$color_link, size=0.1*svg_scale_factor*zgg$bent_links$weightlink)
+                      color=zgg$color_link,
+               size=0.1*svg_scale_factor*zgg$bent_links$weightlink)
     }
   }
   if (is.null(progress))
     display_plot(p,zgg$print_to_file,zgg$flip_results, landscape = zgg$landscape_plot, fname_append = zgg$file_name_append)
+
 
   # Stores results
   zgg$plot  <- p

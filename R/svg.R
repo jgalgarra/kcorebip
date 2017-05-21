@@ -34,6 +34,7 @@ SVG<-function(scale_factor) {
     close(fileConn)
   }
 
+
   # devuelve el HTML correspondiente al objeto
   this$html<-function() {
     # redondea el viewBox a la decena mas cercana
@@ -211,7 +212,9 @@ SVG<-function(scale_factor) {
     yend  <- -this$round_coords(eval(mapping$yend, data)/this$scale_factor)
     # itera para cada segmento
     for (i in 1:nrow(data)) {
-      segment2<-this$segment2(id=paste0(idPrefix, "-", i, "-segment"), x=x[i], xend=xend[i], y=y[i], yend=yend[i], alpha=alpha, color=color[i], size=size, linetype=linetype)
+      segment2<-this$segment2(id=paste0(idPrefix, "-", i, "-segment"),
+                              x=x[i], xend=xend[i], y=y[i], yend=yend[i],
+                              alpha=alpha, color=color[i], size=size[i], linetype=linetype)
       result<-paste0(result, segment2)
     }
 
@@ -257,7 +260,6 @@ SVG<-function(scale_factor) {
   # a ggplot2::geom_path
   this$path <- function(idPrefix, data, mapping, alpha, color, size=0, linetype=1) {
     result <- ""
-
     # si solo se ha pasado un color lo utiliza para todos los datos
     if (length(color)==1) {
       color<-rep(color, nrow(data))
@@ -267,6 +269,7 @@ SVG<-function(scale_factor) {
     group <-eval(mapping$group, data)
     # itera para cada grupo de rutas
     # cambia de signo las coordenadas y, ya que en SVG el eje y es al contrario de lo que trata R con ggplot
+
     for (i in unique(group)) {
       g <- data[data[[as.character(mapping$group)]]==i,]
       x <- this$round_coords(g[,c(as.character(mapping$x))]/this$scale_factor)
@@ -277,6 +280,7 @@ SVG<-function(scale_factor) {
 
     # incorpora el resultado al contenido del SVG
     this$content<<-cbind(this$content,c(result))
+
   }
 
   # funcion auxiliar para la creacion de una ruta
