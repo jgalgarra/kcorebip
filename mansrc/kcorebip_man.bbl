@@ -209,7 +209,7 @@
   \entry{Garcia-Algarra2017}{article}{}
     \name{author}{4}{}{%
       {{hash=GAJ}{%
-         family={García-Algarra},
+         family={Garcia-Algarra},
          familyi={G\bibinitperiod-A\bibinitperiod},
          given={Javier},
          giveni={J\bibinitperiod},
@@ -223,7 +223,7 @@
       {{hash=IJM}{%
          family={Iriondo},
          familyi={I\bibinitperiod},
-         given={José\bibnamedelima María},
+         given={Jose\bibnamedelima Maria},
          giveni={J\bibinitperiod\bibinitdelim M\bibinitperiod},
       }}%
       {{hash=GJ}{%

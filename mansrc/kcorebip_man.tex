@@ -1,4 +1,4 @@
-\documentclass[12pt]{article}
+\documentclass[11pt]{article}
 \usepackage{graphicx}
 \usepackage{epstopdf}
 \usepackage{listings}
@@ -45,7 +45,7 @@ k^A_{radius}(m) = \frac{1}{\mid C^{B} \mid}\sum\limits_{j \in C^{B}} dist_{mj}  
 
 \begin{figure}[h!]
 \centering
-\includegraphics[scale=0.4]{red_example.pdf}
+\includegraphics[scale=0.45]{red_example.pdf}
 \caption {Examples of \textit{$k_{radius}$} in a fictional network.}
 \label{fig:KMAN_red_example}
 \end{figure}
@@ -122,8 +122,13 @@ The function returns:
 \item \texttt{calc\_values}, a list containing the following objects:
    \begin{itemize}
    
-\item \texttt{graph}: an igraph::graph object
-
+\item \texttt{graph}: an igraph::graph object. This is the additional information for each node, besides the regular of the object:
+	\begin{itemize}
+    	\item \texttt{V(result\_analysis\$graph)}: list of node names
+		\item \texttt{V(result\_analysis\$graph)\$kdegree}: list $k_{degree}$
+		\item \texttt{V(result\_analysis\$graph)\$kradius}: list $k_{radius}$
+		\item \texttt{V(result\_analysis\$graph)\$krisk}: list $k_{riks}$, a measurement of vulnerability (See \cite{Garcia-Algarra2017})
+	\end{itemize}
 \item \texttt{max\_core}: maximum k shell index
 
 \item \texttt{nested\_values}: a list containing all the values provided by the bipartite::nested function, unless \texttt{only\_NODF} set TRUE.
