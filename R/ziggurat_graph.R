@@ -1,11 +1,165 @@
 library(scales)
 library(grid)
 library(gridExtra)
-#library(stringr)
 library(bipartite)
 library(igraph)
 library(ggplot2)
 
+#' Plotting a ziggurat graph
+#'
+#' This function plots the ziggurat graph of a bipartite network. Configuration parameters and
+#' results are stored in a global environment called zgg. This environment is not destroyed
+#' after the function is executed, so the developer can store it in a configuration file, retrieve
+#' network analysis variables and so on. If a new ziggurat_graph is called, zgg is destroyed and
+#' created again for the new plot. Plotting options are explained in the user manual.
+#'
+#' @param datadir the name of the file of the interaction matrix
+#' @param filename the file with the interaction matrix
+#' @param print_to_file if set to FALSE the plot is displayed in the R session window
+#' @param plotsdir the directory where the plot is stored
+#' @param flip_results displays the graph in portrait configuration
+#' @param aspect_ratio ziggurat plot default aspect ratio
+#' @param alpha_level transparency for ziggurats' filling
+#' @param color_guild_a default filling for nodes of guild_a
+#' @param color_guild_b default filling for nodes of guild_b
+#' @param color_link default links color
+#' @param alpha_link link transparency
+#' @param size_link width of the links
+#' @param displace_y_b relative vertical displacement of guild_b inner ziggurats
+#' @param displace_y_a relative vertical displacement of guild_a inner ziggurats
+#' @param lsize_kcoremax nodes in kshell max label size
+#' @param lsize_zig nodes in inner ziggurats label size
+#' @param lsize_kcore1 labels of nodes in kshell 1
+#' @param lsize_legend legend label size
+#' @param lsize_kcorebox default kshell boxes label size
+#' @param labels_color default label colors
+#' @param height_box_y_expand expand inner ziggurat rectangles default height by this factor
+#' @param kcore2tail_vertical_separation expand vertical of kshell 1 species linked to kshell 2 by this factor
+#' @param kcore1tail_disttocore expand vertical separation of kshell 1 species from kshell max (guild_a, guild,b)
+#' @param innertail_vertical_separation expand vertical separation of kshell species connected to khsell > 2 & < kshell max
+#' @param factor_hop_x expand inner ziggurats horizontal distance
+#' @param displace_legend modify legend position by these fractions
+#' @param fattailjumphoriz displace kshell 1 species linked to leftmost kshell max species
+#' @param fattailjumpvert idem for vertical position
+#' @param coremax_triangle_width_factor expand khsell max rectangles width by this factor
+#' @param coremax_triangle_height_factor expand khsell max rectangles height by this factor
+#' @param paint_outsiders paint species not connected to giant component
+#' @param displace_outside_component displace outsider species (horizontal, vertical)
+#' @param outsiders_separation_expand multiply by this factor outsiders' separation
+#' @param outsiders_legend_expand displace outsiders legend
+#' @param weirdskcore2_horizontal_dist_rootleaf_expand expand horizontal distance of weird tail root node connected to kshell 2
+#' @param weirdskcore2_vertical_dist_rootleaf_expand expand vertical distance of weird tails connected to kshell 2
+#' @param weirds_boxes_separation_count weird species boxes separation count
+#' @param root_weird_expand expand root weird distances of tails connected to kshell <> 2
+#' @param hide_plot_border hide border around the plot
+#' @param rescale_plot_area full plot area rescaling (horizontal, vertical)
+#' @param kcore1weirds_leafs_vertical_separation expand vertical separation of weird tails connected to kshell 1 species
+#' @param corebox_border_size width of kshell boxes
+#' @param kcore_species_name_display display species names of  shells listed in this vector
+#' @param kcore_species_name_break allow new lines in species names of  shells listed in this vector
+#' @param shorten_species_name number of characters of species name to display
+#' @param exclude_species_number do not include species number in species
+#' @param label_strguilda string labels of guild a
+#' @param label_strguildb string labels of guild b
+#' @param landscape_plot paper landscape configuration
+#' @param backg_color plot background color
+#' @param show_title show plot title
+#' @param use_spline use splines to draw links
+#' @param spline_points number of points for each spline
+#' @param file_name_append a label that the user may append to the plot file name for convenience
+#' @param svg_scale_factor only for interactive apps, do not modify
+#' @param weighted_links function to add link weight: 'none', 'log10' , 'ln'
+#' @param square_nodes_size_scale scale nodes area of kcore1 and outsiders
+#' @param move_all_SVG_up move up all the SVG plot by this fraction, useful to crop upper white space
+#' @param progress only for interactive apps, do not modifiy
+#' @export
+#' @examples ziggurat_graph("data/","M_PL_001.csv",plotsdir="grafresults/",print_to_file = TRUE)
+
+ziggurat_graph <- function(datadir,filename,
+                           paintlinks = TRUE, print_to_file = FALSE, plotsdir ="plot_results/ziggurat/", flip_results = FALSE,
+                           aspect_ratio = 1,
+                           alpha_level = 0.2, color_guild_a = c("#4169E1","#00008B"), color_guild_b = c("#F08080","#FF0000"),
+                           color_link = "slategray3", alpha_link = 0.5, size_link = 0.5,
+                           displace_y_b = rep(0,20),
+                           displace_y_a = rep(0,20),
+                           lsize_kcoremax = 3.5, lsize_zig = 3, lsize_kcore1 = 2.5, lsize_legend = 4, lsize_core_box = 2.5,
+                           labels_color = c(),
+                           height_box_y_expand = 1, kcore2tail_vertical_separation = 1,  kcore1tail_disttocore = c(1,1),
+                           innertail_vertical_separation = 1,
+                           factor_hop_x = 1, displace_legend = c(0,0), fattailjumphoriz = c(1,1), fattailjumpvert = c(1,1),
+                           coremax_triangle_height_factor = 1, coremax_triangle_width_factor = 1,
+                           paint_outsiders = TRUE, displace_outside_component = c(0,0),
+                           outsiders_separation_expand = 1, outsiders_legend_expand = 1,
+                           weirdskcore2_horizontal_dist_rootleaf_expand = 1,
+                           weirdskcore2_vertical_dist_rootleaf_expand = 0, weirds_boxes_separation_count = 1,
+                           root_weird_expand = c(1,1), hide_plot_border = TRUE, rescale_plot_area = c(1,1),
+                           kcore1weirds_leafs_vertical_separation = 1, corebox_border_size = 0.2,
+                           kcore_species_name_display = c(), kcore_species_name_break = c(),
+                           shorten_species_name = 0, exclude_species_number = FALSE, label_strguilda = "",
+                           label_strguildb = "", landscape_plot = TRUE,
+                           backg_color = "white", show_title = TRUE, use_spline =TRUE, spline_points = 100,
+                           file_name_append = "", svg_scale_factor= 10, weighted_links = "none",
+                           square_nodes_size_scale = 1, move_all_SVG_up = 0,
+                           displaylabelszig = TRUE, labels_size = 1,   # dummy parameters for backward compatibility
+                           progress=NULL
+)
+{
+  # This assignment stores the call parameters in ziggurat_argg as a list. This list is useful
+  # to save plotting parameters for a future simulation
+
+  ziggurat_argg <- c(as.list(environment()))
+
+  # Create global environment
+  zgg <<- new.env()
+  if (!is.null(progress)) progress$inc(1/11, detail=strings$value("MESSAGE_ZIGGURAT_PROGRESS_ANALYZING_NETWORK"))
+  # Analyze network
+  f <- read_and_analyze(datadir,filename,label_strguilda, label_strguildb)
+  zgg$result_analysis <- f["result_analysis"][[1]]
+  zgg$str_guild_a <- f["str_guild_a"][[1]]
+  zgg$str_guild_b <- f["str_guild_b"][[1]]
+  zgg$name_guild_a <- f["name_guild_a"][[1]]
+  zgg$name_guild_b <- f["name_guild_b"][[1]]
+  zgg$network_name <- f["network_name"][[1]]
+  # Exit if kcore max == 1
+  if (zgg$result_analysis$max_core == 1){
+    msg = "Max core is 1. Ziggurat plot only works if max core is bigger than 1"
+    if (!is.null(progress))
+      progress$inc(1/11, detail=strings$value(msg))
+    else
+      print(msg)
+    return(zgg)
+  }
+  # Copy input parameters to the zgg environment
+  def_configuration(paintlinks, print_to_file, plotsdir, flip_results, aspect_ratio,
+                    alpha_level, color_guild_a, color_guild_b,
+                    color_link, alpha_link, size_link,
+                    displace_y_b, displace_y_a, lsize_kcoremax, lsize_zig, lsize_kcore1,
+                    lsize_legend, lsize_core_box, labels_color,
+                    height_box_y_expand, kcore2tail_vertical_separation,  kcore1tail_disttocore,
+                    innertail_vertical_separation,
+                    factor_hop_x, displace_legend, fattailjumphoriz, fattailjumpvert,
+                    coremax_triangle_height_factor, coremax_triangle_width_factor,
+                    paint_outsiders, displace_outside_component,
+                    outsiders_separation_expand, outsiders_legend_expand, weirdskcore2_horizontal_dist_rootleaf_expand,
+                    weirdskcore2_vertical_dist_rootleaf_expand , weirds_boxes_separation_count,
+                    root_weird_expand, hide_plot_border, rescale_plot_area,kcore1weirds_leafs_vertical_separation,
+                    corebox_border_size, kcore_species_name_display,kcore_species_name_break,shorten_species_name,exclude_species_number,
+                    label_strguilda, label_strguildb, landscape_plot, backg_color, show_title,
+                    use_spline, spline_points, file_name_append, svg_scale_factor, weighted_links,
+                    square_nodes_size_scale, move_all_SVG_up, progress
+  )
+  # Removes nodes without any tie. This is not usual in input files but happens
+  # when performing destruction simulations
+  strip_isolated_nodes()
+  init_working_values()
+  draw_ziggurat_plot(svg_scale_factor, progress)
+  # Copy input parameters as a string for reroducibility
+  zgg$ziggurat_argg <- ziggurat_argg
+  return(zgg)
+}
+
+
+# Labels of square nodes: tails, weird chains and outsiders
 gen_sq_label <- function(nodes, joinchars = "\n", is_guild_a = TRUE)
 {
   # If kcore1 nodes name are displayed
@@ -30,11 +184,11 @@ gen_sq_label <- function(nodes, joinchars = "\n", is_guild_a = TRUE)
   return(ssal)
 }
 
-
+# Create the label species. May be complex if user chooses to display
+# the binomial name
 create_label_species <- function(strent,newline = FALSE){
   strchar <- ifelse(newline,"\n","")
   pieces <- unlist(strsplit(unlist(strent)," "))
-
   if (is.na(pieces[2]))
     pieces[2] = ""
   if (zgg$shorten_species_name>0){
@@ -49,6 +203,7 @@ create_label_species <- function(strent,newline = FALSE){
   return(strsal)
 }
 
+# Decides length and rotation of labels
 name_species_preprocess <- function (kcore, list_dfs, kcore_species_name_display,
                                      kcore_species_name_break) {
   if (is.element(kcore,kcore_species_name_display)){
@@ -71,6 +226,7 @@ name_species_preprocess <- function (kcore, list_dfs, kcore_species_name_display
   return(calc_values)
 }
 
+# Draws a square, both in ggplot2 and SVG flavours
 draw_square<- function(idPrefix, grafo,svg,basex,basey,side,fillcolor,alphasq,labelcolor,
                        langle,hjust,vjust,slabel,lbsize = zgg$labels_size,
                        inverse="no",adjustoxy = "yes", edgescolor="transparent")
@@ -104,6 +260,7 @@ draw_square<- function(idPrefix, grafo,svg,basex,basey,side,fillcolor,alphasq,la
   return(calc_vals)
 }
 
+# Draw a rectangle. Nodes of inner ziggurats and coremax are rectangles
 draw_rectangle<- function(idPrefix,basex,basey,widthx,widthy,grafo,svg,bordercolor,fillcolor,palpha,slabel,inverse="no",sizelabel=3, bordersize =0.5 )
 {
   x1 <- c(basex)
@@ -135,6 +292,7 @@ draw_rectangle<- function(idPrefix,basex,basey,widthx,widthy,grafo,svg,bordercol
   return(calc_vals)
 }
 
+# Draws (optional) enclosing shell boxes
 draw_core_box <- function(grafo, svg, kcore)
 {
   marginy <- ifelse((zgg$df_cores$num_species_guild_a[2]+zgg$df_cores$num_species_guild_b[2]>4),1.2*zgg$height_y,0.7*zgg$height_y)
@@ -192,6 +350,7 @@ draw_core_box <- function(grafo, svg, kcore)
   return(calc_vals)
 }
 
+# Computes the weight of links depending on the grouping option chosen by the user
 get_link_weights <- function(matrixweight)
 {
   if (zgg$weighted_links == "none")
@@ -202,7 +361,7 @@ get_link_weights <- function(matrixweight)
     return(1+log(matrixweight))
 }
 
-
+# Draw tail, species or set of species of 1-shell connected to higher k-index species
 draw_tail <- function(idPrefix, p,svg,fat_tail,lado,color,sqlabel,basex,basey,gap,
                       lxx2=0,lyy2=0,sqinverse = "no",
                       position = "West", background = "no",
@@ -224,19 +383,23 @@ draw_tail <- function(idPrefix, p,svg,fat_tail,lado,color,sqlabel,basex,basey,ga
   yy <- abs(basey)
   plxx2 <- lxx2
   plyy2 <- lyy2
+  # Lower half plane of the ziggurat
   if (sqinverse=="yes")
     signo <- -1
+  # Tails connected eastwards to inner ziggurats
   if (position == "West"){
     xx <- basex-gap
     posxx1 <- xx+sidex
     posyy1 = signo*(yy)+signo*(0.5*sidex/(zgg$aspect_ratio))
   }
+  # Fat tails, or group of species linked to the highest kdegree species in max shell
   else if (position == "East"){
     gap <- zgg$hop_x/2
     xx <- basex+gap
     posxx1 <- xx
     posyy1 = signo*(yy+sidex/(2*zgg$aspect_ratio))
   }
+  # Tails connected to other nodes of the max shell
   else if ((position == "North") |(position == "South")) {
     xx <- basex-sidex/2
     posxx1 <- xx+sidex/2
@@ -265,12 +428,14 @@ draw_tail <- function(idPrefix, p,svg,fat_tail,lado,color,sqlabel,basex,basey,ga
   }
   if ((zgg$flip_results) & (langle == 0) & (position!="West") )
     langle <- langle + 70
+  # Draw square node
   f <- draw_square(idPrefix, p,svg, xx,yy,paintsidex*sqrt(zgg$square_nodes_size_scale),
                    bgcolor,palpha,labelcolor,langle,lhjust,lvjust,
                    slabel=sqlabel,lbsize = psize,inverse = sqinverse,
                    adjustoxy = adjust, edgescolor = ecolor)
   p <- f["p"][[1]]
   svg <- f["svg"][[1]]
+  # Add tail link
   if (zgg$paintlinks)
     add_link(xx1=posxx1, xx2 = plxx2,
                    yy1 = posyy1, yy2 = plyy2,
@@ -376,6 +541,9 @@ draw_edge_tails <- function(p,svg,point_x,point_y,kcoreother,long_tail,list_dfs,
   return(calc_vals)
 }
 
+
+# Species disconnected of the Giant Component, called 'outsiders'
+# Compute coordinates
 conf_outsiders <- function(outsiders,basex,basey,sidex,fillcolor,strguild)
 {
   x1 <- c()
@@ -405,6 +573,7 @@ conf_outsiders <- function(outsiders,basex,basey,sidex,fillcolor,strguild)
   return(d1)
 }
 
+# Draw outsider square nodes
 draw_sq_outsiders <- function(idPrefix, p,svg,dfo,paintsidex,alpha_level,lsize,is_guild_a = TRUE)
 {
   if (length(zgg$labels_color)>0)
@@ -422,6 +591,7 @@ draw_sq_outsiders <- function(idPrefix, p,svg,dfo,paintsidex,alpha_level,lsize,i
   return(calc_vals)
 }
 
+# Full outsiders management procedure
 handle_outsiders <- function(p,svg,outsiders,df_chains) {
   if (length(zgg$outsider)>0){
     paintsidex <- 2*zgg$height_y*zgg$aspect_ratio
@@ -462,7 +632,6 @@ handle_outsiders <- function(p,svg,outsiders,df_chains) {
         }
       }
     }
-
     margin <- zgg$height_y
     x_inf <- min(dfo_a$x1,dfo_b$x1) - 1.5*margin
     widthx <- max(dfo_a$x2,dfo_b$x2) - x_inf + margin
@@ -487,6 +656,7 @@ handle_outsiders <- function(p,svg,outsiders,df_chains) {
   return(calc_vals)
 }
 
+# Draw one triangle of the innermost shell
 draw_coremax_triangle <- function(basex,topx,basey,topy,numboxes,fillcolor,strlabels,
                                   igraphnet,strguild,orderby = "None")
 {
@@ -501,7 +671,6 @@ draw_coremax_triangle <- function(basex,topx,basey,topy,numboxes,fillcolor,strla
   name_species <- c()
   pbasex <- zgg$coremax_triangle_width_factor*( basex - (numboxes %/%8) * abs(topx-basex)/3)
   xstep <- (topx-pbasex)*1/numboxes
-
   ptopy <- topy * zgg$coremax_triangle_height_factor
   ystep <- (ptopy-basey)*0.7/numboxes
   for (j in (1:numboxes))
@@ -517,7 +686,6 @@ draw_coremax_triangle <- function(basex,topx,basey,topy,numboxes,fillcolor,strla
     name_species <- c(name_species,"")
   }
   d1 <- data.frame(x1, x2, y1, y2, r, col_row, kdegree, kradius, name_species, stringsAsFactors=FALSE)
-
   d1$label <- strlabels
   for (i in 1:nrow(d1)){
     d1[i,]$kdegree <- igraphnet[paste0(strguild,d1[i,]$label)]$kdegree
@@ -572,14 +740,11 @@ conf_outsiders_info <- function(strguild)
   listspecies <- NULL
   num_s <- zgg$cores[1,]$num_species_guild_a
   if (strguild == zgg$str_guild_a)
-    #if (!is.null(zgg$outsiders_a))
       listspecies = zgg$outsiders_a
   else
-    #if (!is.null(zgg$outsiders_b))
       listspecies = zgg$outsiders_b
   for (j in listspecies)
   {
-    #ind <- paste0(strguild,j)
     auxlistdf$label <- gsub(strguild,"",j)
     auxlistdf$kdegree <-  V(zgg$result_analysis$graph)[j]$kdegree
     auxlistdf$kradius <-  V(zgg$result_analysis$graph)[j]$kradius
@@ -589,6 +754,7 @@ conf_outsiders_info <- function(strguild)
   return(retlistdf)
 }
 
+# Configuration of inner ziggurats coordinates
 conf_ziggurat <- function(igraphnet, basex,widthx,basey,ystep,numboxes,fillcolor, strlabels, strguild, inverse = "no", edge_tr = "no")
 {
   kdeg <- rep(0,length(strlabels))
@@ -613,7 +779,6 @@ conf_ziggurat <- function(igraphnet, basex,widthx,basey,ystep,numboxes,fillcolor
   fmult_hght <- 1
   if (edge_tr == "no"){
     xstep <- widthx/numboxes
-    #fmult_hght <- 1.8
     if (numboxes > 3)
     {
       topx <- basex + widthx
@@ -654,6 +819,7 @@ conf_ziggurat <- function(igraphnet, basex,widthx,basey,ystep,numboxes,fillcolor
   return(d1)
 }
 
+# Draw one of the inner ziggurats
 draw_individual_ziggurat <- function(idPrefix, igraphnet, kc, basex = 0, widthx = 0, basey = 0, ystep = 0, numboxes = 0, strlabels = "", strguild = "",
                           sizelabels = 3, colorb = "", grafo = "", svg, zinverse ="no", edge = "no", angle = 0)
 {
@@ -687,7 +853,8 @@ draw_individual_ziggurat <- function(idPrefix, igraphnet, kc, basex = 0, widthx 
   return(calc_grafs)
 }
 
-
+# Find orphans. Orphans are species 1-shell connected to species 1-shell
+# They form werid chains AKA chains of speciaists
 find_orphans <- function(mtxlinks,orphans,gnet,guild_a="yes")
 {
   m <- 0
@@ -726,14 +893,13 @@ find_orphans <- function(mtxlinks,orphans,gnet,guild_a="yes")
   return(df_orph)
 }
 
-
+# Add one link to the graph
 add_link <- function(xx1 = 0,xx2 = 0,yy1 = 0,yy2 = 0,
                       slink = 1,clink = c("gray70"),alpha_l = 0.1, spline = "no")
 {
   if (!zgg$use_spline)
     spline  <- "no"
   link <- data.frame(x1=xx1, x2 = xx2, y1 = yy1,  y2 = yy2, weightlink = slink)
-
   npoints_link <- zgg$spline_points
   col_link <- clink[1]
   if (spline == "no")
@@ -775,6 +941,7 @@ add_link <- function(xx1 = 0,xx2 = 0,yy1 = 0,yy2 = 0,
   return(0)
 }
 
+# Analysis of the chains of specialists
 weird_analysis <- function(weirds,opposite_weirds,species)
 {
   ldf <- weirds[weirds$orph == species,]
@@ -782,6 +949,8 @@ weird_analysis <- function(weirds,opposite_weirds,species)
     return(ldf)
 }
 
+# Store speciailsts in initermediate df_store data frame and compute positions
+# Very hard, indeed
 store_weird_species <- function (row_orph, df_store, strguild, lado, gap, original_weirds_a, original_weirds_b)
 {
 
@@ -919,6 +1088,7 @@ store_weird_species <- function (row_orph, df_store, strguild, lado, gap, origin
   return(df_store)
 }
 
+# Draw a chain of specialists
 draw_weird_chains <- function(grafo, svg, df_chains, ladosq)
 {
   p <- grafo
@@ -1001,14 +1171,13 @@ swap_strguild <- function(strguild)
   return(strguild)
 }
 
+# Store the root node of a chain of specialists
 store_root_leaf <- function(weirds,df_chains,strguild,lado, gap, original_weirds_a, original_weirds_b)
 {
   for (i in 1:nrow(weirds))
   {
     if (weirds[i,]$kcore > 1){
-      #print(weirds[i,])
       df_chains <- store_weird_species(weirds[i,], df_chains, strguild, lado , gap, original_weirds_a, original_weirds_b)
-      #print(df_chains)
       weirds[i,]$drawn = "yes"
     }
   }
@@ -1016,6 +1185,7 @@ store_root_leaf <- function(weirds,df_chains,strguild,lado, gap, original_weirds
   return(calc_vals)
 }
 
+# Store leafs of a weird chain
 store_branch_leaf <- function(weirds, weirds_opp,df_chains, pstrguild, plado, gap, original_weirds_a, original_weirds_b)
 {
   for (i in 1:nrow(weirds))
@@ -1036,7 +1206,7 @@ store_branch_leaf <- function(weirds, weirds_opp,df_chains, pstrguild, plado, ga
   return(calc_vals)
 }
 
-
+# Draw links among species of same k-index
 draw_innercores_tails <- function(p,svg,kc,list_dfs,df_orph,color_guild, inverse="no", is_guild_a = TRUE)
 {
   lastx <- 0
@@ -1074,6 +1244,7 @@ draw_innercores_tails <- function(p,svg,kc,list_dfs,df_orph,color_guild, inverse
   return(calc_vals)
 }
 
+# Draw lnks amnog inner ziggurats
 draw_inner_links <- function(p, svg)
 {
     for (kcb in seq(zgg$kcoremax,2))
@@ -1159,6 +1330,7 @@ draw_inner_links <- function(p, svg)
     return(calc_vals)
 }
 
+# Draw tail connected to highest kdegree node
 draw_fat_tail<- function(p,svg,fat_tail,nrows,list_dfs,color_guild,pos_tail_x,pos_tail_y,fattailjhoriz,fattailjvert,fgap,
                          inverse="no", is_guild_a =TRUE)
 {
@@ -1182,6 +1354,7 @@ draw_fat_tail<- function(p,svg,fat_tail,nrows,list_dfs,color_guild,pos_tail_x,po
   return(calc_vals)
 }
 
+# Management of chains of specialists
 handle_weirds <- function(p,svg,weirds_a,weirds_b,lado,gap)
 {
   ladosq <- 2 * lado * sqrt(zgg$square_nodes_size_scale)
@@ -1249,6 +1422,7 @@ handle_weirds <- function(p,svg,weirds_a,weirds_b,lado,gap)
   return(calc_vals)
 }
 
+# Final annotations
 write_annotations <- function(p, svg)
 {
   if (zgg$show_title)
@@ -1322,6 +1496,7 @@ write_annotations <- function(p, svg)
   return(calc_vals)
 }
 
+# Handle tail species
 handle_orphans <- function(vg)
 {
   zgg$df_orph_a <- data.frame(c())
@@ -2042,151 +2217,6 @@ draw_ziggurat_plot <- function(svg_scale_factor, progress)
   return(zgg)
 }
 
-#' Plotting a ziggurat graph
-#'
-#' This function plots the ziggurat graph of a bipartite network. Configuration parameters and
-#' results are stored in a global environment called zgg. This environment is not destroyed
-#' after the function is executed, so the developer can store it in a configuration file, retrieve
-#' network analysis variables and so on. If a new ziggurat_graph is called, zgg is destroyed and
-#' created again for the new plot. Plotting options are explained in the user manual.
-#'
-#' @param datadir the name of the file of the interaction matrix
-#' @param filename the file with the interaction matrix
-#' @param print_to_file if set to FALSE the plot is displayed in the R session window
-#' @param plotsdir the directory where the plot is stored
-#' @param flip_results displays the graph in portrait configuration
-#' @param aspect_ratio ziggurat plot default aspect ratio
-#' @param alpha_level transparency for ziggurats' filling
-#' @param color_guild_a default filling for nodes of guild_a
-#' @param color_guild_b default filling for nodes of guild_b
-#' @param color_link default links color
-#' @param alpha_link link transparency
-#' @param size_link width of the links
-#' @param displace_y_b relative vertical displacement of guild_b inner ziggurats
-#' @param displace_y_a relative vertical displacement of guild_a inner ziggurats
-#' @param lsize_kcoremax nodes in kshell max label size
-#' @param lsize_zig nodes in inner ziggurats label size
-#' @param lsize_kcore1 labels of nodes in kshell 1
-#' @param lsize_legend legend label size
-#' @param lsize_kcorebox default kshell boxes label size
-#' @param labels_color default label colors
-#' @param height_box_y_expand expand inner ziggurat rectangles default height by this factor
-#' @param kcore2tail_vertical_separation expand vertical of kshell 1 species linked to kshell 2 by this factor
-#' @param kcore1tail_disttocore expand vertical separation of kshell 1 species from kshell max (guild_a, guild,b)
-#' @param innertail_vertical_separation expand vertical separation of kshell species connected to khsell > 2 & < kshell max
-#' @param factor_hop_x expand inner ziggurats horizontal distance
-#' @param displace_legend modify legend position by these fractions
-#' @param fattailjumphoriz displace kshell 1 species linked to leftmost kshell max species
-#' @param fattailjumpvert idem for vertical position
-#' @param coremax_triangle_width_factor expand khsell max rectangles width by this factor
-#' @param coremax_triangle_height_factor expand khsell max rectangles height by this factor
-#' @param paint_outsiders paint species not connected to giant component
-#' @param displace_outside_component displace outsider species (horizontal, vertical)
-#' @param outsiders_separation_expand multiply by this factor outsiders' separation
-#' @param outsiders_legend_expand displace outsiders legend
-#' @param weirdskcore2_horizontal_dist_rootleaf_expand expand horizontal distance of weird tail root node connected to kshell 2
-#' @param weirdskcore2_vertical_dist_rootleaf_expand expand vertical distance of weird tails connected to kshell 2
-#' @param weirds_boxes_separation_count weird species boxes separation count
-#' @param root_weird_expand expand root weird distances of tails connected to kshell <> 2
-#' @param hide_plot_border hide border around the plot
-#' @param rescale_plot_area full plot area rescaling (horizontal, vertical)
-#' @param kcore1weirds_leafs_vertical_separation expand vertical separation of weird tails connected to kshell 1 species
-#' @param corebox_border_size width of kshell boxes
-#' @param kcore_species_name_display display species names of  shells listed in this vector
-#' @param kcore_species_name_break allow new lines in species names of  shells listed in this vector
-#' @param shorten_species_name number of characters of species name to display
-#' @param exclude_species_number do not include species number in species
-#' @param label_strguilda string labels of guild a
-#' @param label_strguildb string labels of guild b
-#' @param landscape_plot paper landscape configuration
-#' @param backg_color plot background color
-#' @param show_title show plot title
-#' @param use_spline use splines to draw links
-#' @param spline_points number of points for each spline
-#' @param file_name_append a label that the user may append to the plot file name for convenience
-#' @param svg_scale_factor only for interactive apps, do not modify
-#' @param weighted_links function to add link weight: 'none', 'log10' , 'ln'
-#' @param square_nodes_size_scale scale nodes area of kcore1 and outsiders
-#' @param move_all_SVG_up move up all the SVG plot by this fraction, useful to crop upper white space
-#' @param progress only for interactive apps, do not modifiy
-#' @export
-#' @examples ziggurat_graph("data/","M_PL_001.csv",plotsdir="grafresults/",print_to_file = TRUE)
-
-ziggurat_graph <- function(datadir,filename,
-                           paintlinks = TRUE, print_to_file = FALSE, plotsdir ="plot_results/ziggurat/", flip_results = FALSE,
-                           aspect_ratio = 1,
-                           alpha_level = 0.2, color_guild_a = c("#4169E1","#00008B"), color_guild_b = c("#F08080","#FF0000"),
-                           color_link = "slategray3", alpha_link = 0.5, size_link = 0.5,
-                           displace_y_b = rep(0,20),
-                           displace_y_a = rep(0,20),
-                           lsize_kcoremax = 3.5, lsize_zig = 3, lsize_kcore1 = 2.5, lsize_legend = 4, lsize_core_box = 2.5,
-                           labels_color = c(),
-                           height_box_y_expand = 1, kcore2tail_vertical_separation = 1,  kcore1tail_disttocore = c(1,1),
-                           innertail_vertical_separation = 1,
-                           factor_hop_x = 1, displace_legend = c(0,0), fattailjumphoriz = c(1,1), fattailjumpvert = c(1,1),
-                           coremax_triangle_height_factor = 1, coremax_triangle_width_factor = 1,
-                           paint_outsiders = TRUE, displace_outside_component = c(0,0),
-                           outsiders_separation_expand = 1, outsiders_legend_expand = 1,
-                           weirdskcore2_horizontal_dist_rootleaf_expand = 1,
-                           weirdskcore2_vertical_dist_rootleaf_expand = 0, weirds_boxes_separation_count = 1,
-                           root_weird_expand = c(1,1), hide_plot_border = TRUE, rescale_plot_area = c(1,1),
-                           kcore1weirds_leafs_vertical_separation = 1, corebox_border_size = 0.2,
-                           kcore_species_name_display = c(), kcore_species_name_break = c(),
-                           shorten_species_name = 0, exclude_species_number = FALSE, label_strguilda = "",
-                           label_strguildb = "", landscape_plot = TRUE,
-                           backg_color = "white", show_title = TRUE, use_spline =TRUE, spline_points = 100,
-                           file_name_append = "", svg_scale_factor= 10, weighted_links = "none",
-                           square_nodes_size_scale = 1, move_all_SVG_up = 0,
-                           displaylabelszig = TRUE, labels_size = 1,   # dummy parameters for backward compatibility
-                           progress=NULL
-                           )
-{
-  # This assignment stores the call parameters in polar_argg as a list. This list is useful
-  # to save plotting parameters for a future simulation
-
-  ziggurat_argg <- c(as.list(environment()))
-
-  zgg <<- new.env()
-  if (!is.null(progress)) progress$inc(1/11, detail=strings$value("MESSAGE_ZIGGURAT_PROGRESS_ANALYZING_NETWORK"))
-  f <- read_and_analyze(datadir,filename,label_strguilda, label_strguildb)
-  zgg$result_analysis <- f["result_analysis"][[1]]
-  zgg$str_guild_a <- f["str_guild_a"][[1]]
-  zgg$str_guild_b <- f["str_guild_b"][[1]]
-  zgg$name_guild_a <- f["name_guild_a"][[1]]
-  zgg$name_guild_b <- f["name_guild_b"][[1]]
-  zgg$network_name <- f["network_name"][[1]]
-  if (zgg$result_analysis$max_core == 1){
-    msg = "Max core is 1. Ziggurat plot only works if max core is bigger than 1"
-    if (!is.null(progress))
-      progress$inc(1/11, detail=strings$value(msg))
-    else
-      print(msg)
-    return(zgg)
-  }
-  def_configuration(paintlinks, print_to_file, plotsdir, flip_results, aspect_ratio,
-                    alpha_level, color_guild_a, color_guild_b,
-                    color_link, alpha_link, size_link,
-                    displace_y_b, displace_y_a, lsize_kcoremax, lsize_zig, lsize_kcore1,
-                    lsize_legend, lsize_core_box, labels_color,
-                    height_box_y_expand, kcore2tail_vertical_separation,  kcore1tail_disttocore,
-                    innertail_vertical_separation,
-                    factor_hop_x, displace_legend, fattailjumphoriz, fattailjumpvert,
-                    coremax_triangle_height_factor, coremax_triangle_width_factor,
-                    paint_outsiders, displace_outside_component,
-                    outsiders_separation_expand, outsiders_legend_expand, weirdskcore2_horizontal_dist_rootleaf_expand,
-                    weirdskcore2_vertical_dist_rootleaf_expand , weirds_boxes_separation_count,
-                    root_weird_expand, hide_plot_border, rescale_plot_area,kcore1weirds_leafs_vertical_separation,
-                    corebox_border_size, kcore_species_name_display,kcore_species_name_break,shorten_species_name,exclude_species_number,
-                    label_strguilda, label_strguildb, landscape_plot, backg_color, show_title,
-                    use_spline, spline_points, file_name_append, svg_scale_factor, weighted_links,
-                    square_nodes_size_scale, move_all_SVG_up, progress
-                    )
-  strip_isolated_nodes()
-  init_working_values()
-  draw_ziggurat_plot(svg_scale_factor, progress)
-  zgg$ziggurat_argg <- ziggurat_argg
-  return(zgg)
-}
 
 # ziggurat_graph("data/","M_SD_008.csv", plotsdir = "plot_results/ziggurat",color_link = "slategray3",weighted_links = "log10",
 #                                alpha_link = 0.5,coremax_triangle_width_factor = 1.3,  displace_y_a=c(0,0,0,0,0.5,0.7,0),
