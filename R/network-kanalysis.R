@@ -2,67 +2,6 @@ library(igraph)
 library(bipartite)
 library(ggplot2)
 
-#' Functions for k-core decompose a bipartite graph and computing some newtork indexes
-
-#' Reads a network interaction matrix from a CSV file
-#'
-#' Args:
-#'   namenetwork: CSV file that contains the interaction matrix
-#'   guild_a, guild_b: Identifier of the guild of species of each class. Default "pl" (plant)
-#'                     "pol" (pollinator)
-#'   directory: directory where newtork CSVs are located
-#'
-#' Return List:
-#'   graph: Newtork as an igraph object
-#'   m    : Interaction matrix
-#'   num_guild_b : number of species of guild_b
-#'   num_guild_a" : number of species of guild_a
-#'   names_guild_a : names of nodes of guild_a
-#'   names_guild_b : names of species of guild_b
-
-read_network <- function(namenetwork, guild_astr = "pl", guild_bstr = "pol", directory="")
-{
-  # Reading species names
-  namesred <- read.csv(paste0(directory,namenetwork),header=FALSE,stringsAsFactors=FALSE)
-  names_guild_a <- namesred[1,2:ncol(namesred)]
-  names_guild_b <- namesred[2:nrow(namesred),1]
-
-  #Reading matrix data
-  m <- read.csv(paste0(directory,namenetwork),header=TRUE,row.names=1)
-
-  num_guild_a <- ncol(m)
-  num_guild_b <- nrow(m)
-  g <- graph.empty()
-  for (i in 1:num_guild_a){
-    g <- g + vertices(paste0(guild_astr,i),color="white",guild_id="a",name_species=names_guild_a[i],id=i)
-  }
-  for (i in 1:num_guild_b){
-    g <- g + vertices(paste0(guild_bstr,i),color="red",guild_id="b",name_species=names_guild_b[i],id=i)
-  }
-
-
-  # for (j in 1:num_guild_a)
-  # {
-  #   for (i in 1:num_guild_b)
-  #   {
-  #     if (m[i,j]!=0) {
-  #       g <- g + igraph::edges(paste0(guild_bstr,i),paste0(guild_astr,j))
-  #     }
-  #   }
-  # }
-
-  mm <- matrix(unlist(list(m)),nrow=num_guild_b,ncol=num_guild_a)
-  listedgesn <- which(mm!=0, arr.ind = T)
-  listedgesn <- listedgesn[order(listedgesn[,1],listedgesn[,2]),]
-  listedgesn[,1] <- paste0(guild_bstr,listedgesn[,1])
-  listedgesn[,2] <- paste0(guild_astr,listedgesn[,2])
-  g <- g + graph.edgelist(listedgesn)
-  calc_values <- list("graph" = g, "matrix" = m, "num_guild_b" = num_guild_b, "num_guild_a" = num_guild_a,
-                      "names_guild_a" = names_guild_a, "names_guild_b"=names_guild_b)
-  return(calc_values)
-
-}
-
 #' Network analysis using k core decomposition
 #'
 #' This function performs the kcore decomposition of a bipartite network. The input is
@@ -101,6 +40,7 @@ analyze_network <- function(namenetwork, directory="", guild_a = "pl", guild_b =
                             weight_direction = "none")
 {
 
+  # K radius is the average distance to nodes of maximum k index of the opposite guild
   calc_kradius <- function(i)
   {
     kradius <- 0
@@ -113,24 +53,28 @@ analyze_network <- function(namenetwork, directory="", guild_a = "pl", guild_b =
   }
 
   an <<- new.env()
-  # zinit_time <- proc.time()
-
+  # Read interaction matrix file
   nread <- read_network(namenetwork, directory = directory, guild_astr = guild_a, guild_bstr = guild_b)
+  # create empty graph
   an$g <- as.undirected(nread$g)
   m <- nread$matrix
   names_guild_a <- nread$names_guild_a
   names_guild_b <- nread$names_guild_b
   num_guild_b <- nread$num_guild_b
   num_guild_a <- nread$num_guild_a
+  # Get egde matrix
   edge_matrix <- igraph::get.edges(an$g, E(an$g))
+  # Compute all shortest paths in network
   spaths_mat <- shortest.paths(an$g)
+  # k-core decompose the network
   g_cores <- graph.coreness(an$g)
 
   wtc <- walktrap.community(an$g)
   #modularity(wtc)
   modularity_measure <- modularity(an$g, membership(wtc))
 
-
+  # This option to plot graphs is only useful for a preliminary exam
+  # becasuse quality is not good enough
   if (plot_graphs){
     plot(an$g, vertex.size=8, layout=layout.kamada.kawai)
     hist(g_cores,right=FALSE)
@@ -143,8 +87,8 @@ analyze_network <- function(namenetwork, directory="", guild_a = "pl", guild_b =
   {
     p[k] <- list(names(g_cores[g_cores == k]))
   }
-  # Find plants and plos of a core
-
+  # Find plants and pollinatorss of a core
+  # In general, you must read 'plants' as 'guildA' and 'pols' as 'guildB' species
   plants_k <- list(rep(NA,max_core))
   pols_k <- list(rep(NA,max_core))
   for (i in 1:max_core)
@@ -167,8 +111,6 @@ analyze_network <- function(namenetwork, directory="", guild_a = "pl", guild_b =
   plants_maxcore <- p[[max_core]][grep(guild_a,as.character(unlist(p[max_core])))]
   pols_maxcore <- p[[max_core]][grep(guild_b,as.character(unlist(p[max_core])))]
   # Purge possible nodes of kcore number maximum that are not part of the giant component
-  # Only one case detected, when kcoremax == 2, network PL_30
-
   if (max_core ==2)
   {
     meandiscnodes <- mean(spaths_mat== Inf)
@@ -179,6 +121,7 @@ analyze_network <- function(namenetwork, directory="", guild_a = "pl", guild_b =
         if (mean(spaths_mat[i,] == Inf)>2*meandiscnodes)
           pols_maxcore <- pols_maxcore[pols_maxcore!=i]
   }
+  # Nodes that are not part of the Giant Component
   V(an$g)$kradius <- NA
   V(an$g)$kcorenum <- NA
   V(an$g)$kdegree <- 0
@@ -187,9 +130,11 @@ analyze_network <- function(namenetwork, directory="", guild_a = "pl", guild_b =
   V(an$g)$guild <- ""
   E(an$g)$weights <- 1
 
+  # Weight of links
   for(i in 1:length(E(an$g))){
     E(an$g)$weights[i] <- m[edge_matrix[i,][2]- num_guild_a,edge_matrix[i,][1]]
   }
+  # Assign k-inedx to each species
   for (i in 1:max_core)
   {
     lnod <- p[[i]]
@@ -199,7 +144,10 @@ analyze_network <- function(namenetwork, directory="", guild_a = "pl", guild_b =
     }
   }
 
+  # k-risk initialization
   V(an$g)$krisk <- 0
+
+  # k-radius computation
   listanodos <- grep(guild_a,V(an$g)$name)
   an$guild <- guild_a
   an$guild_maxcore <- pols_maxcore
@@ -210,8 +158,8 @@ analyze_network <- function(namenetwork, directory="", guild_a = "pl", guild_b =
   an$guild_maxcore <- plants_maxcore
   lapply(listanodos, calc_kradius)
 
-
   meandist <- mean(V(an$g)$kradius[V(an$g)$kradius != Inf])
+  # Computation of nestedness measures
   if (only_NODF)
     nested_values<- nested(as.matrix(m), method = "NODF")
   else
@@ -221,6 +169,7 @@ analyze_network <- function(namenetwork, directory="", guild_a = "pl", guild_b =
   aux_graf <- data.frame(kdegree=V(an$g)$kdegree, kradius=V(an$g)$kradius ,
                          krisk=V(an$g)$krisk, kcorenum=V(an$g)$kcorenum)
 
+  # k-risk computation
   for (l in 1:nrow(edge_matrix))
   {
     polvertex = edge_matrix[l,2]
@@ -279,4 +228,60 @@ get_bipartite <- function(g, str_guild_a = "Plant", str_guild_b = "Pollinator", 
   return(bg)
 }
 
-#result_analysis <- analyze_network("M_SD_008.csv", directory = "data/", guild_a = "Plant", guild_b = "Pollinator", plot_graphs = FALSE)
+#' Functions for k-core decompose a bipartite graph and computing some newtork indexes
+#' Reads a network interaction matrix from a CSV file
+#'
+#' Args:
+#'   namenetwork: CSV file that contains the interaction matrix
+#'   guild_a, guild_b: Identifier of the guild of species of each class. Default "pl" (plant)
+#'                     "pol" (pollinator)
+#'   directory: directory where newtork CSVs are located
+#'
+#' Return List:
+#'   graph: Newtork as an igraph object
+#'   m    : Interaction matrix
+#'   num_guild_b : number of species of guild_b
+#'   num_guild_a" : number of species of guild_a
+#'   names_guild_a : names of nodes of guild_a
+#'   names_guild_b : names of species of guild_b
+
+read_network <- function(namenetwork, guild_astr = "pl", guild_bstr = "pol", directory="")
+{
+  # Reading species names
+  namesred <- read.csv(paste0(directory,namenetwork),header=FALSE,stringsAsFactors=FALSE)
+  names_guild_a <- namesred[1,2:ncol(namesred)]
+  names_guild_b <- namesred[2:nrow(namesred),1]
+
+  #Reading matrix data
+  m <- read.csv(paste0(directory,namenetwork),header=TRUE,row.names=1)
+
+  # Calc number of species of each guild
+  num_guild_a <- ncol(m)
+  num_guild_b <- nrow(m)
+  # Create an graph object
+  g <- graph.empty()
+  # Add one node for each species and name it
+  for (i in 1:num_guild_a){
+    g <- g + vertices(paste0(guild_astr,i),color="white",guild_id="a",name_species=names_guild_a[i],id=i)
+  }
+  for (i in 1:num_guild_b){
+    g <- g + vertices(paste0(guild_bstr,i),color="red",guild_id="b",name_species=names_guild_b[i],id=i)
+  }
+
+  # Adding links to the graph object
+  mm <- matrix(unlist(list(m)),nrow=num_guild_b,ncol=num_guild_a)
+  listedgesn <- which(mm!=0, arr.ind = T)
+  listedgesn <- listedgesn[order(listedgesn[,1],listedgesn[,2]),]
+  listedgesn[,1] <- paste0(guild_bstr,listedgesn[,1])
+  listedgesn[,2] <- paste0(guild_astr,listedgesn[,2])
+  g <- g + graph.edgelist(listedgesn)
+  # Return values
+  calc_values <- list("graph" = g, "matrix" = m, "num_guild_b" = num_guild_b, "num_guild_a" = num_guild_a,
+                      "names_guild_a" = names_guild_a, "names_guild_b"=names_guild_b)
+  return(calc_values)
+
+}
+
+
+# EXAMPLE. Cut and paste to test.
+# result_analysis <- analyze_network("M_SD_008.csv", directory = "data/", guild_a = "Plant", guild_b = "Pollinator", plot_graphs = FALSE)
