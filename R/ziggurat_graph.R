@@ -1063,7 +1063,6 @@ store_weird_species <- function (row_orph, df_store, strguild, lado, gap, origin
     if (zgg$kcore1weirds_leafs_vertical_separation!=1){
       addjump <- sign(df_store$y1[index])*reps*zgg$kcore1weirds_leafs_vertical_separation*sidex/zgg$aspect_ratio
       df_store$y1[index]<- addjump + df_store$y1[index]
-      #print(paste("index",index,"df_store$y1[index]",df_store$y1[index],"reps",reps,"addjump",addjump))
     }
 
   }
@@ -1078,11 +1077,9 @@ store_weird_species <- function (row_orph, df_store, strguild, lado, gap, origin
     df_store$yy2[index] <- (data_row$y2+data_row$y1)/2
     if (df_store$kcorepartner[index] > 1){
       df_store$xx2[index] <- data_row$x2
-      #df_store$yy2[index] <- (data_row$y2+data_row$y1)/2
     }
     else {
       df_store$xx2[index] <- data_row$x1 + (data_row$x2>0)*sidex
-      #df_store$yy2[index] <- data_row$y1
     }
   }
   return(df_store)
@@ -1496,7 +1493,7 @@ write_annotations <- function(p, svg)
   return(calc_vals)
 }
 
-# Handle tail species
+# Handle weird chain species
 handle_orphans <- function(vg)
 {
   zgg$df_orph_a <- data.frame(c())
@@ -1518,6 +1515,7 @@ handle_orphans <- function(vg)
   return(calc_vals)
 }
 
+# Draw weird chains connected to inner ziggurats
 draw_inner_orphans <- function(p, svg)
 {
   if (zgg$kcoremax >2)
@@ -1564,6 +1562,7 @@ draw_inner_orphans <- function(p, svg)
   return(calc_vals)
 }
 
+# Manage fat tails
 handle_fat_tails <- function(p, svg)
 {
   fat_tail_x <- min(zgg$last_xtail_a[[zgg$kcoremax]],zgg$last_xtail_b[[zgg$kcoremax]],zgg$list_dfs_a[[zgg$kcoremax]][1,]$x1,zgg$list_dfs_b[[zgg$kcoremax]][1,]$y2)
