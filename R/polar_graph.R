@@ -17,6 +17,7 @@ paint_kdegree_kradius <- function(graph, num_guild_a, num_guild_b,
                                   filln = FALSE,
                                   alphal = 0.5,
                                   nfsal = "",
+                                  maxkradius = 0,
                                   progress
                                   )
 {
@@ -43,7 +44,10 @@ paint_kdegree_kradius <- function(graph, num_guild_a, num_guild_b,
   dfaux <- dfaux[dfaux$symbolradius != Inf,]
   maxcore <- max(dfaux$kcorenum)
   numkcores <- length(unique(dfaux$kcorenum))
-  extreme <- ceiling(max(dfaux[dfaux$symbolradius != Inf,]$kradius))
+  if (maxkradius == 0)
+    extreme <- ceiling(max(dfaux[dfaux$symbolradius != Inf,]$kradius))
+  else
+    extreme <- maxkradius
   num_central <- (nga+ngb)%/%5
   more_central_nodes <- head(dfaux[order(dfaux$kradius),]$name, num_central)
   slice_multiplier <- 4
@@ -284,6 +288,7 @@ paint_kdegree_kradius <- function(graph, num_guild_a, num_guild_b,
 #' @param printable_labels range of labeled species
 #' @param alpha_nodes fill transparency level
 #' @param fill_nodes if set to FALSE nodes are transparent
+#' @param max_kradius if bigger than 0 sets an upper limit different of the default. Useful for comparisons
 #' @export
 #' @examples polar_graph("M_PL_007.csv","data/",plotsdir="grafresults/",print_to_file = TRUE)
 
@@ -293,7 +298,8 @@ polar_graph <- function( red, directorystr = "data/", plotsdir = "plot_results/p
                          lsize_title = 22, lsize_axis = 16,
                          lsize_legend = 16,lsize_axis_title = 16, lsize_legend_title = 16,
                          file_name_append = "", print_title = TRUE,
-                         progress=NULL, printable_labels = 0, fill_nodes = TRUE, alpha_nodes = 0.5)
+                         progress=NULL, printable_labels = 0, fill_nodes = TRUE, alpha_nodes = 0.5,
+                         max_kradius = 0)
 {
 
   # This assignment stores the call parameters in polar_argg as a list. This list is useful
@@ -363,7 +369,8 @@ polar_graph <- function( red, directorystr = "data/", plotsdir = "plot_results/p
                              MeanKradius = result_analysis$meandist, MeanKdegree = result_analysis$meankdegree,
                              showtext = pshowtext, fname_append = ftname_append,
                              printable_range = printable_labels, ptitle = print_title,
-                             filln = fill_nodes, alphal = alpha_nodes, nfsal = fsal, progress
+                             filln = fill_nodes, alphal = alpha_nodes, nfsal = fsal,
+                             maxkradius = max_kradius, progress
                               )
   #Non interactive mode. Plots stored in file or displayer in R window
   # if (is.null(progress))
