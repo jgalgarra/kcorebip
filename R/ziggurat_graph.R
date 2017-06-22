@@ -341,7 +341,9 @@ draw_core_box <- function(grafo, svg, kcore)
     phjust <- 0.5
     ifelse (zgg$flip_results,pangle<-0,pangle <- 90)
   }
-  p <- p +annotate(geom="text", x=px, y=py, label=corelabel, colour = divcolor,  fontface="italic",
+  # Print label only if size is not 0
+  if (zgg$lsize_core_box>0)
+    p <- p +annotate(geom="text", x=px, y=py, label=corelabel, colour = divcolor,  fontface="italic",
                    size=zgg$lsize_core_box, hjust = phjust, vjust = 0, angle = pangle)
   svg$text(idPrefix=paste0("kcore", kcore), data=data.frame(x=c(px), y=c(py)),
            mapping=aes(x=x, y=y), color=divcolor, label=corelabel, size=zgg$lsize_core_box, angle=pangle)
