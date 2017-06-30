@@ -85,6 +85,7 @@ SVG<-function(scale_factor) {
     }
 
     # actualiza las coordenadas del viewBox si es necesario
+
     if (xmin<this$minx) this$minx<<-xmin
     if (xmin>this$maxx) this$maxx<<-xmin
     if (xmax<this$minx) this$minx<<-xmax
@@ -93,6 +94,7 @@ SVG<-function(scale_factor) {
     if (ymin>this$maxy) this$maxy<<-ymin
     if (ymax<this$miny) this$miny<<-ymax
     if (ymax>this$maxy) this$maxy<<-ymax
+
 
     # dibuja el rectangulo
     result <- paste0(result, "<rect id=\"", id, "\" ")
@@ -147,6 +149,7 @@ SVG<-function(scale_factor) {
     maxx <- x+len*size
     miny <- y-len*size
     maxy <- y+len*size
+
     if (minx<this$minx) this$minx<<-minx
     if (maxx>this$maxx) this$maxx<<-maxx
     if (miny<this$miny) this$miny<<-miny

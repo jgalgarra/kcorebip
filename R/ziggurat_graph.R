@@ -834,7 +834,6 @@ draw_individual_ziggurat <- function(idPrefix, igraphnet, kc, basex = 0, widthx 
     auxhjust[i] <- ifelse(zinverse=="yes",1-i%%2,i%%2)
   p <- grafo + geom_rect(data=dr, mapping=aes(xmin=x1, xmax=x2, ymin=y1, ymax=y2),
                          fill = dr$col_row, alpha = zgg$alpha_level,color="transparent")
-
   svg$rect(idPrefix=idPrefix, data=dr, mapping=aes(xmin=x1, xmax=x2, ymin=y1, ymax=y2), fill=dr$col_row, alpha=zgg$alpha_level,
            color="transparent", size=0.5)
   labelcolor <- ifelse(length(zgg$labels_color)>0,zgg$labels_color[2-as.numeric(strguild == zgg$str_guild_a)],dr$col_row)
@@ -2223,8 +2222,3 @@ draw_ziggurat_plot <- function(svg_scale_factor, progress)
 #                                alpha_link = 0.5,coremax_triangle_width_factor = 1.3,  displace_y_a=c(0,0,0,0,0.5,0.7,0),
 #                                lsize_kcoremax = 6,lsize_zig = 5,lsize_kcore1 = 5,corebox_border_size=1, factor_hop_x = 1.5,
 #                                lsize_legend = 7, lsize_core_box = 6,displace_legend = c(-0.2,0.2), print_to_file = TRUE)
-# ziggurat_graph("data/","M_PL_007.csv", height_box_y_expand = 0.85,use_spline = TRUE, aspect_ratio = 1.2,
-#                lsize_legend = 7, lsize_core_box = 6,corebox_border_size=1,weighted_links = "log10",
-#                plotsdir = "plot_results/ziggurat",color_link = "slategray3", alpha_link = 0.5,
-#                lsize_kcoremax = 6,lsize_zig = 5,lsize_kcore1 = 5, size_link = 0.7,
-#                displace_legend = c(-0.2,0.2),displace_outside_component = c(-1.2,0.6),print_to_file = TRUE)
