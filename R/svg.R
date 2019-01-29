@@ -12,7 +12,7 @@
 #                 al SVG generado
 ###############################################################################
 library(ggplot2)
-
+library(rlang)
 #' SVG aux function
 #'
 #'
@@ -61,10 +61,13 @@ SVG<-function(scale_factor) {
 
     # evalua las posiciones
     # cambia de signo las coordenadas y, ya que en SVG el eje y es al contrario de lo que trata R con ggplot
-    xmin  <- this$round_coords(eval(mapping$xmin, data)/this$scale_factor)
-    xmax  <- this$round_coords(eval(mapping$xmax, data)/this$scale_factor)
-    ymin  <- -this$round_coords(eval(mapping$ymin, data)/this$scale_factor)
-    ymax  <- -this$round_coords(eval(mapping$ymax, data)/this$scale_factor)
+
+    xmin  <- this$round_coords(eval_tidy(mapping$xmin, data)/this$scale_factor)
+    xmax  <- this$round_coords(eval_tidy(mapping$xmax, data)/this$scale_factor)
+    ymin  <- -this$round_coords(eval_tidy(mapping$ymin, data)/this$scale_factor)
+    ymax  <- -this$round_coords(eval_tidy(mapping$ymax, data)/this$scale_factor)
+
+
     # itera para cada rectangulo
     for (i in 1:nrow(data)) {
       rect2<-this$rect2(id=paste0(idPrefix, "-", i, "-rect"), xmin=xmin[i], xmax=xmax[i], ymin=ymin[i], ymax=ymax[i], fill=fill[i], alpha=alpha, color=color[i], size=size, linetype=linetype)
@@ -125,8 +128,10 @@ SVG<-function(scale_factor) {
 
     # evalua las posiciones
     # cambia de signo las coordenadas y, ya que en SVG el eje y es al contrario de lo que trata R con ggplot
-    x <- this$round_coords(eval(mapping$x, data)/this$scale_factor)
-    y <- -this$round_coords(eval(mapping$y, data)/this$scale_factor)
+
+
+    x <- this$round_coords(eval_tidy(mapping$x, data)/this$scale_factor)
+    y <- -this$round_coords(eval_tidy(mapping$y, data)/this$scale_factor)
     # itera para cada texto
     for (i in 1:nrow(data)) {
       text2<-this$text2(id=paste0(idPrefix, "-", i, "-text"), x=x[i], y=y[i], label=label[i], color[i], size, angle)
@@ -209,10 +214,12 @@ SVG<-function(scale_factor) {
 
     # evalua las posiciones
     # cambia de signo las coordenadas y, ya que en SVG el eje y es al contrario de lo que trata R con ggplot
-    x     <- this$round_coords(eval(mapping$x, data)/this$scale_factor)
-    xend  <- this$round_coords(eval(mapping$xend, data)/this$scale_factor)
-    y     <- -this$round_coords(eval(mapping$y, data)/this$scale_factor)
-    yend  <- -this$round_coords(eval(mapping$yend, data)/this$scale_factor)
+
+
+    x     <- this$round_coords(eval_tidy(mapping$x, data)/this$scale_factor)
+    xend  <- this$round_coords(eval_tidy(mapping$xend, data)/this$scale_factor)
+    y     <- -this$round_coords(eval_tidy(mapping$y, data)/this$scale_factor)
+    yend  <- -this$round_coords(eval_tidy(mapping$yend, data)/this$scale_factor)
     # itera para cada segmento
     for (i in 1:nrow(data)) {
       segment2<-this$segment2(id=paste0(idPrefix, "-", i, "-segment"),
@@ -269,14 +276,14 @@ SVG<-function(scale_factor) {
     }
 
     # evalua los grupos
-    group <-eval(mapping$group, data)
+    group <- eval_tidy(mapping$group, data)
     # itera para cada grupo de rutas
     # cambia de signo las coordenadas y, ya que en SVG el eje y es al contrario de lo que trata R con ggplot
 
     for (i in unique(group)) {
-      g <- data[data[[as.character(mapping$group)]]==i,]
-      x <- this$round_coords(g[,c(as.character(mapping$x))]/this$scale_factor)
-      y <- -this$round_coords(g[,c(as.character(mapping$y))]/this$scale_factor)
+      g <- data[data[quo_text(mapping$group)]==i,]
+      x <- this$round_coords(g[,c(quo_text(mapping$x))]/this$scale_factor)
+      y <- -this$round_coords(g[,c(quo_text(mapping$y))]/this$scale_factor)
       path2<-this$path2(id=paste0(idPrefix, "-", i, "-path"), x=x, y=y, alpha=alpha, color=color[i], size=size, linetype=linetype)
       result<-paste0(result, path2)
     }
@@ -348,11 +355,11 @@ SVG<-function(scale_factor) {
 # prueba de SVG
 test <- function(items=2) {
   d<- data.frame(
-      x1 = sample(600, items, replace = TRUE),
-      x2 = sample(600, items, replace = TRUE),
-      y1 = sample(600, items, replace = TRUE),
-      y2 = sample(600, items, replace = TRUE),
-      fill = rep(c("red", "green", "blue"), items)[1:items]
+    x1 = sample(600, items, replace = TRUE),
+    x2 = sample(600, items, replace = TRUE),
+    y1 = sample(600, items, replace = TRUE),
+    y2 = sample(600, items, replace = TRUE),
+    fill = rep(c("red", "green", "blue"), items)[1:items]
   )
 
   s1<-SVG(1)

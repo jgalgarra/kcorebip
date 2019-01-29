@@ -1,9 +1,9 @@
-#library(scales)
 library(grid)
 library(gridExtra)
 library(bipartite)
 library(igraph)
 library(ggplot2)
+library(rlang)
 
 #' Plotting a ziggurat graph
 #'
@@ -1471,7 +1471,7 @@ write_annotations <- function(p, svg)
                     hjust = 0, vjust = 0, angle = 0)
   p <- p + annotate(geom="text", x=x_legend,
                     y=y_legend,
-                    label= paste("                 ",zgg$name_guild_b),
+                    label= paste(rep(" ",length(zgg$name_guild_a))," ",zgg$name_guild_b),
                     colour = zgg$color_guild_b[1], size=zgg$lsize_legend,
                     hjust = 0, vjust = 0, angle = 0)
   p <- p +annotate(geom="text", x=landmark_left,
@@ -2172,7 +2172,7 @@ draw_ziggurat_plot <- function(svg_scale_factor, progress)
   svg <- v["svg"][[1]]
 
   zgg$df_chains <- v["df_chains"][[1]]
-  # Specied outside the giant componente
+  # Specied outside the giant component
   if (!is.null(progress)) progress$inc(1/11, detail=strings$value("MESSAGE_ZIGGURAT_PROGRESS_DRAWING_OUTSIDERS"))
   if (zgg$paint_outsiders) {
     v <- handle_outsiders(p,svg,outsiders,zgg$df_chains)
@@ -2217,8 +2217,4 @@ draw_ziggurat_plot <- function(svg_scale_factor, progress)
   return(zgg)
 }
 
-
-# ziggurat_graph("data/","M_SD_008.csv", plotsdir = "plot_results/ziggurat",color_link = "slategray3",weighted_links = "log10",
-#                                alpha_link = 0.5,coremax_triangle_width_factor = 1.3,  displace_y_a=c(0,0,0,0,0.5,0.7,0),
-#                                lsize_kcoremax = 6,lsize_zig = 5,lsize_kcore1 = 5,corebox_border_size=1, factor_hop_x = 1.5,
-#                                lsize_legend = 7, lsize_core_box = 6,displace_legend = c(-0.2,0.2), print_to_file = TRUE)
+# ziggurat_graph("../data/","M_SD_008.csv")

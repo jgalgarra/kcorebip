@@ -1,0 +1,262 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 2.8 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated as
+% required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+\sortlist[entry]{anyt/global/}
+  \entry{alvarez2005k}{article}{}
+    \name{author}{4}{}{%
+      {{hash=AHJI}{%
+         family={Alvarez-Hamelin},
+         familyi={A\bibinitperiod-H\bibinitperiod},
+         given={Jos{\'e}\bibnamedelima Ignacio},
+         giveni={J\bibinitperiod\bibinitdelim I\bibinitperiod},
+      }}%
+      {{hash=DL}{%
+         family={Dall'Asta},
+         familyi={D\bibinitperiod},
+         given={Luca},
+         giveni={L\bibinitperiod},
+      }}%
+      {{hash=BA}{%
+         family={Barrat},
+         familyi={B\bibinitperiod},
+         given={Alain},
+         giveni={A\bibinitperiod},
+      }}%
+      {{hash=VA}{%
+         family={Vespignani},
+         familyi={V\bibinitperiod},
+         given={Alessandro},
+         giveni={A\bibinitperiod},
+      }}%
+    }
+    \strng{namehash}{AHJI+1}
+    \strng{fullhash}{AHJIDLBAVA1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{labelalpha}{AH+05}
+    \field{sortinit}{A}
+    \field{sortinithash}{A}
+    \field{title}{k-core decomposition: A tool for the visualization of large
+  scale networks}
+    \field{journaltitle}{arXiv preprint cs/0504107}
+    \field{year}{2005}
+  \endentry
+
+  \entry{almeida2008consistent}{article}{}
+    \name{author}{5}{}{%
+      {{hash=ANM}{%
+         family={Almeida-Neto},
+         familyi={A\bibinitperiod-N\bibinitperiod},
+         given={M{\'a}rio},
+         giveni={M\bibinitperiod},
+      }}%
+      {{hash=GP}{%
+         family={Guimaraes},
+         familyi={G\bibinitperiod},
+         given={Paulo},
+         giveni={P\bibinitperiod},
+      }}%
+      {{hash=GPR}{%
+         family={Guimar{\~a}es},
+         familyi={G\bibinitperiod},
+         given={Paulo\bibnamedelima R},
+         giveni={P\bibinitperiod\bibinitdelim R\bibinitperiod},
+      }}%
+      {{hash=LRD}{%
+         family={Loyola},
+         familyi={L\bibinitperiod},
+         given={Rafael\bibnamedelima D},
+         giveni={R\bibinitperiod\bibinitdelim D\bibinitperiod},
+      }}%
+      {{hash=UW}{%
+         family={Ulrich},
+         familyi={U\bibinitperiod},
+         given={Werner},
+         giveni={W\bibinitperiod},
+      }}%
+    }
+    \list{publisher}{1}{%
+      {Wiley Online Library}%
+    }
+    \strng{namehash}{ANM+1}
+    \strng{fullhash}{ANMGPGPRLRDUW1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{labelalpha}{AN+08}
+    \field{sortinit}{A}
+    \field{sortinithash}{A}
+    \field{number}{8}
+    \field{pages}{1227\bibrangedash 1239}
+    \field{title}{A consistent metric for nestedness analysis in ecological
+  systems: reconciling concept and measurement}
+    \field{volume}{117}
+    \field{journaltitle}{Oikos}
+    \field{year}{2008}
+  \endentry
+
+  \entry{bascompte2009}{article}{}
+    \name{author}{1}{}{%
+      {{hash=BJ}{%
+         family={Bascompte},
+         familyi={B\bibinitperiod},
+         given={Jordi},
+         giveni={J\bibinitperiod},
+      }}%
+    }
+    \strng{namehash}{BJ1}
+    \strng{fullhash}{BJ1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{labelalpha}{Bas09}
+    \field{sortinit}{B}
+    \field{sortinithash}{B}
+    \field{pages}{416\bibrangedash 419}
+    \field{title}{Disentangling the web of life}
+    \field{volume}{325}
+    \field{journaltitle}{Science}
+    \field{year}{2009}
+  \endentry
+
+  \entry{carlo2003avian}{article}{}
+    \name{author}{3}{}{%
+      {{hash=CTA}{%
+         family={Carlo},
+         familyi={C\bibinitperiod},
+         given={Tom{\'a}s\bibnamedelima A},
+         giveni={T\bibinitperiod\bibinitdelim A\bibinitperiod},
+      }}%
+      {{hash=CJA}{%
+         family={Collazo},
+         familyi={C\bibinitperiod},
+         given={Jaime\bibnamedelima A},
+         giveni={J\bibinitperiod\bibinitdelim A\bibinitperiod},
+      }}%
+      {{hash=GMJ}{%
+         family={Groom},
+         familyi={G\bibinitperiod},
+         given={Martha\bibnamedelima J},
+         giveni={M\bibinitperiod\bibinitdelim J\bibinitperiod},
+      }}%
+    }
+    \list{publisher}{1}{%
+      {Springer}%
+    }
+    \strng{namehash}{CTACJAGMJ1}
+    \strng{fullhash}{CTACJAGMJ1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{labelalpha}{CCG03}
+    \field{sortinit}{C}
+    \field{sortinithash}{C}
+    \field{number}{1}
+    \field{pages}{119\bibrangedash 131}
+    \field{title}{Avian fruit preferences across a Puerto Rican forested
+  landscape: pattern consistency and implications for seed removal}
+    \field{volume}{134}
+    \field{journaltitle}{Oecologia}
+    \field{year}{2003}
+  \endentry
+
+  \entry{dormann2014method}{article}{}
+    \name{author}{2}{}{%
+      {{hash=DCF}{%
+         family={Dormann},
+         familyi={D\bibinitperiod},
+         given={Carsten\bibnamedelima F},
+         giveni={C\bibinitperiod\bibinitdelim F\bibinitperiod},
+      }}%
+      {{hash=SR}{%
+         family={Strauss},
+         familyi={S\bibinitperiod},
+         given={Rouven},
+         giveni={R\bibinitperiod},
+      }}%
+    }
+    \list{publisher}{1}{%
+      {Wiley Online Library}%
+    }
+    \strng{namehash}{DCFSR1}
+    \strng{fullhash}{DCFSR1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{labelalpha}{DS14}
+    \field{sortinit}{D}
+    \field{sortinithash}{D}
+    \field{number}{1}
+    \field{pages}{90\bibrangedash 98}
+    \field{title}{A method for detecting modules in quantitative bipartite
+  networks}
+    \field{volume}{5}
+    \field{journaltitle}{Methods in Ecology and Evolution}
+    \field{year}{2014}
+  \endentry
+
+  \entry{ramirez1989biologia}{article}{}
+    \name{author}{1}{}{%
+      {{hash=RN}{%
+         family={Ramirez},
+         familyi={R\bibinitperiod},
+         given={Nelson},
+         giveni={N\bibinitperiod},
+      }}%
+    }
+    \list{publisher}{1}{%
+      {JSTOR}%
+    }
+    \strng{namehash}{RN1}
+    \strng{fullhash}{RN1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{labelalpha}{Ram89}
+    \field{sortinit}{R}
+    \field{sortinithash}{R}
+    \field{pages}{319\bibrangedash 330}
+    \field{title}{Biolog{\'\i}a de polinizaci{\'o}n en una comunidad arbustiva
+  tropical de la alta Guayana venezolana}
+    \field{journaltitle}{Biotropica}
+    \field{year}{1989}
+  \endentry
+
+  \entry{seidman1983network}{article}{}
+    \name{author}{1}{}{%
+      {{hash=SSB}{%
+         family={Seidman},
+         familyi={S\bibinitperiod},
+         given={Stephen\bibnamedelima B},
+         giveni={S\bibinitperiod\bibinitdelim B\bibinitperiod},
+      }}%
+    }
+    \list{publisher}{1}{%
+      {Elsevier}%
+    }
+    \strng{namehash}{SSB1}
+    \strng{fullhash}{SSB1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{labelalpha}{Sei83}
+    \field{sortinit}{S}
+    \field{sortinithash}{S}
+    \field{number}{3}
+    \field{pages}{269\bibrangedash 287}
+    \field{title}{Network structure and minimum degree}
+    \field{volume}{5}
+    \field{journaltitle}{Social networks}
+    \field{year}{1983}
+  \endentry
+\endsortlist
+\endinput
