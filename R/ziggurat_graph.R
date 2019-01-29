@@ -1468,7 +1468,7 @@ write_annotations <- function(p, svg)
                     y=y_legend,
                     label=zgg$name_guild_a,
                     colour = zgg$color_guild_a[1], size=zgg$lsize_legend,
-                    hjust = 0, vjust = 0, angle = 0)
+                    hjust = 1, vjust = 0, angle = 0)
   p <- p + annotate(geom="text", x=x_legend,
                     y=y_legend,
                     label= paste(rep(" ",length(zgg$name_guild_a))," ",zgg$name_guild_b),
@@ -1483,12 +1483,10 @@ write_annotations <- function(p, svg)
   svg$text("core-1", data=data.frame(x=landmark_left, y=y_legend), mapping=aes(x=x, y=y), color=zgg$corecols[2],
            label="1-shell",
            size=zgg$lsize_core_box, angle=0)
-  svg$text("core-1", data=data.frame(x=(0.85+(0.3*zgg$displace_legend[1]))*x_legend, y=y_legend), mapping=aes(x=x, y=y), size=zgg$lsize_legend,
+  svg$text("core-1", data=data.frame(x=(0.8+(0.3*zgg$displace_legend[1]))*x_legend, y=y_legend), mapping=aes(x=x, y=y), size=zgg$lsize_legend,
            label=zgg$name_guild_a, color=zgg$color_guild_a[1], angle=0)
   svg$text("core-1", data=data.frame(x=x_legend, y=y_legend), mapping=aes(x=x, y=y), size=zgg$lsize_legend,
            label=zgg$name_guild_b, color=zgg$color_guild_b[1], angle=0)
-  # svg$text("core-1", data=data.frame(x=(0.85+(0.3*zgg$displace_legend[1]))*x_legend, y=max(0.9*landmark_top, y_legend*1.05)), mapping=aes(x=x, y=y),
-  #          size=zgg$lsize_legend, label=paste("Network",zgg$network_name), color="black", angle=0)
 
   calc_vals <- list("p" = p, "svg" = svg)
   return(calc_vals)
