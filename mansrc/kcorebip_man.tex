@@ -1,4 +1,4 @@
-\documentclass[12pt]{article}
+\documentclass[11pt]{article}
 \usepackage{graphicx}
 \usepackage{epstopdf}
 \usepackage{listings}
@@ -13,9 +13,8 @@
  
 \urlstyle{same}
 \addbibresource{kcorebip.bib} % The filename of the bibliography
-
-\title{Using the kcorebip package \\ \small{Version 0.3}}
-\author{Javier Garcia-Algarra \\ \href{mailto:jgalgarra@coit.es}{jgalgarra@coit.es} }
+\title{Using the kcorebip package \\ \small{Version 0.5}} \author{Javier Garcia-Algarra \\ \href{mailto:jgalgarra@coit.es}
+{jgalgarra@coit.es} }
 
 \begin{document}
 
@@ -26,7 +25,22 @@
 \section*{Introduction}
 
 This package performs the \textit{k-core decomposition} analysis of a bipartite graph and provides two new kinds of plot: \textit{polar} and \textit{ziggurat}. It works for
-any kind of bipartite network, but we developed it to study ecological mutualistic communities, so we use terminology and examples of that research field.
+any kind of bipartite network, but we developed it to study ecological mutualistic communities, so we use terminology and examples of that research field \cite{Garcia-Algarra2017}.
+
+
+\section*{Install kcorebip}
+
+To install \texttt{kcorebip} you need the package \texttt{devtools}. \noindent Load it with 
+
+\texttt{library("devtools")} 
+
+\noindent and then issue the following command:
+
+\texttt{install\_github("jgalgarra/kcorebip")}
+\\
+\noindent \textbf{Warning}. You need a \texttt{gcc} compiler in your machine. If you are a developer and you know yo do have it, \texttt{kcorebip} will install smoothly. Otherwise, you will get a message telling that \texttt{Rtools} is not available. In that case follow the instructions of the following page to install \texttt{Rtools}:
+
+https://cran.r-project.org/bin/windows/Rtools/
 
 \section*{Decomposition and definition of k-magnitudes}
 \label{K-magnitudes}
@@ -45,7 +59,7 @@ k^A_{radius}(m) = \frac{1}{\mid C^{B} \mid}\sum\limits_{j \in C^{B}} dist_{mj}  
 
 \begin{figure}[h!]
 \centering
-\includegraphics[scale=0.4]{red_example.pdf}
+\includegraphics[scale=0.45]{red_example.pdf}
 \caption {Examples of \textit{$k_{radius}$} in a fictional network.}
 \label{fig:KMAN_red_example}
 \end{figure}
@@ -122,8 +136,13 @@ The function returns:
 \item \texttt{calc\_values}, a list containing the following objects:
    \begin{itemize}
    
-\item \texttt{graph}: an igraph::graph object
-
+\item \texttt{graph}: an igraph::graph object. This is the additional information for each node, besides the regular of the object:
+	\begin{itemize}
+    	\item \texttt{V(result\_analysis\$graph)}: list of node names
+		\item \texttt{V(result\_analysis\$graph)\$kdegree}: list $k_{degree}$
+		\item \texttt{V(result\_analysis\$graph)\$kradius}: list $k_{radius}$
+		\item \texttt{V(result\_analysis\$graph)\$krisk}: list $k_{riks}$, a measurement of vulnerability (See \cite{Garcia-Algarra2017})
+	\end{itemize}
 \item \texttt{max\_core}: maximum k shell index
 
 \item \texttt{nested\_values}: a list containing all the values provided by the bipartite::nested function, unless \texttt{only\_NODF} set TRUE.
@@ -166,16 +185,17 @@ Nodes are depicted with their centers located at $k_{radius}$. Angles are assign
 \begin{verbatim}
 polar_graph <- function( red, directorystr = "data/", 
                          plotsdir = "plot_results/polar/", 
-                         print_to_file = FALSE, pshowtext = FALSE,
-                         show_histograms = TRUE, 
+                         print_to_file = FALSE,     
+                         pshowtext = FALSE, show_histograms = TRUE, 
                          glabels = c("Plant", "Pollinator"),
                          gshortened = c("pl","pol"),
-                         lsize_title = 22, lsize_axis = 12, 
-                         lsize_legend = 13, lsize_axis_title = 14, 
-                         lsize_legend_title = 15, file_name_append = "",
-                         print_title = TRUE,
-                         progress = NULL, printable_labels = 0, 
-                         fill_nodes = TRUE, alpha_nodes = 0.5)
+                         lsize_title = 22, lsize_axis = 16,
+                         lsize_legend = 16,lsize_axis_title = 16, 
+                         lsize_legend_title = 16,
+                         file_name_append = "", print_title = TRUE,
+                         progress=NULL, printable_labels = 0, 
+                         fill_nodes = TRUE, alpha_nodes = 0.5,
+                         max_kradius = 0)
 \end{verbatim}
 \normalsize
 
@@ -184,18 +204,18 @@ plus \texttt{\_polar.png}. Paths are relative to the current working path in \te
 
 File plots have a resolution of 600 dots per inch, and a size of 12 x 12 inches. If the user wants to display the result in the current R session, label sizes may appear different depending on the installed fonts and size of the plotting window.
 
-The following command creates the file \texttt{M\_PL\_001\_polar.png} in the directory \texttt{graphresults/}
+The following command creates the file \texttt{M\_PL\_008\_polar.png} in the directory \texttt{graphresults/}
 
 \fontsize{3.5mm}{3.5mm}\selectfont
 \begin{verbatim}
-polar_graph("M_PL_034.csv","data/",plotsdir="grafresults/",
-            print_to_file = TRUE)
+pgr <- polar_graph("M_PL_008.csv","data/",plotsdir="grafresults/",
+                    print_to_file = TRUE))
 \end{verbatim}
 \normalsize
 
 \begin{figure}[h!]
 \centering
-\includegraphics[scale=0.4]{M_PL_034_polar.png}
+\includegraphics[scale=0.4]{M_PL_008_polar.png}
 %\caption {Examples of \textit{$k_{radius}$} in a fictional network.}
 \label{fig:M_PL_034_polar}
 \end{figure}
@@ -250,8 +270,7 @@ ziggurat_graph(datadir, filename, paintlinks = TRUE,
 	  lsize_kcore1 = 2.5, lsize_legend = 4, lsize_core_box = 2.5, 
 	  labels_color = c(), height_box_y_expand = 1, 
 	  kcore2tail_vertical_separation = 1, kcore1tail_disttocore = c(1, 1), 
-	  innertail_vertical_separation = 1,
-	  horiz_kcoremax_tails_expand = 1, factor_hop_x = 1,
+	  innertail_vertical_separation = 1, factor_hop_x = 1,
 	  displace_legend = c(0, 0), fattailjumphoriz = c(1, 1),
 	  fattailjumpvert = c(1, 1), coremax_triangle_height_factor = 1,
 	  coremax_triangle_width_factor = 1, paint_outsiders = TRUE,
@@ -266,7 +285,9 @@ ziggurat_graph(datadir, filename, paintlinks = TRUE,
 	  shorten_species_name = 0, label_strguilda = "", label_strguildb = "",
 	  landscape_plot = TRUE, backg_color = "white", show_title = TRUE,
 	  use_spline = TRUE, spline_points = 100, file_name_append = "",
-	  svg_scale_factor = 10, progress = NULL)
+	  svg_scale_factor = 10, progress = NULL, svg_scale_factor= 10, 
+	  weighted_links = "none", square_nodes_size_scale = 1, 
+	  move_all_SVG_up = 0,)
 \end{verbatim}
 \normalsize
 
@@ -347,8 +368,7 @@ to include, but we have added it to explain its meaning.
 If you do not use splines, as in this example, links appear as straight lines. If you use splines you could also tell the function how many points they should have.
 
 \textit{Fat tails} are the two sets of \textit{1-shell} species eventually linked to highest $k_{degree}$ generalists, those that are located
-leftmost in the max \textit{k-shell}. We may modify the vertical and horizontal distances to those species with \texttt{fattailjumpvert}
-and \texttt{fattailjumphoriz}. Compare the relative position of plant species $28$ in this plot with the deafult one.
+leftmost in the max \textit{k-shell}. 
 
 We saw how \texttt{height\_box\_y\_expand} controls the height of outer ziggurat boxes. Height and width of rectangles of the max \textit{k-shell} are modified with \texttt{coremax\_triangle\_height\_factor} and \texttt{coremax\_triangle\_width\_factor}. 
 
@@ -390,14 +410,14 @@ The \texttt{ziggurat\_grap} function offers input fields to manage the appearanc
 
 \clearpage
 
-It is possible to display the names of the species inside the ziggurat rectangles. Be caçul, because they may make
+It is possible to display the names of the species inside the ziggurat rectangles. Be careful, because they may make
 very difficult to understand the structure, we do not encourage using this feature unless the network is tiny. Species
 names of \textit{1-shell} cannot be displayed
 
 \begin{figure}[hp!]
 \centering
 \includegraphics[scale=0.4]{M_SD_025_ziggurat.png}
-%\caption {Default ziggurat graph of a plant - pollinator network in Alta Guyana (Venezuela) \cite{ramirez1989biologia}.}
+\caption {Ziggurat graph of a plant - disperser.}
 \label{fig:KMAN_ziggurat_025}
 \end{figure}
 
@@ -413,6 +433,30 @@ ziggurat_graph("./data/","M_SD_025.csv",plotsdir="grafresults/",
 
 \end{verbatim}
 \normalsize
+
+\clearpage
+
+If the network is weighted, links width may be a function of the interaction strength, as in figure \ref{fig:RA_HP_001-ziggurat}. There are two options, the natural or decimal logarithm of the weight.
+
+\begin{figure}[hp!]
+\centering
+\includegraphics[scale=0.4]{RA_HP_001_ziggurat.png}
+\caption {Ziggurat graph of a host - parasite network.}
+\label{fig:RA_HP_001-ziggurat}
+\end{figure}
+
+\fontsize{3.5mm}{3.5mm}\selectfont
+\begin{verbatim}
+ziggurat_graph("data/","RA_HP_001.csv" ,weighted_links = "ln", 
+               print_to_file = TRUE, ,label_strguilda = "Parasite" ,
+               label_strguildb = "Host"  ,lsize_kcoremax = 5 ,               
+               lsize_zig = 4.5 ,lsize_kcore1 = 4 ,lsize_legend = 5 ,
+               lsize_core_box = 5 )
+
+\end{verbatim}
+\normalsize
+
+
 
 \clearpage
 
@@ -549,7 +593,12 @@ are stored. If you are developing an application, you can retrieve:
 
 \item \texttt{weighted\_links}: weight function to display links, (\texttt{"none"},\texttt{"log10"},\texttt{"ln"})
 
+\item \texttt{square\_nodes\_size\_scale}: scale the area of nodes in kshell 1 or outsiders.
+
 \item \texttt{progress}: only for interactive apps, do not modifiy.
+
+\item \texttt{move\_all\_SVG\_up}: only for interactive apps, do not modifiy.
+
 \end{itemize}
 
 
