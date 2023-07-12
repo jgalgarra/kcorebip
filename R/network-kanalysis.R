@@ -249,7 +249,7 @@ read_network <- function(namenetwork, guild_astr = "pl", guild_bstr = "pol", dir
 {
   # Reading species names
   namesred <- read.csv(paste0(directory,namenetwork),header=FALSE,stringsAsFactors=FALSE)
-  names_guild_a <- namesred[1,2:ncol(namesred)]
+  names_guild_a <- unname(unlist(namesred[1,2:ncol(namesred)])) # JULY 2023 
   names_guild_b <- namesred[2:nrow(namesred),1]
 
   #Reading matrix data
@@ -284,4 +284,5 @@ read_network <- function(namenetwork, guild_astr = "pl", guild_bstr = "pol", dir
 
 
 # EXAMPLE. Cut and paste to test.
-# result_analysis <- analyze_network("M_SD_008.csv", directory = "data/", guild_a = "Plant", guild_b = "Pollinator", plot_graphs = FALSE)
+#result_analysis <- analyze_network("M_SD_008.csv", directory = "data/", guild_a = "Plant", guild_b = "Pollinator", plot_graphs = FALSE)
+

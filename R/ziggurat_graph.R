@@ -2215,4 +2215,4 @@ draw_ziggurat_plot <- function(svg_scale_factor, progress)
   return(zgg)
 }
 
-# ziggurat_graph("../data/","M_SD_008.csv")
+# ziggurat_graph("../data/","example-try-this-first.csv")
