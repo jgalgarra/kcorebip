@@ -1,7 +1,7 @@
 Package: kcorebip
 Title: Bipartite networks kcore decomposition and visualization
-Version: 0.9
-Date: 2019-01-29
+Version: 0.9.1
+Date: 2023-07-12
 Author: Javier Garcia-Algarra [aut, cre], Juan Manuel Garcia Santi [ctb]
 Maintainer: Javier Garcia-Algarra <jgalgarra@coit.es>
 Description: Functions for k-core decomposing a bipartite graph and visualizing it with two original kind of plots, polar and ziggurat. This package is specially suited for ecological networks.
