@@ -68,7 +68,7 @@ library(rlang)
 #' @param spline_points number of points for each spline
 #' @param file_name_append a label that the user may append to the plot file name for convenience
 #' @param svg_scale_factor only for interactive apps, do not modify
-#' @param weighted_links function to add link weight: 'none', 'log10' , 'ln'
+#' @param weighted_links function to add link weight: 'none', 'log10' , 'ln', 'sqrt'
 #' @param square_nodes_size_scale scale nodes area of kcore1 and outsiders
 #' @param move_all_SVG_up move up all the SVG plot by this fraction, useful to crop upper white space
 #' @param progress only for interactive apps, do not modifiy
@@ -361,6 +361,8 @@ get_link_weights <- function(matrixweight)
     return(1+log10(matrixweight))
   if (zgg$weighted_links == "ln")
     return(1+log(matrixweight))
+  if (zgg$weighted_links == "sqrt")
+    return(sqrt(matrixweight))
 }
 
 # Draw tail, species or set of species of 1-shell connected to higher k-index species
