@@ -244,7 +244,7 @@ draw_square<- function(idPrefix, grafo,svg,basex,basey,side,fillcolor,alphasq,la
     signo <- -1
   }
 
-  p <- grafo + geom_rect(data=ds, size=0.01,
+  p <- grafo + geom_rect(data=ds, linewidth=0.01,
                          mapping=aes(xmin=x1, xmax=x2, ymin=y1, ymax=y2),
                          fill = fillcolor, alpha = alphasq, color="transparent")
   pxx <- x1+0.05*(x2-x1)
@@ -278,7 +278,7 @@ draw_rectangle<- function(idPrefix,basex,basey,widthx,widthy,grafo,svg,bordercol
   if (bordersize > 0)
     p <- grafo + geom_rect(data=ds,
                          mapping=aes(xmin=x1, xmax=x2, ymin=y1, ymax=y2),
-                         fill = fillcolor, alpha =palpha, color=bordercolor, size = bordersize, linetype = 3)
+                         fill = fillcolor, alpha =palpha, color=bordercolor, linewidth = bordersize, linetype = 3)
   else
     p <- grafo
   p <- p +annotate(geom="text", x=x1+(x2-x1)/8, y=signo*(y1+(y2-y1)/2), label=slabel,
@@ -2190,14 +2190,14 @@ draw_ziggurat_plot <- function(svg_scale_factor, progress)
   if (zgg$paintlinks){
     if (nrow(zgg$straight_links)>0) {
       p <- p+ geom_segment(data=zgg$straight_links, aes(x=x1, y=y1, xend=x2, yend=y2),
-                         size=zgg$straight_links$weightlink, color=zgg$color_link ,alpha=zgg$alpha_link)
+                           linewidth=zgg$straight_links$weightlink, color=zgg$color_link ,alpha=zgg$alpha_link)
       factormult <- 0.1*svg_scale_factor
       svg$segment(idPrefix="link", data=zgg$straight_links, mapping=aes(x=x1, y=y1, xend=x2, yend=y2),
                   alpha=zgg$alpha_link, color=zgg$color_link,
                   size=factormult*zgg$straight_links$weightlink)
     }
     if (nrow(zgg$bent_links)>0) {
-      p <- p + geom_path(data =zgg$bent_links,aes(x,y,group=number), size=zgg$bent_links$weightlink,
+      p <- p + geom_path(data =zgg$bent_links,aes(x,y,group=number), linewidth=zgg$bent_links$weightlink,
                        color=zgg$color_link ,alpha=zgg$alpha_link)
       svg$path(idPrefix="link", data=zgg$bent_links, mapping=aes(x, y, group=number), alpha=zgg$alpha_link,
                       color=zgg$color_link,

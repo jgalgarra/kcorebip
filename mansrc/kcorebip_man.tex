@@ -2,7 +2,9 @@
 \usepackage{graphicx}
 \usepackage{epstopdf}
 \usepackage{listings}
-\usepackage[backend=bibtex,style=alphabetic,natbib=true]{biblatex} % (which resembles APA)
+\usepackage[normalem]{ulem}
+\newcommand{\mydash}{\hbox{\sout{ }}}
+\usepackage[backend=bibtex,style=alphabetic]{biblatex} % (which resembles APA)
 \usepackage{hyperref}
 \hypersetup{
     colorlinks=true,
@@ -13,8 +15,8 @@
  
 \urlstyle{same}
 \addbibresource{kcorebip.bib} % The filename of the bibliography
-\title{Using the kcorebip package \\ \small{Version 0.5}} \author{Javier Garcia-Algarra \\ \href{mailto:jgalgarra@coit.es}
-{jgalgarra@coit.es} }
+\title{Using the kcorebip package \\ \small{Version 0.9.1}} \author{Javier Garcia-Algarra \\ \href{mailto:jgalgarra@gmail.com}
+{jgalgarra@gmail.com} }
 
 \begin{document}
 
@@ -25,7 +27,7 @@
 \section*{Introduction}
 
 This package performs the \textit{k-core decomposition} analysis of a bipartite graph and provides two new kinds of plot: \textit{polar} and \textit{ziggurat}. It works for
-any kind of bipartite network, but we developed it to study ecological mutualistic communities, so we use terminology and examples of that research field \cite{Garcia-Algarra2017}.
+any kind of bipartite network, but we developed it to study ecological mutualistic communities, so we use terminology and examples of that research field \cite{garcia2018structural,GarciaAlgarra2017}.
 
 
 \section*{Install kcorebip}
@@ -141,7 +143,7 @@ The function returns:
     	\item \texttt{V(result\_analysis\$graph)}: list of node names
 		\item \texttt{V(result\_analysis\$graph)\$kdegree}: list $k_{degree}$
 		\item \texttt{V(result\_analysis\$graph)\$kradius}: list $k_{radius}$
-		\item \texttt{V(result\_analysis\$graph)\$krisk}: list $k_{riks}$, a measurement of vulnerability (See \cite{Garcia-Algarra2017})
+		\item \texttt{V(result\_analysis\$graph)\$krisk}: list $k_{riks}$, a measurement of vulnerability (See \cite{GarciaAlgarra2017})
 	\end{itemize}
 \item \texttt{max\_core}: maximum k shell index
 
@@ -260,35 +262,34 @@ Nodes of $1$-$shell$ are scattered around the ziggurats. When multiple species o
 \fontsize{3.5mm}{3.5mm}\selectfont
 \begin{verbatim}
 ziggurat_graph(datadir, filename, paintlinks = TRUE,
-	  displaylabelszig = TRUE, print_to_file = FALSE,
-	  plotsdir = "plot_results/ziggurat/", flip_results = FALSE,
-	  aspect_ratio = 1, alpha_level = 0.2, color_guild_a = c("#4169E1",
-	  "#00008B"), color_guild_b = c("#F08080", "#FF0000"),
-	  color_link = "slategray3", alpha_link = 0.5, size_link = 0.5,
-	  displace_y_b = rep(0, 11), displace_y_a = rep(0, 11), 
-	  labels_size = 3.5, lsize_kcoremax = 3.5, lsize_zig = 3, 
-	  lsize_kcore1 = 2.5, lsize_legend = 4, lsize_core_box = 2.5, 
-	  labels_color = c(), height_box_y_expand = 1, 
-	  kcore2tail_vertical_separation = 1, kcore1tail_disttocore = c(1, 1), 
-	  innertail_vertical_separation = 1, factor_hop_x = 1,
-	  displace_legend = c(0, 0), fattailjumphoriz = c(1, 1),
-	  fattailjumpvert = c(1, 1), coremax_triangle_height_factor = 1,
-	  coremax_triangle_width_factor = 1, paint_outsiders = TRUE,
-	  displace_outside_component = c(1, 1), outsiders_separation_expand = 1,
-	  outsiders_legend_expand = 1,
-	  weirdskcore2_horizontal_dist_rootleaf_expand = 1,
-	  weirdskcore2_vertical_dist_rootleaf_expand = 0,
-	  weirds_boxes_separation_count = 1, root_weird_expand = c(1, 1),
-	  hide_plot_border = TRUE, rescale_plot_area = c(1, 1),
-	  kcore1weirds_leafs_vertical_separation = 1, corebox_border_size = 0.2,
-	  kcore_species_name_display = c(), kcore_species_name_break = c(),
-	  shorten_species_name = 0, label_strguilda = "", label_strguildb = "",
-	  landscape_plot = TRUE, backg_color = "white", show_title = TRUE,
-	  use_spline = TRUE, spline_points = 100, file_name_append = "",
-	  svg_scale_factor = 10, progress = NULL, svg_scale_factor= 10, 
-	  weighted_links = "none", square_nodes_size_scale = 1, 
-	  move_all_SVG_up = 0,)
+  displaylabelszig = TRUE, print_to_file = FALSE,
+  plotsdir = "plot_results/ziggurat/", flip_results = FALSE,
+  aspect_ratio = 1, alpha_level = 0.2, color_guild_a = c("#4169E1",
+  "#00008B"), color_guild_b = c("#F08080", "#FF0000"),
+  color_link = "slategray3", alpha_link = 0.5, size_link = 0.5,
+  displace_y_b = rep(0, 20), displace_y_a = rep(0, 20), labels_size = 3.5,
+  lsize_kcoremax = 3.5, lsize_zig = 3, lsize_kcore1 = 2.5,
+  lsize_legend = 4, lsize_core_box = 2.5, labels_color = c(),
+  height_box_y_expand = 1, kcore2tail_vertical_separation = 1,
+  kcore1tail_disttocore = c(1, 1), innertail_vertical_separation = 1,
+  horiz_kcoremax_tails_expand = 1, factor_hop_x = 1,
+  displace_legend = c(0, 0), fattailjumphoriz = c(1, 1),
+  fattailjumpvert = c(1, 1), coremax_triangle_height_factor = 1,
+  coremax_triangle_width_factor = 1, paint_outsiders = TRUE,
+  displace_outside_component = c(1, 1), outsiders_separation_expand = 1,
+  outsiders_legend_expand = 1,
+  weirdskcore2_horizontal_dist_rootleaf_expand = 1,
+  weirdskcore2_vertical_dist_rootleaf_expand = 0,
+  weirds_boxes_separation_count = 1, root_weird_expand = c(1, 1),
+  hide_plot_border = TRUE, rescale_plot_area = c(1, 1),
+  kcore1weirds_leafs_vertical_separation = 1, corebox_border_size = 0.2,
+  kcore_species_name_display = c(), kcore_species_name_break = c(),
+  shorten_species_name = 0, label_strguilda = "", label_strguildb = "",
+  landscape_plot = TRUE, backg_color = "white", show_title = TRUE,
+  use_spline = TRUE, spline_points = 100, file_name_append = "",
+  svg_scale_factor = 10, progress = NULL)
 \end{verbatim}
+
 \normalsize
 
 The configuration of ziggurat plots is richer but also more complex than that of polar graphs. Some parameters
@@ -482,6 +483,8 @@ are stored. If you are developing an application, you can retrieve:
 
 \item \texttt{filename}: file with the interaction matrix.
 
+\item \texttt{paintlinks}: if set to FALSE links will be hidden. It is useful to test the plot appearance when the network is huge.
+
 \item \texttt{print\_to\_file}: if set to FALSE the plot is displayed in the R session window.
 
 \item \texttt{plotsdir}:  the directory where the plot is stored.
@@ -500,40 +503,40 @@ are stored. If you are developing an application, you can retrieve:
 
 \item \texttt{alpha\_link}: link transparency.
 
-\item \texttt{size\_link}: width of the links.
+\item \texttt{size\_link}: width of links.
 \item \texttt{displace\_y\_b}: relative vertical displacement of guild\_b inner ziggurats.
 
 \item \texttt{displace\_y\_a}: relative vertical displacement of guild\_a inner ziggurats.
 
-\item \texttt{labels\_size}: default nodes labels size.
+\item \texttt{labels\_size}: default node label size.
 
-\item \texttt{lsize\_kcoremax}: nodes in kshell max label size.
+\item \texttt{lsize\_kcoremax}: nodes in $max\mydash kshell$ label size.
 
 \item \texttt{lsize\_zig nodes}: in inner ziggurats label size.
 
-\item \texttt{lsize\_kcore1}: labels of nodes in kshell 1.
+\item \texttt{lsize\_kcore1}: labels of nodes in $1\mydash shell$.
 
 \item \texttt{lsize\_legend}: legend label size.
 
-\item \texttt{lsize\_kcorebox}: default kshell boxes label size.
+\item \texttt{lsize\_kcorebox}: default $kshell$ boxes label size.
 
 \item \texttt{labels\_color}: default label colors.
 
 \item \texttt{height\_box\_y\_expand}: expand inner ziggurat rectangles default height by this factor.
 
-\item \texttt{kcore2tail\_vertical\_separation}: expand vertical of kshell 1 species linked to kshell 2 by this factor.
+\item \texttt{kcore2tail\_vertical\_separation}: expand vertical of $1\mydash shell$ species linked to $2\mydash shell$ by this factor.
 
-\item \texttt{kcore1tail\_disttocore}: expand vertical separation of kshell 1 species from kshell max (guild\_a, guild,b).
+\item \texttt{kcore1tail\_disttocore}: expand vertical separation of $1\mydash shell$ species from $max\mydash shell$ (guild\_a, guild,b).
 
-\item \texttt{innertail\_vertical\_separation}: expand vertical separation of kshell species connected to 2 < kshell < kshell max.
+\item \texttt{innertail\_vertical\_separation}: expand vertical separation of $kshell$ species connected to $2\mydash shell < kshell < max\mydash shell$.
 
-\item \texttt{horiz\_kcoremax\_tails\_expand}: expand horizontal separation of weird tails connected to kshell max.
+\item \texttt{horiz\_kcoremax\_tails\_expand}: expands horizontal separation of weird tails connected to $max\mydash shell$.
 
-\item \texttt{factor\_hop\_x expand inner}: ziggurats horizontal distance.
+\item \texttt{factor\_hop\_x expand inner}: expands ziggurats horizontal distance.
 
-\item \texttt{displace\_legend modify}: legend position by these fractions.
+\item \texttt{displace\_legend modify}: expands legend position by these fractions.
 
-\item \texttt{fattailjumphoriz}: displace kshell 1 species linked to leftmost kshell max species.
+\item \texttt{fattailjumphoriz}: displace  species linked to leftmost $max\mydash shell$ species.
 
 \item \texttt{fattailjumpvert}: idem for vertical position.
 
@@ -541,7 +544,7 @@ are stored. If you are developing an application, you can retrieve:
 
 \item \texttt{coremax\_triangle\_height\_factor}: expand khsell max rectangles height by this factor.
 
-\item \texttt{paint\_outsiders}: paint species not connected to giant component.
+\item \texttt{paint\_outsiders}: paint species disconnected of the giant component.
 
 \item \texttt{displace\_outside\_component}: displace outsider species (horizontal, vertical).
 
@@ -549,29 +552,27 @@ are stored. If you are developing an application, you can retrieve:
 
 \item \texttt{outsiders\_legend\_expand}: displace outsiders legend.
 
-\item \texttt{weirdskcore2\_horizontal\_dist\_rootleaf\_expand}: expand horizontal distance of weird tail root node connected to kshell 2.
+\item \texttt{weirdskcore2\_horizontal\_dist\_rootleaf\_expand}: expand horizontal distance of weird tail root node connected to $2\mydash shell$.
 
-\item \texttt{weirdskcore2\_vertical\_dist\_rootleaf\_expand}: expand vertical distance of weird tails connected to kshell 2.
+\item \texttt{weirdskcore2\_vertical\_dist\_rootleaf\_expand}: expand vertical distance of weird tails connected to  $2\mydash shell$.
 
 \item \texttt{weirds\_boxes\_separation\_count}: weird species boxes separation count.
 
-\item \texttt{root\_weird\_expand}: expand root weird distances of tails connected to kshell != 2.
+\item \texttt{root\_weird\_expand}: expand root weird distances of tails connected to $kshell \neq 2$.
 
 \item \texttt{hide\_plot\_border}: hide border around the plot.
 
 \item \texttt{rescale\_plot\_area}: full plot area rescaling (horizontal, vertical).
 
-\item \texttt{kcore1weirds\_leafs\_vertical\_separation}: expand vertical separation of weird tails connected to kshell 1 species.
+\item \texttt{kcore1weirds\_leafs\_vertical\_separation}: expand vertical separation of weird tails connected to $1\mydash shell$ species.
 
-\item \texttt{corebox\_border\_size}: width of kshell boxes.
+\item \texttt{corebox\_border\_size}: width of $kshell$ boxes.
 
 \item \texttt{kcore\_species\_name\_display}: display species names of shells listed in this vector.
 
 \item \texttt{kcore\_species\_name\_break}: allow new lines in species names of shells listed in this vector.
 
 \item \texttt{shorten\_species\_names}: number of characters of species name to display.
-
-\item \texttt{exclude\_species\_number}: do not paste species number before species name.
 
 \item \texttt{label\_strguilda}: string labels of guild a.
 
@@ -591,16 +592,15 @@ are stored. If you are developing an application, you can retrieve:
 
 \item \texttt{svg\_scale\_factor}: only for interactive apps, do not modify.
 
-\item \texttt{weighted\_links}: weight function to display links, (\texttt{"none"},\texttt{"log10"},\texttt{"ln"})
+\item \texttt{weighted\_links}: weight function to display links, (\texttt{"none"},\texttt{"log10"},\texttt{"ln"},\texttt{"sqrt"})
 
-\item \texttt{square\_nodes\_size\_scale}: scale the area of nodes in kshell 1 or outsiders.
-
-\item \texttt{progress}: only for interactive apps, do not modifiy.
+\item \texttt{square\_nodes\_size\_scale}: scale the area of nodes in $1\mydash shell $ or outsiders.
 
 \item \texttt{move\_all\_SVG\_up}: only for interactive apps, do not modifiy.
 
-\end{itemize}
+\item \texttt{progress}: only for interactive apps, do not modifiy.
 
+\end{itemize}
 
 \normalsize
 
