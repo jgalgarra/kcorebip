@@ -4,6 +4,7 @@ library(bipartite)
 library(igraph)
 library(ggplot2)
 library(rlang)
+library(ggtext)
 
 #' Plotting a ziggurat graph
 #'
@@ -38,7 +39,6 @@ library(rlang)
 #' @param kcore1tail_disttocore expand vertical separation of kshell 1 species from kshell max (guild_a, guild,b)
 #' @param innertail_vertical_separation expand vertical separation of kshell species connected to khsell > 2 & < kshell max
 #' @param factor_hop_x expand inner ziggurats horizontal distance
-#' @param displace_legend modify legend position by these fractions
 #' @param fattailjumphoriz displace kshell 1 species linked to leftmost kshell max species
 #' @param fattailjumpvert idem for vertical position
 #' @param coremax_triangle_width_factor expand khsell max rectangles width by this factor
@@ -86,7 +86,7 @@ ziggurat_graph <- function(datadir,filename,
                            labels_color = c(),
                            height_box_y_expand = 1, kcore2tail_vertical_separation = 1,  kcore1tail_disttocore = c(1,1),
                            innertail_vertical_separation = 1,
-                           factor_hop_x = 1, displace_legend = c(0,0), fattailjumphoriz = c(1,1), fattailjumpvert = c(1,1),
+                           factor_hop_x = 1, fattailjumphoriz = c(1,1), fattailjumpvert = c(1,1),
                            coremax_triangle_height_factor = 1, coremax_triangle_width_factor = 1,
                            paint_outsiders = TRUE, displace_outside_component = c(0,0),
                            outsiders_separation_expand = 1, outsiders_legend_expand = 1,
@@ -100,7 +100,6 @@ ziggurat_graph <- function(datadir,filename,
                            backg_color = "white", show_title = TRUE, use_spline =TRUE, spline_points = 100,
                            file_name_append = "", svg_scale_factor= 10, weighted_links = "none",
                            square_nodes_size_scale = 1, move_all_SVG_up = 0,
-                           displaylabelszig = TRUE, labels_size = 1,   # dummy parameters for backward compatibility
                            progress=NULL
 )
 {
@@ -137,7 +136,7 @@ ziggurat_graph <- function(datadir,filename,
                     lsize_legend, lsize_core_box, labels_color,
                     height_box_y_expand, kcore2tail_vertical_separation,  kcore1tail_disttocore,
                     innertail_vertical_separation,
-                    factor_hop_x, displace_legend, fattailjumphoriz, fattailjumpvert,
+                    factor_hop_x, fattailjumphoriz, fattailjumpvert,
                     coremax_triangle_height_factor, coremax_triangle_width_factor,
                     paint_outsiders, displace_outside_component,
                     outsiders_separation_expand, outsiders_legend_expand, weirdskcore2_horizontal_dist_rootleaf_expand,
@@ -1425,8 +1424,15 @@ handle_weirds <- function(p,svg,weirds_a,weirds_b,lado,gap)
 # Final annotations
 write_annotations <- function(p, svg)
 {
+  title_text = ""
   if (zgg$show_title)
-    p <- p+ ggtitle(sprintf("Network %s ", zgg$network_name))
+    title_text <- paste0("Network: ",zgg$network_name)
+  # Legend size conversion factor
+  lzcf <- 3
+  legends_text <- paste0(
+    "<span style = 'color:",zgg$color_guild_a[1],"; font-size:",lzcf*zgg$lsize_legend,"pt'>",zgg$name_guild_a,
+    "</span> <span style = 'color:",zgg$color_guild_b[1],"; font-size:",lzcf*zgg$lsize_legend,"pt'>",zgg$name_guild_b,"</span>")
+  p <- p+ ggtitle(title_text,subtitle=paste("<span align='right' size>",legends_text,"</span>"))
   p <- p + coord_fixed(ratio=zgg$aspect_ratio) +theme_bw() + theme(panel.grid.minor.x = element_blank(),
                                                                panel.grid.minor.y = element_blank(),
                                                                panel.grid.major.x = element_blank(),
@@ -1438,9 +1444,12 @@ write_annotations <- function(p, svg)
                                                                axis.title.x = element_blank(),
                                                                axis.title.y = element_blank(),                                                               plot.background = element_rect(fill = zgg$backg_color),
                                                                panel.background = element_rect(fill = zgg$backg_color),
-                                                               plot.title = element_text(lineheight=.7,
+                                                               plot.title = element_text(size = lzcf*(zgg$lsize_legend+1),
                                                                                          hjust = 0.5,
-                                                                                         face="plain"))
+                                                                                         face="plain"),
+                                                               
+                                                               plot.subtitle = ggtext::element_markdown()
+                                                                )
   if (zgg$hide_plot_border)
     p <- p + theme(panel.border=element_blank())
   landmark_top <- 1.4*max(zgg$last_ytail_b[!is.na(zgg$last_ytail_b)],1.2*zgg$ymax)*zgg$rescale_plot_area[2]
@@ -1460,35 +1469,35 @@ write_annotations <- function(p, svg)
   x_span <- landmark_right - landmark_left
 
   if (!(zgg$flip_results)){
-    x_legend <- 0.8*landmark_right*(1+zgg$displace_legend[1])
-    y_legend <- 0.8*landmark_top*(1+zgg$displace_legend[2])
+    x_legend <- 0.8*landmark_right#*(1+zgg$displace_legend[1])
+    y_legend <- 0.8*landmark_top#*(1+zgg$displace_legend[2])
   } else {
-    x_legend <- 0.8*landmark_top*(1+zgg$displace_legend[2])
-    y_legend <- 0.8*landmark_right*(1+zgg$displace_legend[1])
+    x_legend <- 0.8*landmark_top#*(1+zgg$displace_legend[2])
+    y_legend <- 0.8*landmark_right#*(1+zgg$displace_legend[1])
   }
-  p <- p + annotate(geom="text", x=x_legend,
-                    y=y_legend,
-                    label=zgg$name_guild_a,
-                    colour = zgg$color_guild_a[1], size=zgg$lsize_legend,
-                    hjust = 1, vjust = 0, angle = 0)
-  p <- p + annotate(geom="text", x=x_legend,
-                    y=y_legend,
-                    label= paste(rep(" ",length(zgg$name_guild_a))," ",zgg$name_guild_b),
-                    colour = zgg$color_guild_b[1], size=zgg$lsize_legend,
-                    hjust = 0, vjust = 0, angle = 0)
-  p <- p +annotate(geom="text", x=landmark_left,
-                   y = y_legend,
-                   label="1-shell",
-                   colour = zgg$corecols[2], size=zgg$lsize_core_box, hjust = 0, vjust = 0,
-                   angle = 0,
-                   fontface="italic")
-  svg$text("core-1", data=data.frame(x=landmark_left, y=y_legend), mapping=aes(x=x, y=y), color=zgg$corecols[2],
-           label="1-shell",
-           size=zgg$lsize_core_box, angle=0)
-  svg$text("core-1", data=data.frame(x=(0.8+(0.3*zgg$displace_legend[1]))*x_legend, y=y_legend), mapping=aes(x=x, y=y), size=zgg$lsize_legend,
-           label=zgg$name_guild_a, color=zgg$color_guild_a[1], angle=0)
-  svg$text("core-1", data=data.frame(x=x_legend, y=y_legend), mapping=aes(x=x, y=y), size=zgg$lsize_legend,
-           label=zgg$name_guild_b, color=zgg$color_guild_b[1], angle=0)
+  # p <- p + annotate(geom="text", x=x_legend,
+  #                   y=y_legend,
+  #                   label=zgg$name_guild_a,
+  #                   colour = zgg$color_guild_a[1], size=zgg$lsize_legend,
+  #                   hjust = 1, vjust = 0, angle = 0)
+  # p <- p + annotate(geom="text", x=x_legend,
+  #                   y=y_legend,
+  #                   label= paste(rep(" ",length(zgg$name_guild_a))," ",zgg$name_guild_b),
+  #                   colour = zgg$color_guild_b[1], size=zgg$lsize_legend,
+  #                   hjust = 0, vjust = 0, angle = 0)
+  # p <- p +annotate(geom="text", x=landmark_left,
+  #                  y = y_legend,
+  #                  label="1-shell",
+  #                  colour = zgg$corecols[2], size=zgg$lsize_core_box, hjust = 0, vjust = 0,
+  #                  angle = 0,
+  #                  fontface="italic")
+  # svg$text("core-1", data=data.frame(x=landmark_left, y=y_legend), mapping=aes(x=x, y=y), color=zgg$corecols[2],
+  #          label="1-shell",
+  #          size=zgg$lsize_core_box, angle=0)
+  # svg$text("core-1", data=data.frame(x=(0.8+(0.3*zgg$displace_legend[1]))*x_legend, y=y_legend), mapping=aes(x=x, y=y), size=zgg$lsize_legend,
+  #          label=zgg$name_guild_a, color=zgg$color_guild_a[1], angle=0)
+  # svg$text("core-1", data=data.frame(x=x_legend, y=y_legend), mapping=aes(x=x, y=y), size=zgg$lsize_legend,
+  #          label=zgg$name_guild_b, color=zgg$color_guild_b[1], angle=0)
 
   calc_vals <- list("p" = p, "svg" = svg)
   return(calc_vals)
@@ -1855,9 +1864,9 @@ display_plot <- function(p, printfile, flip, plwidth=14, plheight=11, ppi = 300,
       ftname_append <- fname_append
     dir.create(zgg$plotsdir, showWarnings = FALSE)
     if (landscape)
-      png(paste0("",zgg$plotsdir,"/",zgg$network_name,"_ziggurat",ftname_append,".png"), width=(plwidth*ppi), height=plheight*ppi, res=ppi)
+      png(paste0(zgg$plotsdir,"/",zgg$network_name,"_ziggurat",ftname_append,".png"), width=(plwidth*ppi), height=plheight*ppi, res=ppi)
     else
-      png(paste0("",zgg$plotsdir,"/",zgg$network_name,"_ziggurat",ftname_append,".png"), width=(plheight*ppi), height=plwidth*ppi, res=ppi)
+      png(paste0(zgg$plotsdir,"/",zgg$network_name,"_ziggurat",ftname_append,".png"), width=(plheight*ppi), height=plwidth*ppi, res=ppi)
   }
   print(p)
   if (printfile)
@@ -1918,7 +1927,7 @@ def_configuration <- function(paintlinks, print_to_file, plotsdir, flip_results,
                               lsize_legend, lsize_core_box, labels_color,
                               height_box_y_expand, kcore2tail_vertical_separation,  kcore1tail_disttocore,
                               innertail_vertical_separation ,
-                              factor_hop_x, displace_legend, fattailjumphoriz, fattailjumpvert,
+                              factor_hop_x, fattailjumphoriz, fattailjumpvert,
                               coremax_triangle_height_factor, coremax_triangle_width_factor,
                               paint_outsiders, displace_outside_component,
                               outsiders_separation_expand, outsiders_legend_expand, weirdskcore2_horizontal_dist_rootleaf_expand,
@@ -1958,7 +1967,7 @@ def_configuration <- function(paintlinks, print_to_file, plotsdir, flip_results,
   zgg$innertail_vertical_separation <- innertail_vertical_separation                  # Vertical separation of orphan boxes linked to inner cores in number of heights_y
   #zgg$horiz_kcoremax_tails_expand <- horiz_kcoremax_tails_expand                  # horizontal separation of edge tails connected to kcoremax.
   zgg$factor_hop_x <- factor_hop_x
-  zgg$displace_legend <- displace_legend
+  #zgg$displace_legend <- displace_legend   DEPRECATED
   zgg$fattailjumphoriz <- fattailjumphoriz
   zgg$fattailjumpvert <- fattailjumpvert
   zgg$coremax_triangle_height_factor <- coremax_triangle_height_factor
