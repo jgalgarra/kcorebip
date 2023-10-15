@@ -1452,7 +1452,7 @@ write_annotations <- function(p, svg)
                                                                 )
   if (zgg$hide_plot_border)
     p <- p + theme(panel.border=element_blank())
-  landmark_top <- 1.4*max(zgg$last_ytail_b[!is.na(zgg$last_ytail_b)],1.2*zgg$ymax)*zgg$rescale_plot_area[2]
+  landmark_top <- 1.2*max(zgg$last_ytail_b[!is.na(zgg$last_ytail_b)],1.2*zgg$ymax)*zgg$rescale_plot_area[2]
   mlabel <- "."
   landmark_right <- (zgg$tot_width+2*zgg$hop_x)*zgg$rescale_plot_area[1]
   f <- draw_square("annotation",p,svg,landmark_right,0,1,"transparent",0.5,"transparent",0,0,0,slabel="")
