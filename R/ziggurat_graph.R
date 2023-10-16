@@ -47,13 +47,13 @@ library(ggtext)
 #' @param displace_outside_component displace outsider species (horizontal, vertical)
 #' @param outsiders_separation_expand multiply by this factor outsiders' separation
 #' @param outsiders_legend_expand displace outsiders legend
-#' @param weirdskcore2_horizontal_dist_rootleaf_expand expand horizontal distance of weird tail root node connected to kshell 2
-#' @param weirdskcore2_vertical_dist_rootleaf_expand expand vertical distance of weird tails connected to kshell 2
-#' @param weirds_boxes_separation_count weird species boxes separation count
-#' @param root_weird_expand expand root weird distances of tails connected to kshell <> 2
+#' @param specialistskcore2_horizontal_dist_rootleaf_expand expand horizontal distance of specialist tail root node connected to kshell 2
+#' @param specialistskcore2_vertical_dist_rootleaf_expand expand vertical distance of specialist tails connected to kshell 2
+#' @param specialists_boxes_separation_count specialist species boxes separation count
+#' @param root_specialist_expand expand root specialist distances of tails connected to kshell <> 2
 #' @param hide_plot_border hide border around the plot
 #' @param rescale_plot_area full plot area rescaling (horizontal, vertical)
-#' @param kcore1weirds_leafs_vertical_separation expand vertical separation of weird tails connected to kshell 1 species
+#' @param kcore1specialists_leafs_vertical_separation expand vertical separation of specialist tails connected to kshell 1 species
 #' @param corebox_border_size width of kshell boxes
 #' @param kcore_species_name_display display species names of  shells listed in this vector
 #' @param kcore_species_name_break allow new lines in species names of  shells listed in this vector
@@ -90,10 +90,10 @@ ziggurat_graph <- function(datadir,filename,
                            coremax_triangle_height_factor = 1, coremax_triangle_width_factor = 1,
                            paint_outsiders = TRUE, displace_outside_component = c(0,0),
                            outsiders_separation_expand = 1, outsiders_legend_expand = 1,
-                           weirdskcore2_horizontal_dist_rootleaf_expand = 1,
-                           weirdskcore2_vertical_dist_rootleaf_expand = 0, weirds_boxes_separation_count = 1,
-                           root_weird_expand = c(1,1), hide_plot_border = TRUE, rescale_plot_area = c(1,1),
-                           kcore1weirds_leafs_vertical_separation = 1, corebox_border_size = 0.2,
+                           specialistskcore2_horizontal_dist_rootleaf_expand = 1,
+                           specialistskcore2_vertical_dist_rootleaf_expand = 0, specialists_boxes_separation_count = 1,
+                           root_specialist_expand = c(1,1), hide_plot_border = TRUE, rescale_plot_area = c(1,1),
+                           kcore1specialists_leafs_vertical_separation = 1, corebox_border_size = 0.2,
                            kcore_species_name_display = c(), kcore_species_name_break = c(),
                            shorten_species_name = 0, exclude_species_number = FALSE, label_strguilda = "",
                            label_strguildb = "", landscape_plot = TRUE,
@@ -139,9 +139,9 @@ ziggurat_graph <- function(datadir,filename,
                     factor_hop_x, fattailjumphoriz, fattailjumpvert,
                     coremax_triangle_height_factor, coremax_triangle_width_factor,
                     paint_outsiders, displace_outside_component,
-                    outsiders_separation_expand, outsiders_legend_expand, weirdskcore2_horizontal_dist_rootleaf_expand,
-                    weirdskcore2_vertical_dist_rootleaf_expand , weirds_boxes_separation_count,
-                    root_weird_expand, hide_plot_border, rescale_plot_area,kcore1weirds_leafs_vertical_separation,
+                    outsiders_separation_expand, outsiders_legend_expand, specialistskcore2_horizontal_dist_rootleaf_expand,
+                    specialistskcore2_vertical_dist_rootleaf_expand , specialists_boxes_separation_count,
+                    root_specialist_expand, hide_plot_border, rescale_plot_area,kcore1specialists_leafs_vertical_separation,
                     corebox_border_size, kcore_species_name_display,kcore_species_name_break,shorten_species_name,exclude_species_number,
                     label_strguilda, label_strguildb, landscape_plot, backg_color, show_title,
                     use_spline, spline_points, file_name_append, svg_scale_factor, weighted_links,
@@ -158,7 +158,7 @@ ziggurat_graph <- function(datadir,filename,
 }
 
 
-# Labels of square nodes: tails, weird chains and outsiders
+# Labels of square nodes: tails, specialist chains and outsiders
 gen_sq_label <- function(nodes, joinchars = "\n", is_guild_a = TRUE)
 {
   # If kcore1 nodes name are displayed
@@ -923,7 +923,7 @@ add_link <- function(xx1 = 0,xx2 = 0,yy1 = 0,yy2 = 0,
       x <- c(link$x1,link$x1+(link$x2-link$x1)*0.80,link$x1+(link$x2-link$x1)*0.90,link$x2)
       y <- c(link$y1,link$y1+(link$y2-link$y1)*0.95,link$y1+(link$y2-link$y1)*0.99,link$y2)
     }
-    else if (spline == "weirdhorizontal"){
+    else if (spline == "specialisthorizontal"){
       x <- c(link$x1,link$x1+(link$x2-link$x1)*0.40,link$x1+(link$x2-link$x1)*0.75,link$x2)
       y <- c(link$y1,link$y1+(link$y2-link$y1)*0.6,link$y1+(link$y2-link$y1)*0.70,link$y2)
     }
@@ -944,25 +944,25 @@ add_link <- function(xx1 = 0,xx2 = 0,yy1 = 0,yy2 = 0,
 }
 
 # Analysis of the chains of specialists
-weird_analysis <- function(weirds,opposite_weirds,species)
+specialist_analysis <- function(specialists,opposite_specialists,species)
 {
-  ldf <- weirds[weirds$orph == species,]
+  ldf <- specialists[specialists$orph == species,]
   if (max(ldf$kcore)>1)
     return(ldf)
 }
 
 # Store speciailsts in initermediate df_store data frame and compute positions
 # Very hard, indeed
-store_weird_species <- function (row_orph, df_store, strguild, lado, gap, original_weirds_a, original_weirds_b)
+store_specialist_species <- function (row_orph, df_store, strguild, lado, gap, original_specialists_a, original_specialists_b)
 {
 
   sidex <- lado
   index <- nrow(df_store)+1
   df_store[index,]$kcorepartner <- row_orph$kcore
-  separation <- (1+zgg$weirds_boxes_separation_count)*sidex
-  tot_weirds <- nrow(original_weirds_a)+nrow(original_weirds_b)
-  jumpfactor <- (4-min(3,(tot_weirds%/%10)))
-  cgap <- (lado+gap/(5-min(3,(tot_weirds%/%10))))
+  separation <- (1+zgg$specialists_boxes_separation_count)*sidex
+  tot_specialists <- nrow(original_specialists_a)+nrow(original_specialists_b)
+  jumpfactor <- (4-min(3,(tot_specialists%/%10)))
+  cgap <- (lado+gap/(5-min(3,(tot_specialists%/%10))))
 
   if (row_orph$kcore > 1){
     df_store$guild[index] <- as.character(strguild)
@@ -1008,8 +1008,8 @@ store_weird_species <- function (row_orph, df_store, strguild, lado, gap, origin
 
     } else {
       if (row_orph$kcore == 2){
-        xoffset <- 2*zgg$weirdskcore2_horizontal_dist_rootleaf_expand*separation   # Controls the separation of weirds root leaves connected to core 2
-        zgg$yoffset <- zgg$weirdskcore2_vertical_dist_rootleaf_expand*separation/zgg$aspect_ratio
+        xoffset <- 2*zgg$specialistskcore2_horizontal_dist_rootleaf_expand*separation   # Controls the separation of specialists root leaves connected to core 2
+        zgg$yoffset <- zgg$specialistskcore2_vertical_dist_rootleaf_expand*separation/zgg$aspect_ratio
       } else{
         xoffset <- 0
         zgg$yoffset <- 0
@@ -1030,12 +1030,12 @@ store_weird_species <- function (row_orph, df_store, strguild, lado, gap, origin
       }
     }
     if (row_orph$kcore == zgg$kcoremax)
-      df_store$x1[index] <- df_store$x1[index]* zgg$root_weird_expand[1]
-    else if (zgg$root_weird_expand[1]>1)
-      df_store$x1[index] <- df_store$x1[index]* zgg$root_weird_expand[1]
+      df_store$x1[index] <- df_store$x1[index]* zgg$root_specialist_expand[1]
+    else if (zgg$root_specialist_expand[1]>1)
+      df_store$x1[index] <- df_store$x1[index]* zgg$root_specialist_expand[1]
     else if (row_orph$kcore > 2)
-      df_store$x1[index] <- df_store$x1[index]* (9+zgg$root_weird_expand[1])/10
-    df_store$y1[index] <- df_store$y1[index]* zgg$root_weird_expand[2] * zgg$aspect_ratio
+      df_store$x1[index] <- df_store$x1[index]* (9+zgg$root_specialist_expand[1])/10
+    df_store$y1[index] <- df_store$y1[index]* zgg$root_specialist_expand[2] * zgg$aspect_ratio
   }
   else {                                          # Branch leaves
     df_store$partner[index] <- row_orph$orph
@@ -1047,23 +1047,23 @@ store_weird_species <- function (row_orph, df_store, strguild, lado, gap, origin
     if (data_row$kcorepartner == zgg$kcoremax){
       if (zgg$kcoremax > 2){
         df_store$x1[index] <- data_row$x1 - 1.5*separation*(repetitions)
-        df_store$y1[index] <- data_row$y1 + sign(data_row$y1)*4*(zgg$weirds_boxes_separation_count*zgg$height_y + (repetitions-1)*sidex/zgg$aspect_ratio)
+        df_store$y1[index] <- data_row$y1 + sign(data_row$y1)*4*(zgg$specialists_boxes_separation_count*zgg$height_y + (repetitions-1)*sidex/zgg$aspect_ratio)
       }
       else{
         df_store$x1[index] <- data_row$x1 - (4+0.2*sqrt(index))*sidex
-        df_store$y1[index] <- data_row$y1+ sign(data_row$y1)*(zgg$weirds_boxes_separation_count*zgg$height_y + as.integer(data_row$partner)*sidex/zgg$aspect_ratio) +
+        df_store$y1[index] <- data_row$y1+ sign(data_row$y1)*(zgg$specialists_boxes_separation_count*zgg$height_y + as.integer(data_row$partner)*sidex/zgg$aspect_ratio) +
           (2+0.2*sqrt(index))*sign(data_row$y1)*(repetitions-1)*sidex/zgg$aspect_ratio
       }
     }
-    else{                                   # weirds connected to root leaf connected to kcoremax
+    else{                                   # specialists connected to root leaf connected to kcoremax
       hjump <- sign(data_row$x1)*zgg$factor_hop_x* separation
       df_store$x1[index] <- data_row$x1 + hjump
       df_store$y1[index] <- data_row$y1 + sign(data_row$y1)*2*(repetitions-1)*sidex/zgg$aspect_ratio
     }
     reps <- sum((df_store$partner == df_store$partner[index]) & (df_store$guild == strguild))
 
-    if (zgg$kcore1weirds_leafs_vertical_separation!=1){
-      addjump <- sign(df_store$y1[index])*reps*zgg$kcore1weirds_leafs_vertical_separation*sidex/zgg$aspect_ratio
+    if (zgg$kcore1specialists_leafs_vertical_separation!=1){
+      addjump <- sign(df_store$y1[index])*reps*zgg$kcore1specialists_leafs_vertical_separation*sidex/zgg$aspect_ratio
       df_store$y1[index]<- addjump + df_store$y1[index]
     }
 
@@ -1088,7 +1088,7 @@ store_weird_species <- function (row_orph, df_store, strguild, lado, gap, origin
 }
 
 # Draw a chain of specialists
-draw_weird_chains <- function(grafo, svg, df_chains, ladosq)
+draw_specialist_chains <- function(grafo, svg, df_chains, ladosq)
 {
   p <- grafo
   df_chains$weightlink <- 0
@@ -1107,7 +1107,7 @@ draw_weird_chains <- function(grafo, svg, df_chains, ladosq)
     vjust <- 0
     labelcolor <- ifelse(length(zgg$labels_color)>0,zgg$labels_color[2-as.numeric(is_guild_a)], bgcolor)
     sqlabel = gen_sq_label(df_chains[i,]$orph,is_guild_a = is_guild_a)
-    f <- draw_square(paste0(ifelse(is_guild_a, "weird-chains-kcore1-a-", "weird-chains-kcore1-b-"), i),p,
+    f <- draw_square(paste0(ifelse(is_guild_a, "specialist-chains-kcore1-a-", "specialist-chains-kcore1-b-"), i),p,
                      svg,df_chains[i,]$x1,df_chains[i,]$y1, ladosq,
                      bgcolor,zgg$alpha_level,
                      labelcolor,0,hjust,vjust,
@@ -1140,7 +1140,7 @@ draw_weird_chains <- function(grafo, svg, df_chains, ladosq)
       }
       else
         splineshape = "arc"
-        #splineshape = "weirdhorizontal"
+        #splineshape = "specialisthorizontal"
       #color_link = "green"
       tailweight <- 0
       # for (h in 1:nrow(df_chains))
@@ -1171,37 +1171,37 @@ swap_strguild <- function(strguild)
 }
 
 # Store the root node of a chain of specialists
-store_root_leaf <- function(weirds,df_chains,strguild,lado, gap, original_weirds_a, original_weirds_b)
+store_root_leaf <- function(specialists,df_chains,strguild,lado, gap, original_specialists_a, original_specialists_b)
 {
-  for (i in 1:nrow(weirds))
+  for (i in 1:nrow(specialists))
   {
-    if (weirds[i,]$kcore > 1){
-      df_chains <- store_weird_species(weirds[i,], df_chains, strguild, lado , gap, original_weirds_a, original_weirds_b)
-      weirds[i,]$drawn = "yes"
+    if (specialists[i,]$kcore > 1){
+      df_chains <- store_specialist_species(specialists[i,], df_chains, strguild, lado , gap, original_specialists_a, original_specialists_b)
+      specialists[i,]$drawn = "yes"
     }
   }
-  calc_vals <- list("df_chains" = df_chains, "weirds" = weirds)
+  calc_vals <- list("df_chains" = df_chains, "specialists" = specialists)
   return(calc_vals)
 }
 
-# Store leafs of a weird chain
-store_branch_leaf <- function(weirds, weirds_opp,df_chains, pstrguild, plado, gap, original_weirds_a, original_weirds_b)
+# Store leafs of a specialist chain
+store_branch_leaf <- function(specialists, specialists_opp,df_chains, pstrguild, plado, gap, original_specialists_a, original_specialists_b)
 {
-  for (i in 1:nrow(weirds))
+  for (i in 1:nrow(specialists))
   {
-    if (weirds[i,]$drawn == "no"){
+    if (specialists[i,]$drawn == "no"){
       strguild <- pstrguild
-      if (sum( ((df_chains$orph == weirds[i,]$orph) & (df_chains$guild == strguild)) )>0 ){
+      if (sum( ((df_chains$orph == specialists[i,]$orph) & (df_chains$guild == strguild)) )>0 ){
         strguild <- swap_strguild(pstrguild)
-        df_chains <- store_weird_species(weirds[i,], df_chains, strguild, plado, gap, original_weirds_a, original_weirds_b)
-        weirds[i,]$drawn = "yes"
-        mirror_weird <- which((weirds_opp$partner == weirds[i,]$orph) & (weirds_opp$orph == weirds[i,]$partner))
-        if (length(mirror_weird)>0)
-          weirds_opp[mirror_weird , ]$drawn = "yes"
+        df_chains <- store_specialist_species(specialists[i,], df_chains, strguild, plado, gap, original_specialists_a, original_specialists_b)
+        specialists[i,]$drawn = "yes"
+        mirror_specialist <- which((specialists_opp$partner == specialists[i,]$orph) & (specialists_opp$orph == specialists[i,]$partner))
+        if (length(mirror_specialist)>0)
+          specialists_opp[mirror_specialist , ]$drawn = "yes"
       }
     }
   }
-  calc_vals <- list("df_chains" = df_chains, "weirds" = weirds, "weirds_opp" = weirds_opp)
+  calc_vals <- list("df_chains" = df_chains, "specialists" = specialists, "specialists_opp" = specialists_opp)
   return(calc_vals)
 }
 
@@ -1354,26 +1354,26 @@ draw_fat_tail<- function(p,svg,fat_tail,nrows,list_dfs,color_guild,pos_tail_x,po
 }
 
 # Management of chains of specialists
-handle_weirds <- function(p,svg,weirds_a,weirds_b,lado,gap)
+handle_specialists <- function(p,svg,specialists_a,specialists_b,lado,gap)
 {
   ladosq <- 2 * lado * sqrt(zgg$square_nodes_size_scale)
-  weirds_a <- data.frame(c())
-  weirds_b <- data.frame(c())
+  specialists_a <- data.frame(c())
+  specialists_b <- data.frame(c())
   if (exists("df_orph_a", envir = zgg))
     if (nrow(zgg$df_orph_a)>0)
      {
-      weirds_a <-  zgg$df_orph_a[zgg$df_orph_a$repeated== "yes",]
-      weirds_a <-  weirds_a[rev(order(weirds_a$orph,weirds_a$kcore)),]
-      if (nrow(weirds_a)>0)
-        weirds_a$drawn <- "no"
+      specialists_a <-  zgg$df_orph_a[zgg$df_orph_a$repeated== "yes",]
+      specialists_a <-  specialists_a[rev(order(specialists_a$orph,specialists_a$kcore)),]
+      if (nrow(specialists_a)>0)
+        specialists_a$drawn <- "no"
       }
   if (exists("df_orph_b", envir = zgg))
     if (nrow(zgg$df_orph_b)>0)
       {
-      weirds_b <-  zgg$df_orph_b[zgg$df_orph_b$repeated== "yes",]
-      weirds_b <-  weirds_b[rev(order(weirds_b$orph,weirds_b$kcore)),]
-      if (nrow(weirds_b)>0)
-        weirds_b$drawn <- "no"
+      specialists_b <-  zgg$df_orph_b[zgg$df_orph_b$repeated== "yes",]
+      specialists_b <-  specialists_b[rev(order(specialists_b$orph,specialists_b$kcore)),]
+      if (nrow(specialists_b)>0)
+        specialists_b$drawn <- "no"
       }
 
   # Create empty df_chains data frame
@@ -1381,39 +1381,39 @@ handle_weirds <- function(p,svg,weirds_a,weirds_b,lado,gap)
                           guild = character(0), orph = integer(0), partner = integer(0),
                           kcorepartner = integer(0), xx2 = numeric(0), yy2 = numeric(0), stringsAsFactors = FALSE )
 
-  if  (( ( nrow(weirds_a)+nrow(weirds_b) )>0)) {
-    original_weirds_a <- weirds_a
-    original_weirds_b <- weirds_b
-    while (((nrow(weirds_a)+nrow(weirds_b))>0))
+  if  (( ( nrow(specialists_a)+nrow(specialists_b) )>0)) {
+    original_specialists_a <- specialists_a
+    original_specialists_b <- specialists_b
+    while (((nrow(specialists_a)+nrow(specialists_b))>0))
     {
-      if (nrow(weirds_a)>0){
-        k <- store_root_leaf(weirds_a, zgg$df_chains, zgg$str_guild_a, ladosq, gap, original_weirds_a, original_weirds_b)
+      if (nrow(specialists_a)>0){
+        k <- store_root_leaf(specialists_a, zgg$df_chains, zgg$str_guild_a, ladosq, gap, original_specialists_a, original_specialists_b)
         zgg$df_chains <- k["df_chains"][[1]]
-        weirds_a <- k["weirds"][[1]]
+        specialists_a <- k["specialists"][[1]]
       }
-      if (nrow(weirds_b)>0){
-        k <- store_root_leaf(weirds_b, zgg$df_chains, zgg$str_guild_b, ladosq, gap, original_weirds_a, original_weirds_b)
+      if (nrow(specialists_b)>0){
+        k <- store_root_leaf(specialists_b, zgg$df_chains, zgg$str_guild_b, ladosq, gap, original_specialists_a, original_specialists_b)
         zgg$df_chains <- k["df_chains"][[1]]
-        weirds_b <- k["weirds"][[1]]
+        specialists_b <- k["specialists"][[1]]
       }
-      if (nrow(weirds_a)>0){
-        k <- store_branch_leaf(weirds_a, weirds_b, zgg$df_chains, zgg$str_guild_a, ladosq, gap, original_weirds_a, original_weirds_b)
+      if (nrow(specialists_a)>0){
+        k <- store_branch_leaf(specialists_a, specialists_b, zgg$df_chains, zgg$str_guild_a, ladosq, gap, original_specialists_a, original_specialists_b)
         zgg$df_chains <- k["df_chains"][[1]]
-        weirds_a <- k["weirds"][[1]]
-        weirds_b <- k["weirds_opp"][[1]]
+        specialists_a <- k["specialists"][[1]]
+        specialists_b <- k["specialists_opp"][[1]]
       }
-      if (nrow(weirds_b)>0){
-        k <- store_branch_leaf(weirds_b, weirds_a, zgg$df_chains, zgg$str_guild_b, ladosq, gap, original_weirds_a, original_weirds_b)
+      if (nrow(specialists_b)>0){
+        k <- store_branch_leaf(specialists_b, specialists_a, zgg$df_chains, zgg$str_guild_b, ladosq, gap, original_specialists_a, original_specialists_b)
         zgg$df_chains <- k["df_chains"][[1]]
-        weirds_b <- k["weirds"][[1]]
-        weirds_a <- k["weirds_opp"][[1]]
+        specialists_b <- k["specialists"][[1]]
+        specialists_a <- k["specialists_opp"][[1]]
       }
-      # Now they may be some weirds of core 1 linked to core 1 that were not
+      # Now they may be some specialists of core 1 linked to core 1 that were not
       # stored in the previous procedure
-      weirds_a <- weirds_a[weirds_a$drawn == "no",]
-      weirds_b <- weirds_b[weirds_b$drawn == "no",]
+      specialists_a <- specialists_a[specialists_a$drawn == "no",]
+      specialists_b <- specialists_b[specialists_b$drawn == "no",]
     }
-    f <- draw_weird_chains(p, svg, zgg$df_chains, ladosq)
+    f <- draw_specialist_chains(p, svg, zgg$df_chains, ladosq)
     p <- f["p"][[1]]
     svg <- f["svg"][[1]]
   }
@@ -1503,7 +1503,7 @@ write_annotations <- function(p, svg)
   return(calc_vals)
 }
 
-# Handle weird chain species
+# Handle specialist chain species
 handle_orphans <- function(vg)
 {
   zgg$df_orph_a <- data.frame(c())
@@ -1525,7 +1525,7 @@ handle_orphans <- function(vg)
   return(calc_vals)
 }
 
-# Draw weird chains connected to inner ziggurats
+# Draw specialist chains connected to inner ziggurats
 draw_inner_orphans <- function(p, svg)
 {
   if (zgg$kcoremax >2)
@@ -1911,7 +1911,7 @@ read_and_analyze <- function(directorystr,network_file,label_strguilda,label_str
   }
 
   result_analysis <- analyze_network(network_file, directory = directorystr, guild_a = str_guild_a,
-                                     guild_b = str_guild_b)
+                                     guild_b = str_guild_b, only_NODF = TRUE)
 
 
   calc_vals <- list("result_analysis" = result_analysis, "str_guild_a" = str_guild_a, "str_guild_b" = str_guild_b,
@@ -1930,9 +1930,9 @@ def_configuration <- function(paintlinks, print_to_file, plotsdir, flip_results,
                               factor_hop_x, fattailjumphoriz, fattailjumpvert,
                               coremax_triangle_height_factor, coremax_triangle_width_factor,
                               paint_outsiders, displace_outside_component,
-                              outsiders_separation_expand, outsiders_legend_expand, weirdskcore2_horizontal_dist_rootleaf_expand,
-                              weirdskcore2_vertical_dist_rootleaf_expand , weirds_boxes_separation_count,
-                              root_weird_expand,hide_plot_border,rescale_plot_area,kcore1weirds_leafs_vertical_separation,
+                              outsiders_separation_expand, outsiders_legend_expand, specialistskcore2_horizontal_dist_rootleaf_expand,
+                              specialistskcore2_vertical_dist_rootleaf_expand , specialists_boxes_separation_count,
+                              root_specialist_expand,hide_plot_border,rescale_plot_area,kcore1specialists_leafs_vertical_separation,
                               corebox_border_size, kcore_species_name_display,kcore_species_name_break,
                               shorten_species_name,exclude_species_number,
                               label_strguilda, label_strguildb, landscape_plot, backg_color, show_title,
@@ -1963,7 +1963,7 @@ def_configuration <- function(paintlinks, print_to_file, plotsdir, flip_results,
   zgg$labels_color <- labels_color
   zgg$height_box_y_expand <- height_box_y_expand
   zgg$kcore2tail_vertical_separation <- kcore2tail_vertical_separation                 # Vertical separation of orphan boxes linked to core 2 in number of heights_y
-  zgg$kcore1tail_disttocore <- kcore1tail_disttocore                            # Horizontal & Vertical distances of edge/weird tails linked to core 1 North & South
+  zgg$kcore1tail_disttocore <- kcore1tail_disttocore                            # Horizontal & Vertical distances of edge/specialist tails linked to core 1 North & South
   zgg$innertail_vertical_separation <- innertail_vertical_separation                  # Vertical separation of orphan boxes linked to inner cores in number of heights_y
   #zgg$horiz_kcoremax_tails_expand <- horiz_kcoremax_tails_expand                  # horizontal separation of edge tails connected to kcoremax.
   zgg$factor_hop_x <- factor_hop_x
@@ -1976,13 +1976,13 @@ def_configuration <- function(paintlinks, print_to_file, plotsdir, flip_results,
   zgg$displace_outside_component <- displace_outside_component
   zgg$outsiders_separation_expand <- outsiders_separation_expand
   zgg$outsiders_legend_expand <- outsiders_legend_expand
-  zgg$weirdskcore2_horizontal_dist_rootleaf_expand <- weirdskcore2_horizontal_dist_rootleaf_expand        # Controls the distance of weird root leaves to partner in core 2
-  zgg$weirdskcore2_vertical_dist_rootleaf_expand <- weirdskcore2_vertical_dist_rootleaf_expand
-  zgg$weirds_boxes_separation_count <- weirds_boxes_separation_count                  # Separation of leaves of a weird tail
-  zgg$root_weird_expand <- root_weird_expand
+  zgg$specialistskcore2_horizontal_dist_rootleaf_expand <- specialistskcore2_horizontal_dist_rootleaf_expand        # Controls the distance of specialist root leaves to partner in core 2
+  zgg$specialistskcore2_vertical_dist_rootleaf_expand <- specialistskcore2_vertical_dist_rootleaf_expand
+  zgg$specialists_boxes_separation_count <- specialists_boxes_separation_count                  # Separation of leaves of a specialist tail
+  zgg$root_specialist_expand <- root_specialist_expand
   zgg$hide_plot_border <- hide_plot_border
   zgg$rescale_plot_area <- rescale_plot_area
-  zgg$kcore1weirds_leafs_vertical_separation <- kcore1weirds_leafs_vertical_separation
+  zgg$kcore1specialists_leafs_vertical_separation <- kcore1specialists_leafs_vertical_separation
   zgg$corebox_border_size <- corebox_border_size
   zgg$kcore_species_name_display <- kcore_species_name_display
   zgg$kcore_species_name_break <- kcore_species_name_break
@@ -2174,9 +2174,9 @@ draw_ziggurat_plot <- function(svg_scale_factor, progress)
     svg <- z["svg"][[1]]
   }
 
-  # Weirds management
-  if (!is.null(progress)) progress$inc(1/11, detail=strings$value("MESSAGE_ZIGGURAT_PROGRESS_DRAWING_WEIRDS"))
-  v <- handle_weirds(p,svg,weirds_a,weirds_b,zgg$lado,zgg$gap)
+  # specialists management
+  if (!is.null(progress)) progress$inc(1/11, detail=strings$value("MESSAGE_ZIGGURAT_PROGRESS_DRAWING_specialistS"))
+  v <- handle_specialists(p,svg,specialists_a,specialists_b,zgg$lado,zgg$gap)
   p <- v["p"][[1]]
   svg <- v["svg"][[1]]
 
