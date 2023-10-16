@@ -97,7 +97,7 @@ ziggurat_graph <- function(datadir,filename,
                            kcore_species_name_display = c(), kcore_species_name_break = c(),
                            shorten_species_name = 0, exclude_species_number = FALSE, label_strguilda = "",
                            label_strguildb = "", landscape_plot = TRUE,
-                           backg_color = "white", show_title = TRUE, use_spline =TRUE, spline_points = 100,
+                           backg_color = "white", show_title = TRUE, use_spline =TRUE, spline_points = 10,
                            file_name_append = "", svg_scale_factor= 10, weighted_links = "none",
                            square_nodes_size_scale = 1, move_all_SVG_up = 0,
                            progress=NULL
