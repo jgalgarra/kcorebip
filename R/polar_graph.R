@@ -192,7 +192,7 @@ paint_kdegree_kradius <- function(graph, num_guild_a, num_guild_b,
   polar_plot <- polar_plot + annotate(geom="text",x=xlab,y=pylab,label=ylab,size=4, color="gray50",
                                       lineheight=.8, alpha = 0.5)
   if (ptitle)
-    polar_plot <- polar_plot + ggtitle(sprintf("Network %s NODF: %.02f Modularity: %.04f\n\n Avg k-radius: %.02f Avg k-degree: %.02f", network_name, NODF, Modularity, MeanKradius, MeanKdegree)) +
+    polar_plot <- polar_plot + ggtitle(sprintf("Network %s", network_name) #+ ggtitle(sprintf("Network %s NODF: %.02f Modularity: %.04f\n\n Avg k-radius: %.02f Avg k-degree: %.02f", network_name, NODF, Modularity, MeanKradius, MeanKdegree)) +
     guides(row = guide_legend(nrow = 1))
   histo_kradius <- ggplot(dfaux, aes(kradius)) + geom_histogram(alpha = alpha_level,position='dodge',
                                                              binwidth=(extreme+1)/10,
@@ -396,7 +396,3 @@ polar_graph <- function( red, directorystr = "data/", plotsdir = "plot_results/p
 }
 
 #polar_graph("pl017-minus6plants.csv","datanetworks2015/",print_to_file=TRUE, lsize_title = 24, lsize_axis = 18, lsize_legend = 18, lsize_axis_title = 18, lsize_legend_title = 20)
-#source("jga/network-kanalysis.R"), lsize_title = 24, lsize_axis = 18, lsize_legend = 18, lsize_axis_title = 18, lsize_legend_title = 20)
-#polar_graph("M_PL_021.csv","data/",print_to_file=TRUE, lsize_title = 24, lsize_axis = 18, lsize_legend = 18, lsize_axis_title = 18, lsize_legend_title = 20)
-#polar_graph("M_PL_007.csv","data/",print_to_file=TRUE, lsize_title = 24, lsize_axis = 18, lsize_legend = 18, lsize_axis_title = 18, lsize_legend_title = 20)
-#polar_graph("M_PL_031.csv","data/",print_to_file=TRUE, lsize_title = 24, lsize_axis = 18, lsize_legend = 18, lsize_axis_title = 18, lsize_legend_title = 20)
