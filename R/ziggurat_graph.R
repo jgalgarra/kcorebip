@@ -2204,7 +2204,7 @@ draw_ziggurat_plot <- function(svg_scale_factor, progress)
       svg$segment(idPrefix="link", data=zgg$straight_links, mapping=aes(x=x1, y=y1, xend=x2, yend=y2),
                   alpha=zgg$alpha_link, color=zgg$color_link,
                   #size=factormult*zgg$straight_links$weightlink)
-                  size=factormult*zgg$straight_links$weightlink)
+                  size=zgg$straight_links$weightlink)
     }
     if (nrow(zgg$bent_links)>0) {
       p <- p + geom_path(data =zgg$bent_links,aes(x,y,group=number), linewidth=zgg$bent_links$weightlink,
