@@ -1,9 +1,7 @@
 library(ggplot2)
-#library(scales)
 library(grid)
 library(gridExtra)
 library(igraph)
-
 
 paint_kdegree_kradius <- function(graph, num_guild_a, num_guild_b,
                                   lsize_title , lsize_axis, lsize_legend, lsize_axis_title ,
@@ -192,7 +190,7 @@ paint_kdegree_kradius <- function(graph, num_guild_a, num_guild_b,
   polar_plot <- polar_plot + annotate(geom="text",x=xlab,y=pylab,label=ylab,size=4, color="gray50",
                                       lineheight=.8, alpha = 0.5)
   if (ptitle)
-    polar_plot <- polar_plot + ggtitle(sprintf("Network %s", network_name) #+ ggtitle(sprintf("Network %s NODF: %.02f Modularity: %.04f\n\n Avg k-radius: %.02f Avg k-degree: %.02f", network_name, NODF, Modularity, MeanKradius, MeanKdegree)) +
+    polar_plot <- polar_plot + ggtitle(sprintf("Network %s", network_name)) +
     guides(row = guide_legend(nrow = 1))
   histo_kradius <- ggplot(dfaux, aes(kradius)) + geom_histogram(alpha = alpha_level,position='dodge',
                                                              binwidth=(extreme+1)/10,
@@ -353,7 +351,6 @@ polar_graph <- function( red, directorystr = "data/", plotsdir = "plot_results/p
       ftname_append <- paste0("_",file_name_append)
     else
       ftname_append <- file_name_append
-    dir.create(plotsdir, showWarnings = FALSE)
     fsal <- paste0(plotsdir,red_name,"_polar",ftname_append,".png")
     if (show_histograms)
       png(fsal, width=12*ppi, height=12*ppi, res=ppi)
@@ -395,4 +392,4 @@ polar_graph <- function( red, directorystr = "data/", plotsdir = "plot_results/p
   return(r)
 }
 
-#polar_graph("pl017-minus6plants.csv","datanetworks2015/",print_to_file=TRUE, lsize_title = 24, lsize_axis = 18, lsize_legend = 18, lsize_axis_title = 18, lsize_legend_title = 20)
+#polar_graph("pl017-minus6plants.csv","datanetworks2015/",print_to_file=TRUE, lsize_title = 24, lsize_axis = 18, lsize_legend = 18, lsize_axis_title = 18, lsize_legend_title = 20)remove,
