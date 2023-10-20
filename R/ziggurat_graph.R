@@ -2203,6 +2203,7 @@ draw_ziggurat_plot <- function(svg_scale_factor, progress)
       factormult <- 0.1*svg_scale_factor
       svg$segment(idPrefix="link", data=zgg$straight_links, mapping=aes(x=x1, y=y1, xend=x2, yend=y2),
                   alpha=zgg$alpha_link, color=zgg$color_link,
+                  #size=factormult*zgg$straight_links$weightlink)
                   size=factormult*zgg$straight_links$weightlink)
     }
     if (nrow(zgg$bent_links)>0) {
@@ -2210,7 +2211,8 @@ draw_ziggurat_plot <- function(svg_scale_factor, progress)
                        color=zgg$color_link ,alpha=zgg$alpha_link)
       svg$path(idPrefix="link", data=zgg$bent_links, mapping=aes(x, y, group=number), alpha=zgg$alpha_link,
                       color=zgg$color_link,
-               size=0.1*svg_scale_factor*zgg$bent_links$weightlink)
+               #size=0.1*svg_scale_factor*zgg$bent_links$weightlink)
+               size=zgg$bent_links$weightlink)
     }
   }
   if (is.null(progress))
