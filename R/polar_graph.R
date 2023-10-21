@@ -135,7 +135,6 @@ paint_kdegree_kradius <- function(graph, num_guild_a, num_guild_b,
     scale_fill_manual(values = vcols)+
     guides(col = guide_legend(override.aes = list(shape = 15, size = 8)),
            shape = guide_legend(override.aes = list(size = 8, colour = "black")))
-           #,kdegree = guide_legend(override.aes = list(shape = 15, size = 8, colour = "slategray1")))
   if (showtext == "yes"){
     polar_plot <- polar_plot+ geom_text(aes(size=0.005+0.05*normdegree,angle=0,
                                             colour = factor(kcorenum),
@@ -346,7 +345,7 @@ polar_graph <- function( red, directorystr = "data/", plotsdir = "plot_results/p
   fsal=""
   if (print_to_file) {
     dir.create(plotsdir, showWarnings = FALSE)
-    ppi <- 600
+    ppi <- 300
     if (file_name_append != "")
       ftname_append <- paste0("_",file_name_append)
     else
