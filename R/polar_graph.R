@@ -107,10 +107,11 @@ paint_kdegree_kradius <- function(graph, num_guild_a, num_guild_b,
       indtop <- indtop + 1
     }
     else{
-      if ((numspecies > 75) & (dfaux$kcorenum[j] < 3))
-        shift <- (shift + 0.007)
-      else
-        shift <- 0
+      # if ((numspecies > 75) & (dfaux$kcorenum[j] < 3))
+      #   shift <- (shift + 0.007)
+      # else
+      #   shift <- 0
+      shift  <- 0
       dfaux$posx[j] <- ((1+shift)*(indvulg[dfaux$classe[j]]*primemove))%%denom
       if (sum( (dfaux$posx == dfaux$posx[j])& (dfaux$posy == dfaux$posy[j]))>1){
         indvulg[dfaux$classe[j]] <- indvulg[dfaux$classe[j]] + 0.7
@@ -237,9 +238,6 @@ paint_kdegree_kradius <- function(graph, num_guild_a, num_guild_b,
   histo_kdegree <- ggplot(dfaux, aes(kdegree)) +
     geom_histogram(alpha = alpha_level,binwidth=(1+ceiling(max(dfaux$kdegree)))/8,
                    position='dodge',color="white",fill = "grey20") +
-    # scale_x_continuous(breaks=seq(0, 1+ceiling(max(dfaux$kdegree)), by=salto),
-    #                    labels=seq(0, 1+ceiling(max(dfaux$kdegree)), by=salto),
-    #                    lim=c(0,1+ceiling(max(dfaux$kdegree)))) +
     theme_bw() +
     theme(panel.border = element_blank(),
           legend.key = element_blank(),
@@ -372,10 +370,10 @@ polar_graph <- function( red, directorystr = "data/", plotsdir = "plot_results/p
   # if (is.null(progress))
   # {
     if (show_histograms)
-      grid.arrange(r["polar_plot"][[1]], nrow=2, heights=c(4/5,1/5),
+      print(grid.arrange(r["polar_plot"][[1]], nrow=2, heights=c(4/5,1/5),
                    arrangeGrob(r["histo_kradius"][[1]],
                                r["histo_kdegree"][[1]],
-                               r["histo_core"][[1]],ncol=3, nrow=1, widths=c(1/3,1/3,1/3))
+                               r["histo_core"][[1]],ncol=3, nrow=1, widths=c(1/3,1/3,1/3)))
                    )
 
     else
