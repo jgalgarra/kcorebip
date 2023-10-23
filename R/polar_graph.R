@@ -366,20 +366,17 @@ polar_graph <- function( red, directorystr = "data/", plotsdir = "plot_results/p
                              filln = fill_nodes, alphal = alpha_nodes, nfsal = fsal,
                              maxkradius = max_kradius, progress
                               )
-  #Non interactive mode. Plots stored in file or displayer in R window
-  # if (is.null(progress))
-  # {
     if (show_histograms)
-      print(grid.arrange(r["polar_plot"][[1]], nrow=2, heights=c(4/5,1/5),
+      r$full_plot <- grid.arrange(r["polar_plot"][[1]], nrow=2, heights=c(4/5,1/5),
                    arrangeGrob(r["histo_kradius"][[1]],
                                r["histo_kdegree"][[1]],
                                r["histo_core"][[1]],ncol=3, nrow=1, widths=c(1/3,1/3,1/3)))
-                   )
-
     else
-      print(r["polar_plot"][[1]])
-    if (print_to_file)
+      r$full_plot <- r["polar_plot"][[1]]
+    if (print_to_file){
+      print(r$full_plot)
       dev.off()
+      }
   # }
   # Message for interactive apps.
   if (!is.null(progress)) {
