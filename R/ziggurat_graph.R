@@ -1140,8 +1140,6 @@ draw_specialist_chains <- function(grafo, svg, df_chains, ladosq)
       }
       else
         splineshape = "arc"
-        #splineshape = "specialisthorizontal"
-      #color_link = "green"
       tailweight <- 0
       # for (h in 1:nrow(df_chains))
         if (df_chains$guild[i] == zgg$str_guild_a)
