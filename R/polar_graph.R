@@ -383,6 +383,7 @@ polar_graph <- function( red, directorystr = "data/", plotsdir = "plot_results/p
     progress$inc(0, detail=strings$value("MESSAGE_POLAR_PROGRESS_DONE"))
   }
   r$polar_argg <- polar_argg
+  r$result_analysis <- result_analysis
   return(r)
 }
 
