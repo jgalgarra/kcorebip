@@ -53,7 +53,7 @@ paint_kdegree_kradius <- function(graph, num_guild_a, num_guild_b,
   pal <-colorRampPalette(c("cadetblue","darkorchid4"))
   jet.colors <- colorRampPalette(c("gray20","gray50"))
   vcols <- jet.colors(maxcore)
-  alpha_level <- 0.5
+  alpha_level <- 0.8
   k <- 1
   symbol_a <- 22
   symbol_b <- 21
