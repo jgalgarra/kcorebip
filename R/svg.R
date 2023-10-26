@@ -176,7 +176,7 @@ SVG<-function(scale_factor) {
       valignstr = "baseline"
     }
     result <- paste0(result, "style=\"text-anchor:",halignstr,";dominant-baseline:",valignstr,
-                     ";font-size:", size*this$font_scale_factor, "px;fill:", color, "\"")
+                     ";font-family:Arial;font-size:", size*this$font_scale_factor, "px;fill:", color, "\"")
     result <- paste0(result, ">\n")
 
     # tspan
