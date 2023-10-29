@@ -350,9 +350,9 @@ polar_graph <- function( red, directorystr = "data/", plotsdir = "plot_results/p
       ftname_append <- file_name_append
     fsal <- paste0(plotsdir,red_name,"_polar",ftname_append,".png")
     if (show_histograms)
-      png(fsal, width=12*ppi, height=12*ppi, res=ppi)
+      png(fsal, width=16*ppi, height=16*ppi, res=ppi)
     else
-      png(fsal, width=9*ppi, height=9*ppi, res=ppi)
+      png(fsal, width=12*ppi, height=12*ppi, res=ppi)
   }
   if (exists("zgg"))
     zgg$polar_file = fsal
