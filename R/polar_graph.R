@@ -301,6 +301,8 @@ polar_graph <- function( red, directorystr = "data/", plotsdir = "plot_results/p
   # to save plotting parameters for a future simulation
 
   polar_argg <- c(as.list(environment()))
+  
+  set.seed(2023)
 
   strip_isolated_nodes <- function()
   {
