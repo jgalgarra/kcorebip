@@ -302,8 +302,6 @@ polar_graph <- function( red, directorystr = "data/", plotsdir = "plot_results/p
 
   polar_argg <- c(as.list(environment()))
   
-  set.seed(2023)
-
   strip_isolated_nodes <- function()
   {
     lgrados <- igraph::degree(result_analysis$graph)
