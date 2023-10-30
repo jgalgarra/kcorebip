@@ -2,6 +2,7 @@ library(ggplot2)
 library(grid)
 library(gridExtra)
 library(igraph)
+library(ggrepel)
 
 paint_kdegree_kradius <- function(graph, num_guild_a, num_guild_b,
                                   lsize_title , lsize_axis, lsize_legend, lsize_axis_title ,
@@ -51,7 +52,7 @@ paint_kdegree_kradius <- function(graph, num_guild_a, num_guild_b,
   slice_multiplier <- 4
   rnd_central <- seq(guarda,pi-guarda,length.out = num_central*slice_multiplier)
   pal <-colorRampPalette(c("cadetblue","darkorchid4"))
-  jet.colors <- colorRampPalette(c("lightsteelblue","gray10"))
+  jet.colors <- colorRampPalette(c("slategray","gray10"))
   vcols <- jet.colors(maxcore)
   alpha_level <- 1
   k <- 1
@@ -137,7 +138,7 @@ paint_kdegree_kradius <- function(graph, num_guild_a, num_guild_b,
     guides(col = guide_legend(override.aes = list(shape = 15, size = 8)),
            shape = guide_legend(override.aes = list(size = 8, colour = "black")))
   if (showtext == "yes"){
-    polar_plot <- polar_plot+ geom_text(aes(size=0.005+0.05*normdegree,angle=0,
+    polar_plot <- polar_plot+ geom_text_repel(aes(size=0.005+0.05*normdegree,angle=0,
                                             colour = factor(kcorenum),
                                             label = num), alpha = alphal+0.1)
   }
