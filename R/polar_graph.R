@@ -328,7 +328,7 @@ polar_graph <- function( red, directorystr = "data/", plotsdir = "plot_results/p
   }
 
   if (!is.null(progress)) progress$inc(1/4, detail=strings$value("MESSAGE_POLAR_PROGRESS_ANALYZING_NETWORK"))
-  result_analysis <- analyze_network(red, directory = directorystr, guild_a = sguild_a, guild_b = sguild_b, plot_graphs = FALSE)
+  result_analysis <- analyze_network(red, directory = directorystr, guild_a = sguild_a, guild_b = sguild_b, only_NODF = TRUE)
   strip_isolated_nodes()
   numlinks <- result_analysis$links
   an$result_analysis <<- result_analysis
