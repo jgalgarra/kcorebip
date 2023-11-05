@@ -1047,11 +1047,13 @@ store_specialist_species <- function (row_orph, df_store, strguild, lado, gap, o
     if (data_row$kcorepartner == zgg$kcoremax){
       if (zgg$kcoremax > 2){
         df_store$x1[index] <- data_row$x1 - 1.5*separation*(repetitions)
-        df_store$y1[index] <- data_row$y1 + sign(data_row$y1)*4*(zgg$specialists_boxes_separation_count*zgg$height_y + (repetitions-1)*sidex/zgg$aspect_ratio)
+        df_store$y1[index] <- data_row$y1 + sign(data_row$y1)*(((3+(zgg$specialists_boxes_separation_count))*zgg$height_y) + ((repetitions-1)*sidex/zgg$aspect_ratio))
       }
       else{
         df_store$x1[index] <- data_row$x1 - (4+0.2*sqrt(index))*sidex
-        df_store$y1[index] <- data_row$y1+ sign(data_row$y1)*(zgg$specialists_boxes_separation_count*zgg$height_y + as.integer(data_row$partner)*sidex/zgg$aspect_ratio) +
+        # df_store$y1[index] <- data_row$y1+ sign(data_row$y1)*(zgg$specialists_boxes_separation_count*zgg$height_y + as.integer(data_row$partner)*sidex/zgg$aspect_ratio) +
+        #   (2+0.2*sqrt(index))*sign(data_row$y1)*(repetitions-1)*sidex/zgg$aspect_ratio
+        df_store$y1[index] <- data_row$y1+ sign(data_row$y1)*(zgg$specialists_boxes_separation_count*zgg$height_y + sidex/zgg$aspect_ratio) +
           (2+0.2*sqrt(index))*sign(data_row$y1)*(repetitions-1)*sidex/zgg$aspect_ratio
       }
     }
