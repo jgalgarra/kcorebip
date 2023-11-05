@@ -294,7 +294,7 @@ draw_rectangle<- function(idPrefix,basex,basey,widthx,widthy,grafo,svg,bordercol
 # Draws (optional) enclosing shell boxes
 draw_core_box <- function(grafo, svg, kcore)
 {
-  marginy <- ifelse((zgg$df_cores$num_species_guild_a[2]+zgg$df_cores$num_species_guild_b[2]>4),1.2*zgg$height_y,0.7*zgg$height_y)
+  marginy <- ifelse((zgg$df_cores$num_species_guild_a[2]+zgg$df_cores$num_species_guild_b[2]>6),1.4*zgg$height_y,0.7*zgg$height_y)
   marginx <- 1.5*zgg$lado
   if (kcore<zgg$kcoremax)
   {
@@ -302,8 +302,8 @@ draw_core_box <- function(grafo, svg, kcore)
     widthx <- (max(zgg$list_dfs_b[[kcore]]$x2,zgg$list_dfs_a[[kcore]]$x2 ) - x_inf) + marginx
     y_inf <- ifelse(length(zgg$list_dfs_a[[kcore]])>0, min(zgg$list_dfs_a[[kcore]]$y2,zgg$list_dfs_a[[kcore]]$y1) - marginy,
                     min(zgg$list_dfs_b[[kcore]]$y2,zgg$list_dfs_b[[kcore]]$y1) - marginy)
-    widthy <- ifelse(length(zgg$list_dfs_b[[kcore]])>0, max(zgg$list_dfs_b[[kcore]]$y2) - y_inf + (1+0.45*zgg$kcoremax)*marginy,
-                     widthy <- max(zgg$list_dfs_a[[kcore]]$y1) - y_inf + (1+0.45*zgg$kcoremax)*marginy)
+    widthy <- ifelse(length(zgg$list_dfs_b[[kcore]])>0, max(zgg$list_dfs_b[[kcore]]$y2) - y_inf + (1+0.5*zgg$kcoremax)*marginy,
+                     widthy <- max(zgg$list_dfs_a[[kcore]]$y1) - y_inf + (1+0.5*zgg$kcoremax)*marginy)
   }
   else{
     x_inf <- min(zgg$list_dfs_b[[kcore]]$x1,zgg$list_dfs_a[[kcore]]$x1) - 3*marginx
@@ -316,7 +316,7 @@ draw_core_box <- function(grafo, svg, kcore)
   p <- f["p"][[1]]
   svg <- f["svg"][[1]]
   if (kcore == zgg$kcoremax){
-    position_x_text <- x_inf+1.5*marginx
+    position_x_text <- x_inf+marginx
     corelabel <- paste0(kcore,"-shell")
   }
   else{
@@ -324,9 +324,9 @@ draw_core_box <- function(grafo, svg, kcore)
     corelabel <- paste0(kcore,"-shell")
   }
   if (!is.null(nrow(zgg$list_dfs_b[[kcore]])))
-    position_y_text <- y_inf+widthy - marginy
+    position_y_text <- y_inf+widthy - 1.4*marginy
   else
-    position_y_text <- y_inf - marginy
+    position_y_text <- y_inf - 1.4*marginy
   zgg$max_position_y_text_core <- max(zgg$max_position_y_text_core,position_y_text)
   if (kcore != zgg$kcoremax){
     px <- position_x_text
@@ -602,7 +602,11 @@ handle_outsiders <- function(p,svg,outsiders,df_chains) {
     zgg$outsiders_a <- zgg$outsider$name[grep(zgg$str_guild_a,zgg$outsider$name)]
     zgg$outsiders_b <- zgg$outsider$name[grep(zgg$str_guild_b,zgg$outsider$name)]
     pox <- -(zgg$hop_x/4)+ zgg$tot_width * (zgg$displace_outside_component[1])
-    poy <- min(-zgg$last_ytail_b[!is.na(zgg$last_ytail_b)]-4*zgg$lado,df_chains$y1) * (1+zgg$displace_outside_component[2])
+    poy <- min(-zgg$last_ytail_b[!is.na(zgg$last_ytail_b)]-4*zgg$lado,df_chains$y1) 
+    if (poy<0) 
+      poy <- poy*(1-zgg$displace_outside_component[2])
+    else
+      poy <- poy*(1+zgg$displace_outside_component[2])
     dfo_a <- conf_outsiders(zgg$outsiders_a,pox,poy,
                             zgg$lado*sqrt(zgg$square_nodes_size_scale),zgg$color_guild_a[2],zgg$str_guild_a)
     guild_sep <- poy-max(1,length(zgg$outsider)/10)*6*zgg$lado*sqrt(zgg$square_nodes_size_scale)*zgg$outsiders_separation_expand/zgg$aspect_ratio
@@ -1469,11 +1473,11 @@ write_annotations <- function(p, svg)
   x_span <- landmark_right - landmark_left
 
   if (!(zgg$flip_results)){
-    x_legend <- 0.8*landmark_right#*(1+zgg$displace_legend[1])
-    y_legend <- 0.8*landmark_top#*(1+zgg$displace_legend[2])
+    x_legend <- 0.8*landmark_right
+    y_legend <- 0.8*landmark_top
   } else {
-    x_legend <- 0.8*landmark_top#*(1+zgg$displace_legend[2])
-    y_legend <- 0.8*landmark_right#*(1+zgg$displace_legend[1])
+    x_legend <- 0.8*landmark_top
+    y_legend <- 0.8*landmark_right
   }
   # p <- p + annotate(geom="text", x=x_legend,
   #                   y=y_legend,
@@ -1952,7 +1956,7 @@ def_configuration <- function(paintlinks, print_to_file, plotsdir, flip_results,
   zgg$alpha_link <- alpha_link
   zgg$size_link <- size_link
   zgg$displace_y_b <- displace_y_b
-  zgg$displace_y_a <- displace_y_a
+  zgg$displace_y_a <- -displace_y_a
   zgg$aspect_ratio <- aspect_ratio
   zgg$labels_size <- 3.5
   zgg$lsize_kcoremax <- lsize_kcoremax
@@ -2175,7 +2179,7 @@ draw_ziggurat_plot <- function(svg_scale_factor, progress)
   }
 
   # specialists management
-  if (!is.null(progress)) progress$inc(1/11, detail=strings$value("MESSAGE_ZIGGURAT_PROGRESS_DRAWING_specialistS"))
+  if (!is.null(progress)) progress$inc(1/11, detail=strings$value("MESSAGE_ZIGGURAT_PROGRESS_DRAWING_SPECIALISTS"))
   v <- handle_specialists(p,svg,specialists_a,specialists_b,zgg$lado,zgg$gap)
   p <- v["p"][[1]]
   svg <- v["svg"][[1]]
