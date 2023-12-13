@@ -1342,7 +1342,8 @@ draw_fat_tail<- function(p,svg,fat_tail,nrows,list_dfs,color_guild,pos_tail_x,po
   ppos_tail_y <- pos_tail_y * fattailjvert
   if (nrow(fat_tail)>0)
   {
-    plyy2 <- ifelse(inverse == "yes", list_dfs[[zgg$kcoremax]][1,]$y1-3*zgg$lado, list_dfs[[zgg$kcoremax]][1,]$y2-3*zgg$lado)
+    nodekcoremax <- list_dfs[[zgg$kcoremax]][1,]
+    plyy2 <-  (nodekcoremax$y1+nodekcoremax$y2)/2
     v<- draw_tail(ifelse(is_guild_a, "fat-kcore1-a", "fat-kcore1-b"), p,svg,
                   fat_tail,zgg$lado,color_guild,gen_sq_label(fat_tail$orph,is_guild_a = is_guild_a),
                   ppos_tail_x,ppos_tail_y,fgap,
@@ -1579,7 +1580,10 @@ draw_inner_orphans <- function(p, svg)
 # Manage fat tails
 handle_fat_tails <- function(p, svg)
 {
-  fat_tail_x <- min(zgg$last_xtail_a[[zgg$kcoremax]],zgg$last_xtail_b[[zgg$kcoremax]],zgg$list_dfs_a[[zgg$kcoremax]][1,]$x1,zgg$list_dfs_b[[zgg$kcoremax]][1,]$y2)
+  fat_tail_x <- min(zgg$last_xtail_a[[zgg$kcoremax]],
+                    zgg$last_xtail_b[[zgg$kcoremax]],
+                    zgg$list_dfs_a[[zgg$kcoremax]][1,]$x1,
+                    zgg$list_dfs_b[[zgg$kcoremax]][1,]$y2)
   max_b_kdegree <- zgg$list_dfs_b[[zgg$kcoremax]][which(zgg$list_dfs_b[[zgg$kcoremax]]$kdegree == max(zgg$list_dfs_b[[zgg$kcoremax]]$kdegree)),]$label
   if (exists("df_orph_a", envir = zgg)){
     fat_tail_a <- zgg$df_orph_a[(zgg$df_orph_a$partner == max(max_b_kdegree)) & (zgg$df_orph_a$repeated == "no"),]
@@ -1606,9 +1610,13 @@ handle_fat_tails <- function(p, svg)
   }
   if (!exists("fat_tail_b"))
     fat_tail_b <- data.frame(c())
-  fgap <- 0.7*zgg$hop_x
-  zgg$pos_tail_x <- min(zgg$last_xtail_a[[zgg$kcoremax]],zgg$last_xtail_b[[zgg$kcoremax]],zgg$list_dfs_b[[zgg$kcoremax]][1,]$x1-fgap,zgg$list_dfs_a[[zgg$kcoremax]][1,]$x1-fgap)
   nrows_fat <- nrow(fat_tail_b)+nrow(fat_tail_a)
+  
+  fgap <- 0.7*zgg$hop_x + (1+sum(nrows_fat>40))*zgg$lado
+  zgg$pos_tail_x <- min(zgg$last_xtail_a[[zgg$kcoremax]],
+                        zgg$last_xtail_b[[zgg$kcoremax]],
+                        zgg$list_dfs_b[[zgg$kcoremax]][1,]$x1-fgap,
+                        zgg$list_dfs_a[[zgg$kcoremax]][1,]$x1-fgap)
   if ((exists("fat_tail_a")) & (zgg$kcoremax > 2)) {
     f <- draw_fat_tail(p,svg,fat_tail_a,nrows_fat,zgg$list_dfs_b,zgg$color_guild_a[2],
                        zgg$pos_tail_x,pos_tail_y,zgg$fattailjumphoriz[1],
