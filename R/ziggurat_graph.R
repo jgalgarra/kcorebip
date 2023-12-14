@@ -1505,6 +1505,7 @@ write_annotations <- function(p, svg)
   # svg$text("core-1", data=data.frame(x=x_legend, y=y_legend), mapping=aes(x=x, y=y), size=zgg$lsize_legend,
   #          label=zgg$name_guild_b, color=zgg$color_guild_b[1], angle=0)
 
+  print(paste("landmark_left",landmark_left,"landmark_right",landmark_right))
   calc_vals <- list("p" = p, "svg" = svg)
   return(calc_vals)
 }
@@ -2232,10 +2233,12 @@ draw_ziggurat_plot <- function(svg_scale_factor, progress)
   zgg$plot  <- p
   zgg$svg   <- svg
 
-  if (!is.null(progress)) progress$inc(0, detail=strings$value("MESSAGE_ZIGGURAT_PROGRESS_DONE"))
+  if (!is.null(progress)) 
+    progress$inc(0, detail=strings$value("MESSAGE_ZIGGURAT_PROGRESS_DONE"))
 
   return(zgg)
 }
 
 #ziggurat_graph("../data/","example-try-this-first.csv")
 
+ziggurat_graph("../data/","M_PL_002_NULL_NESTED.csv")
