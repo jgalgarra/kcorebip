@@ -1468,6 +1468,8 @@ write_annotations <- function(p, svg)
   svg$text("annotation", data=data.frame(x=landmark_right, y=0), mapping=aes(x=x, y=y), color="red", label=mlabel, size=1, angle=0)
   landmark_left <- min(zgg$last_xtail_a[[zgg$kcoremax]],zgg$last_xtail_b[[zgg$kcoremax]])-min(zgg$hop_x,0.2*min(zgg$last_xtail_a[[zgg$kcoremax]],zgg$last_xtail_b[[zgg$kcoremax]]))
   landmark_left <- min(landmark_left, zgg$pos_tail_x)*zgg$rescale_plot_area[1]
+  
+  print(paste("landmark_left",landmark_left,"landmark_right",landmark_right,"landmark_top",landmark_top))
   p <- p +annotate(geom="text", x=landmark_left, y=0, label=mlabel,
                    colour = "red", size=2, hjust = 0, vjust = 0, angle = 0)
   svg$text("annotation", data=data.frame(x=landmark_left, y=0), mapping=aes(x=x, y=y), color="red", label=mlabel, size=1, angle=0)
@@ -2214,23 +2216,19 @@ draw_ziggurat_plot <- function(svg_scale_factor, progress)
                            linewidth=zgg$straight_links$weightlink, color=zgg$color_link ,alpha=zgg$alpha_link)
       factormult <- 0.1*svg_scale_factor
       svg$segment(idPrefix="link", data=zgg$straight_links, mapping=aes(x=x1, y=y1, xend=x2, yend=y2),
-                  alpha=zgg$alpha_link, color=zgg$color_link,
-                  #size=factormult*zgg$straight_links$weightlink)
-                  size=zgg$straight_links$weightlink)
+                  alpha=zgg$alpha_link, color=zgg$color_link, size=zgg$straight_links$weightlink)
     }
     if (nrow(zgg$bent_links)>0) {
       p <- p + geom_path(data =zgg$bent_links,aes(x,y,group=number), linewidth=zgg$bent_links$weightlink,
                        color=zgg$color_link ,alpha=zgg$alpha_link)
       svg$path(idPrefix="link", data=zgg$bent_links, mapping=aes(x, y, group=number), alpha=zgg$alpha_link,
-                      color=zgg$color_link,
-               #size=0.1*svg_scale_factor*zgg$bent_links$weightlink)
-               size=zgg$bent_links$weightlink)
+               color=zgg$color_link,size=zgg$bent_links$weightlink)
     }
   }
   if (is.null(progress))
     display_plot(p,zgg$print_to_file,zgg$flip_results, landscape = zgg$landscape_plot, fname_append = zgg$file_name_append)
 
-
+  
   # Stores results
   zgg$plot  <- p
   zgg$svg   <- svg
@@ -2240,5 +2238,5 @@ draw_ziggurat_plot <- function(svg_scale_factor, progress)
   return(zgg)
 }
 
-# ziggurat_graph("../data/","example-try-this-first.csv")
+#ziggurat_graph("../data/","example-try-this-first.csv")
 
