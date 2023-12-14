@@ -1469,7 +1469,6 @@ write_annotations <- function(p, svg)
   landmark_left <- min(zgg$last_xtail_a[[zgg$kcoremax]],zgg$last_xtail_b[[zgg$kcoremax]])-min(zgg$hop_x,0.2*min(zgg$last_xtail_a[[zgg$kcoremax]],zgg$last_xtail_b[[zgg$kcoremax]]))
   landmark_left <- min(landmark_left, zgg$pos_tail_x)*zgg$rescale_plot_area[1]
   
-  print(paste("landmark_left",landmark_left,"landmark_right",landmark_right,"landmark_top",landmark_top))
   p <- p +annotate(geom="text", x=landmark_left, y=0, label=mlabel,
                    colour = "red", size=2, hjust = 0, vjust = 0, angle = 0)
   svg$text("annotation", data=data.frame(x=landmark_left, y=0), mapping=aes(x=x, y=y), color="red", label=mlabel, size=1, angle=0)
