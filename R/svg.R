@@ -38,11 +38,21 @@ SVG<-function(scale_factor) {
   # devuelve el HTML correspondiente al objeto
   this$html<-function() {
     # redondea el viewBox a la decena mas cercana
+#print(paste("this$minx",this$minx,"this$maxx",this$maxx,"this$miny",this$miny,"this$maxy",this$maxy))    
+    
     minx  <- floor(this$minx/10)*10
-    maxx  <- ceiling(this$maxx/10)*10
-    miny  <- (1-zgg$move_all_SVG_up)*floor(this$miny/10)*10
-    maxy  <- ceiling(this$maxy/10)*10
-    viewBox<-paste0(minx, " ", miny, " ", maxx-minx, " ", maxy-miny)
+    # maxx  <- ceiling(this$maxx/10)*10
+    miny  <- (1-zgg$move_all_SVG_up)*ceiling(1.1*this$miny/10)*10
+    maxy  <- ceiling(1.1*this$maxy/10)*10
+    #minx <- floor(1.1*zgg$landmark_left/100)*10
+    maxx <- ceiling(1.1*zgg$landmark_right/100)*10
+    #miny <- (1-zgg$move_all_SVG_up)*floor(zgg$landmark_bottom/100)*10
+    #maxy <- (1-zgg$move_all_SVG_up)*ceiling(1.1*zgg$landmark_top/100)*10
+    
+#print(paste("minx",minx,"maxx",maxx,"miny",miny,"maxy",maxy))    
+    
+        
+    viewBox<-paste0(minx, " ", miny, " ", maxx-minx, " ", (maxy-miny))
     #svg0<-paste0("<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"", viewBox, "\" width=\"", maxx-minx, "\" height=\"", maxy-miny, "\">")
     svg0<-paste0("<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"", viewBox, "\">\n")
     svg1<-paste0("</svg>")

@@ -1457,7 +1457,7 @@ write_annotations <- function(p, svg)
                                                                 )
   if (zgg$hide_plot_border)
     p <- p + theme(panel.border=element_blank())
-  landmark_top <- max(zgg$last_ytail_b[!is.na(zgg$last_ytail_b)],1.2*zgg$ymax)*zgg$rescale_plot_area[2]
+  landmark_top <- 1.2*max(zgg$last_ytail_b[!is.na(zgg$last_ytail_b)],zgg$ymax)*zgg$rescale_plot_area[2]
   mlabel <- "."
   landmark_right <- (zgg$tot_width+2*zgg$hop_x)*zgg$rescale_plot_area[1]
   f <- draw_square("annotation",p,svg,landmark_right,0,1,"transparent",0.5,"transparent",0,0,0,slabel="")
@@ -1505,7 +1505,15 @@ write_annotations <- function(p, svg)
   # svg$text("core-1", data=data.frame(x=x_legend, y=y_legend), mapping=aes(x=x, y=y), size=zgg$lsize_legend,
   #          label=zgg$name_guild_b, color=zgg$color_guild_b[1], angle=0)
 
-  print(paste("landmark_left",landmark_left,"landmark_right",landmark_right))
+  landmark_bottom <- min(zgg$last_ytail_a[!is.na(zgg$last_ytail_b)],1.2*zgg$ymin)*zgg$rescale_plot_area[2]
+  
+  zgg$landmark_left <<- landmark_left
+  zgg$landmark_right <<- landmark_right
+  zgg$landmark_top <<- landmark_top
+  zgg$landmark_bottom <- landmark_bottom
+  
+  # print(paste("landmark_left",landmark_left,"landmark_right",landmark_right))
+  # print(paste("landmark_top",landmark_top,"landmark_bottom",landmark_bottom))
   calc_vals <- list("p" = p, "svg" = svg)
   return(calc_vals)
 }
@@ -2232,6 +2240,9 @@ draw_ziggurat_plot <- function(svg_scale_factor, progress)
   # Stores results
   zgg$plot  <- p
   zgg$svg   <- svg
+  
+#html<-svg$html()
+#cat(html, file = "tmp.svg")
 
   if (!is.null(progress)) 
     progress$inc(0, detail=strings$value("MESSAGE_ZIGGURAT_PROGRESS_DONE"))
@@ -2239,4 +2250,5 @@ draw_ziggurat_plot <- function(svg_scale_factor, progress)
   return(zgg)
 }
 
-#ziggurat_graph("../data/","example-try-this-first.csv")
+#ziggurat_graph("../data/","example-try-this-first.csv",)
+ziggurat_graph("../data/","M_PL_002_NULL_NESTED.csv",)
