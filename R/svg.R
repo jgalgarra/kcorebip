@@ -37,7 +37,7 @@ SVG<-function(scale_factor) {
 
   # devuelve el HTML correspondiente al objeto
   this$html<-function() {
-    redondea el viewBox a la decena mas cercana
+    #redondea el viewBox a la decena mas cercana
     minx  <- floor(this$minx/10)*10
     maxx  <- min(ceiling(this$maxx/10)*10, ceiling(1.1*zgg$landmark_right/100)*10)
     miny  <- (1-zgg$move_all_SVG_up)*floor(this$miny/10)*10
