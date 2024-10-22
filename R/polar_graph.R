@@ -161,7 +161,7 @@ paint_kdegree_kradius <- function(graph, num_guild_a, num_guild_b,
   polar_plot <- polar_plot + coord_polar(start = -pi/2) + labs(x = '', y = '')
   polar_plot <- polar_plot + scale_y_continuous(breaks=seq(min_radius,extreme),
                                                 lim=c(min_radius, extreme),labels=seq(min_radius,extreme) )
-  polar_plot <- polar_plot + guides(size=FALSE, fill=FALSE)
+  polar_plot <- polar_plot + guides(size="none", fill="none")
   polar_plot <- polar_plot + scale_x_continuous(breaks=seq(0, 2*pi, by=pi/2), lim=c(0,2*pi))
   polar_plot <- polar_plot+ theme_bw() + theme( axis.ticks.y = element_blank(),
                                                axis.ticks.x = element_blank(),
