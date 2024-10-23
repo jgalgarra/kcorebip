@@ -1460,7 +1460,7 @@ write_annotations <- function(p, svg)
   landmark_top <- 1.2*max(zgg$last_ytail_b[!is.na(zgg$last_ytail_b)],zgg$ymax)*zgg$rescale_plot_area[2]
   mlabel <- "."
   #landmark_right <- (zgg$tot_width+2*zgg$hop_x)*zgg$rescale_plot_area[1]
-  landmark_right <- (zgg$tot_width+zgg$hop_x)*zgg$rescale_plot_area[1]
+  landmark_right <- (zgg$tot_width+1.5*zgg$hop_x)*zgg$rescale_plot_area[1]
   f <- draw_square("annotation",p,svg,landmark_right,0,1,"transparent",0.5,"transparent",0,0,0,slabel="")
   p <- f["p"][[1]]
   svg <- f["svg"][[1]]

@@ -42,8 +42,8 @@ SVG<-function(scale_factor) {
     maxx  <- min(ceiling(this$maxx/10)*10, ceiling(1.1*zgg$landmark_right/100)*10)
     miny  <- (1-zgg$move_all_SVG_up)*floor(this$miny/10)*10
     maxy  <- ceiling(this$maxy/10)*10
-
-    viewBox<-paste0(minx, " ", miny, " ", maxx-minx, " ", (maxy-miny))
+    fscale <- 1.05
+    viewBox<-paste0(minx, " ", miny, " ", fscale*(maxx-minx), " ", fscale*(maxy-miny))
     #svg0<-paste0("<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"", viewBox, "\" width=\"", maxx-minx, "\" height=\"", maxy-miny, "\">")
     svg0<-paste0("<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"", viewBox, "\">\n")
     svg1<-paste0("</svg>")
