@@ -18,6 +18,7 @@ library(ggtext)
 #' @param filename the file with the interaction matrix
 #' @param print_to_file if set to FALSE the plot is displayed in the R session window
 #' @param plotsdir the directory where the plot is stored
+#' @param orderkcoremaxby sets order of kcoremax nodes, by kradius or kdegree
 #' @param flip_results displays the graph in portrait configuration
 #' @param aspect_ratio ziggurat plot default aspect ratio
 #' @param alpha_level transparency for ziggurats' filling
@@ -77,8 +78,8 @@ library(ggtext)
 #' @examples ziggurat_graph("data/","M_PL_001.csv",plotsdir="grafresults/",print_to_file = TRUE)
 
 ziggurat_graph <- function(datadir,filename,
-                           paintlinks = TRUE, print_to_file = FALSE, plotsdir ="plot_results/ziggurat/", flip_results = FALSE,
-                           aspect_ratio = 1,
+                           paintlinks = TRUE, print_to_file = FALSE, plotsdir ="plot_results/ziggurat/", 
+                           orderkcoremaxby = "kradius", flip_results = FALSE, aspect_ratio = 1,
                            alpha_level = 0.2, color_guild_a = c("#4169E1","#00008B"), color_guild_b = c("#F08080","#FF0000"),
                            color_link = "slategray3", alpha_link = 0.5, size_link = 0.5,
                            displace_y_b = rep(0,20),
@@ -130,7 +131,7 @@ ziggurat_graph <- function(datadir,filename,
     return(zgg)
   }
   # Copy input parameters to the zgg environment
-  def_configuration(paintlinks, print_to_file, plotsdir, flip_results, aspect_ratio,
+  def_configuration(paintlinks, print_to_file, plotsdir, orderkcoremaxby, flip_results, aspect_ratio,
                     alpha_level, color_guild_a, color_guild_b,
                     color_link, alpha_link, size_link,
                     displace_y_b, displace_y_a, lsize_kcoremax, lsize_zig, lsize_kcore1,
@@ -666,7 +667,7 @@ handle_outsiders <- function(p,svg,outsiders,df_chains) {
 
 # Draw one triangle of the innermost shell
 draw_coremax_triangle <- function(basex,topx,basey,topy,numboxes,fillcolor,strlabels,
-                                  igraphnet,strguild,orderby = "None")
+                                  igraphnet,strguild,orderby = "kradius")
 {
   x1 <- c()
   x2 <- c()
@@ -701,6 +702,7 @@ draw_coremax_triangle <- function(basex,topx,basey,topy,numboxes,fillcolor,strla
     d1[i,]$name_species <- igraphnet[paste0(strguild,d1[i,]$label)]$name_species
   }
 
+  
   if (orderby == "kradius"){
     ordvector <- order(d1$kradius)
     d1$label <- d1[ordvector,]$label
@@ -1762,7 +1764,7 @@ draw_maxcore <- function(svg)
   zgg$list_dfs_a[[zgg$kcoremax]]<- draw_coremax_triangle(zgg$basex,zgg$topxa,zgg$basey,zgg$toopy,
                                                   zgg$num_a_coremax,zgg$color_guild_a,
                                                   zgg$df_cores$species_guild_a[[zgg$kcoremax]],
-                                                  zgg$g, zgg$str_guild_a, orderby = "kdegree")
+                                                  zgg$g, zgg$str_guild_a, orderby = zgg$orderkcoremaxby)
 
   nsp <- name_species_preprocess(zgg$kcoremax,zgg$list_dfs_a[[zgg$kcoremax]],zgg$kcore_species_name_display,
                                  zgg$kcore_species_name_break)
@@ -1789,7 +1791,7 @@ draw_maxcore <- function(svg)
   zgg$list_dfs_b[[zgg$kcoremax]] <- draw_coremax_triangle(zgg$basex,zgg$topxb,zgg$basey,zgg$toopy,num_b_coremax,
                                                   zgg$color_guild_b,
                                                   zgg$df_cores$species_guild_b[[zgg$kcoremax]],
-                                                  zgg$g, zgg$str_guild_b, orderby = "kdegree")
+                                                  zgg$g, zgg$str_guild_b, orderby = zgg$orderkcoremaxby)
 
   zgg$last_ytail_b[zgg$kcoremax]<- zgg$toopy
   zgg$last_xtail_b[zgg$kcoremax]<- zgg$topxb
@@ -1942,7 +1944,7 @@ read_and_analyze <- function(directorystr,network_file,label_strguilda,label_str
   return(calc_vals)
 }
 
-def_configuration <- function(paintlinks, print_to_file, plotsdir, flip_results, aspect_ratio,
+def_configuration <- function(paintlinks, print_to_file, plotsdir, orderkcoremaxby, flip_results, aspect_ratio,
                               alpha_level, color_guild_a, color_guild_b,
                               color_link, alpha_link, size_link,
                               displace_y_b, displace_y_a, lsize_kcoremax, lsize_zig, lsize_kcore1,
@@ -1966,6 +1968,7 @@ def_configuration <- function(paintlinks, print_to_file, plotsdir, flip_results,
   zgg$paintlinks <- paintlinks
   zgg$print_to_file <- print_to_file
   zgg$plotsdir <- plotsdir
+  zgg$orderkcoremaxby <- orderkcoremaxby
   zgg$flip_results <- flip_results
   zgg$alpha_level <- alpha_level
   zgg$color_guild_a <- color_guild_a
@@ -2237,7 +2240,6 @@ draw_ziggurat_plot <- function(svg_scale_factor, progress)
   if (is.null(progress))
     display_plot(p,zgg$print_to_file,zgg$flip_results, landscape = zgg$landscape_plot, fname_append = zgg$file_name_append)
 
-  
   # Stores results
   zgg$plot  <- p
   zgg$svg   <- svg
