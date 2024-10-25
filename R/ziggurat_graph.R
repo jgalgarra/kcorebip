@@ -71,6 +71,7 @@ library(ggtext)
 #' @param weighted_links function to add link weight: 'none', 'log10' , 'ln', 'sqrt'
 #' @param square_nodes_size_scale scale nodes area of kcore1 and outsiders
 #' @param move_all_SVG_up move up all the SVG plot by this fraction, useful to crop upper white space
+#' @param move_all_SVG_right move rightwards all the SVG plot by this fraction, useful to crop right white space
 #' @param progress only for interactive apps, do not modifiy
 #' @export
 #' @examples ziggurat_graph("data/","M_PL_001.csv",plotsdir="grafresults/",print_to_file = TRUE)
@@ -99,7 +100,7 @@ ziggurat_graph <- function(datadir,filename,
                            label_strguildb = "", landscape_plot = TRUE,
                            backg_color = "white", show_title = TRUE, use_spline =TRUE, spline_points = 10,
                            file_name_append = "", svg_scale_factor= 10, weighted_links = "none",
-                           square_nodes_size_scale = 1, move_all_SVG_up = 0,
+                           square_nodes_size_scale = 1, move_all_SVG_up = 0, move_all_SVG_right = 0,
                            progress=NULL
 )
 {
@@ -145,7 +146,7 @@ ziggurat_graph <- function(datadir,filename,
                     corebox_border_size, kcore_species_name_display,kcore_species_name_break,shorten_species_name,exclude_species_number,
                     label_strguilda, label_strguildb, landscape_plot, backg_color, show_title,
                     use_spline, spline_points, file_name_append, svg_scale_factor, weighted_links,
-                    square_nodes_size_scale, move_all_SVG_up, progress
+                    square_nodes_size_scale, move_all_SVG_up, move_all_SVG_right, progress
   )
   # Removes nodes without any tie. This is not usual in input files but happens
   # when performing destruction simulations
@@ -1958,7 +1959,7 @@ def_configuration <- function(paintlinks, print_to_file, plotsdir, flip_results,
                               shorten_species_name,exclude_species_number,
                               label_strguilda, label_strguildb, landscape_plot, backg_color, show_title,
                               use_spline, spline_points, file_name_append, svg_scale_factor, weighted_links, square_nodes_size_scale,
-                              move_all_SVG_up, progress
+                              move_all_SVG_up, move_all_SVG_right, progress
                               )
 {
   # ENVIRONMENT CONFIGURATION PARAMETERS
@@ -2019,6 +2020,7 @@ def_configuration <- function(paintlinks, print_to_file, plotsdir, flip_results,
   zgg$weighted_links <- weighted_links
   zgg$square_nodes_size_scale <- square_nodes_size_scale
   zgg$move_all_SVG_up <- move_all_SVG_up
+  zgg$move_all_SVG_right <- move_all_SVG_right
   zgg$progress <- progress
 }
 
