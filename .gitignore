@@ -3,4 +3,5 @@
 .RData
 .Ruserdata
 mansrc
-plotresuls
+plot_results/ziggurat/*.*
+plot_results/polar/*.*
