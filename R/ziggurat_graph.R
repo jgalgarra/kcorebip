@@ -704,14 +704,14 @@ draw_coremax_triangle <- function(basex,topx,basey,topy,numboxes,fillcolor,strla
 
   
   if (orderby == "kradius"){
-    ordvector <- order(d1$kradius)
+    ordvector <- order(1000*d1$kradius-d1$kdegree)
     d1$label <- d1[ordvector,]$label
     d1$kradius <- d1[ordvector,]$kradius
     d1$kdegree <- d1[ordvector,]$kdegree
     d1$name_species <- d1[ordvector,]$name_species
   }
   else if (orderby == "kdegree"){
-    ordvector <- rev(order(d1$kdegree))
+    ordvector <- rev(order(1000*d1$kdegree-d1$kradius))
     d1$label <- d1[ordvector,]$label
     d1$kradius <- d1[ordvector,]$kradius
     d1$kdegree <- d1[ordvector,]$kdegree
@@ -778,7 +778,7 @@ conf_ziggurat <- function(igraphnet, basex,widthx,basey,ystep,numboxes,fillcolor
     name <- igraphnet[paste0(strguild,d2[i,]$label)]$name_species
     d2[i,]$name_species <- igraphnet[paste0(strguild,d2[i,]$label)]$name_species
   }
-  d2 <- d2[order(d2$kradius),]
+  d2 <- d2[order(1000*d2$kradius-d2$kdegree),]
   yjump <- 0.2*zgg$height_y
   x1 <- c()
   x2 <- c()
