@@ -19,6 +19,7 @@ library(ggtext)
 #' @param print_to_file if set to FALSE the plot is displayed in the R session window
 #' @param plotsdir the directory where the plot is stored
 #' @param orderkcoremaxby sets order of kcoremax nodes, by kradius or kdegree
+#' @param isogonos equal side for all ziggurat nodes
 #' @param flip_results displays the graph in portrait configuration
 #' @param aspect_ratio ziggurat plot default aspect ratio
 #' @param alpha_level transparency for ziggurats' filling
@@ -79,7 +80,7 @@ library(ggtext)
 
 ziggurat_graph <- function(datadir,filename,
                            paintlinks = TRUE, print_to_file = FALSE, plotsdir ="plot_results/ziggurat/", 
-                           orderkcoremaxby = "kradius", flip_results = FALSE, aspect_ratio = 1,
+                           orderkcoremaxby = "kradius", isogonos= FALSE, flip_results = FALSE, aspect_ratio = 1,
                            alpha_level = 0.2, color_guild_a = c("#4169E1","#00008B"), color_guild_b = c("#F08080","#FF0000"),
                            color_link = "slategray3", alpha_link = 0.5, size_link = 0.5,
                            displace_y_b = rep(0,20),
@@ -131,7 +132,7 @@ ziggurat_graph <- function(datadir,filename,
     return(zgg)
   }
   # Copy input parameters to the zgg environment
-  def_configuration(paintlinks, print_to_file, plotsdir, orderkcoremaxby, flip_results, aspect_ratio,
+  def_configuration(paintlinks, print_to_file, plotsdir, orderkcoremaxby, isogonos, flip_results, aspect_ratio,
                     alpha_level, color_guild_a, color_guild_b,
                     color_link, alpha_link, size_link,
                     displace_y_b, displace_y_a, lsize_kcoremax, lsize_zig, lsize_kcore1,
@@ -264,6 +265,7 @@ draw_square<- function(idPrefix, grafo,svg,basex,basey,side,fillcolor,alphasq,la
 # Draw a rectangle. Nodes of inner ziggurats and coremax are rectangles
 draw_rectangle<- function(idPrefix,basex,basey,widthx,widthy,grafo,svg,bordercolor,fillcolor,palpha,slabel,inverse="no",sizelabel=3, bordersize =0.5 )
 {
+
   x1 <- c(basex)
   x2 <- c(basex+widthx)
   y1 <- c(basey)
@@ -680,8 +682,13 @@ draw_coremax_triangle <- function(basex,topx,basey,topy,numboxes,fillcolor,strla
   name_species <- c()
   pbasex <- zgg$coremax_triangle_width_factor*( basex - (numboxes %/%8) * abs(topx-basex)/3)
   xstep <- (topx-pbasex)*1/numboxes
-  ptopy <- topy * zgg$coremax_triangle_height_factor
-  ystep <- (ptopy-basey)*0.7/numboxes
+  if (!(zgg$isogonos)){
+    ptopy <- topy * zgg$coremax_triangle_height_factor
+    ystep <- (ptopy-basey)*0.7/numboxes
+  } else {
+    ptopy <- basey+(if (basey>0) 1 else -1)*xstep
+    ystep <- 0
+  }
   for (j in (1:numboxes))
   {
     x1 <- c(x1, pbasex+(j-1)*xstep)
@@ -811,11 +818,14 @@ conf_ziggurat <- function(igraphnet, basex,widthx,basey,ystep,numboxes,fillcolor
       x2 <- c(x2, topx-(j-1)*(xstep/8)  )
     else
       x2 <- c(x2, topx-(j-1)*xstep/4)
+    if (zgg$isogonos)
+      x2 <- x1 + xstep
     y1 <- c(y1, basey-(j-1)*(ystep*fmult_hght+yjump)  )
     y2 <- c(y2, y1[j]+ystep*fmult_hght)
     r <- c(r,j)
     col_row <- c(col_row,fillcolor[1+j%%2])
   }
+    
   label <- d2$label
   kdegree <- d2$kdegree
   kradius <- d2$kradius
@@ -1775,9 +1785,10 @@ draw_maxcore <- function(svg)
   p <- ggplot() +
     scale_x_continuous(name="x") +
     scale_y_continuous(name="y") +
-    geom_rect(data=zgg$list_dfs_a[[zgg$kcoremax]], mapping=aes(xmin=x1, xmax=x2, ymin=y1, ymax=y2), fill = zgg$list_dfs_a[[zgg$kcoremax]]$col_row,  color="transparent",alpha=zgg$alpha_level)
-
-
+    geom_rect(data=zgg$list_dfs_a[[zgg$kcoremax]], 
+              mapping=aes(xmin=x1, xmax=x2, ymin=y1, ymax=y2), 
+              fill = zgg$list_dfs_a[[zgg$kcoremax]]$col_row,  
+              color="transparent",alpha=zgg$alpha_level)
   svg$rect(paste0("kcore", zgg$kcoremax, "-a"), data=zgg$list_dfs_a[[zgg$kcoremax]],
            mapping=aes(xmin=x1, xmax=x2, ymin=y1, ymax=y2), fill=zgg$list_dfs_a[[zgg$kcoremax]]$col_row, alpha=zgg$alpha_level,
            color="transparent", size=0.5)
@@ -1944,7 +1955,7 @@ read_and_analyze <- function(directorystr,network_file,label_strguilda,label_str
   return(calc_vals)
 }
 
-def_configuration <- function(paintlinks, print_to_file, plotsdir, orderkcoremaxby, flip_results, aspect_ratio,
+def_configuration <- function(paintlinks, print_to_file, plotsdir, orderkcoremaxby, isogonos, flip_results, aspect_ratio,
                               alpha_level, color_guild_a, color_guild_b,
                               color_link, alpha_link, size_link,
                               displace_y_b, displace_y_a, lsize_kcoremax, lsize_zig, lsize_kcore1,
@@ -1969,6 +1980,7 @@ def_configuration <- function(paintlinks, print_to_file, plotsdir, orderkcoremax
   zgg$print_to_file <- print_to_file
   zgg$plotsdir <- plotsdir
   zgg$orderkcoremaxby <- orderkcoremaxby
+  zgg$isogonos <- isogonos
   zgg$flip_results <- flip_results
   zgg$alpha_level <- alpha_level
   zgg$color_guild_a <- color_guild_a
@@ -2253,4 +2265,4 @@ draw_ziggurat_plot <- function(svg_scale_factor, progress)
   return(zgg)
 }
 
-#ziggurat_graph("../data/","example-try-this-first.csv",)
+#ziggurat_graph("../data/","example-try-this-first.csv")
