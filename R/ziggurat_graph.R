@@ -2057,6 +2057,8 @@ init_working_values <- function()
   zgg$outsider <- zgg$rg[zgg$rg$kradius == Inf]
   zgg$outsiders_a <- zgg$outsider$name[grep(zgg$str_guild_a,zgg$outsider$name)]
   zgg$outsiders_b <- zgg$outsider$name[grep(zgg$str_guild_b,zgg$outsider$name)]
+  zgg$outsiders_a <- sort(zgg$outsider$name[grep(zgg$str_guild_a,zgg$outsider$name)])
+  zgg$outsiders_b <- sort(zgg$outsider$name[grep(zgg$str_guild_b,zgg$outsider$name)])
   zgg$ind_cores <- rev(sort(unique(zgg$g$kcorenum)))
   zgg$kcoremax <- max(zgg$ind_cores)
   palcores <- colorRampPalette(c("salmon3","salmon4"))
