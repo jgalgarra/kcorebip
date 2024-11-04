@@ -6,6 +6,12 @@ library(ggplot2)
 library(rlang)
 library(ggtext)
 
+debugging = FALSE
+if (debugging){
+source("network-kanalysis.R")
+source("SVG.R")
+}
+
 #' Plotting a ziggurat graph
 #'
 #' This function plots the ziggurat graph of a bipartite network. Configuration parameters and
@@ -1606,36 +1612,27 @@ handle_fat_tails <- function(p, svg)
                     zgg$last_xtail_b[[zgg$kcoremax]],
                     zgg$list_dfs_a[[zgg$kcoremax]][1,]$x1,
                     zgg$list_dfs_b[[zgg$kcoremax]][1,]$y2)
-  if (zgg$orderkcoremaxby == "kdegree")
-    max_b_k <- zgg$list_dfs_b[[zgg$kcoremax]][which(zgg$list_dfs_b[[zgg$kcoremax]]$kdegree == max(zgg$list_dfs_b[[zgg$kcoremax]]$kdegree)),]$label
-  if (zgg$orderkcoremaxby == "kradius")
-    max_b_k <- zgg$list_dfs_b[[zgg$kcoremax]][which(zgg$list_dfs_b[[zgg$kcoremax]]$kradius == min(zgg$list_dfs_b[[zgg$kcoremax]]$kradius)),]$label
-  
+  max_b_kdegree <- zgg$list_dfs_b[[zgg$kcoremax]][which(zgg$list_dfs_b[[zgg$kcoremax]]$kdegree == max(zgg$list_dfs_b[[zgg$kcoremax]]$kdegree)),]$label
   if (exists("df_orph_a", envir = zgg)){
-    fat_tail_a <- zgg$df_orph_a[(zgg$df_orph_a$partner == max(max_b_k)) 
-                                & (zgg$df_orph_a$repeated == "no"),]
+    fat_tail_a <- zgg$df_orph_a[(zgg$df_orph_a$partner == max(max_b_kdegree)) & (zgg$df_orph_a$repeated == "no"),]
     tailweight <- 0
     if (nrow(fat_tail_a)>0) {
-      for (h in 1:nrow(fat_tail_a))
-        tailweight <- tailweight + zgg$result_analysis$matrix[as.numeric(fat_tail_a$partner[h]),
-                                                              as.numeric(fat_tail_a$orph[h])]
+    for (h in 1:nrow(fat_tail_a))
+      tailweight <- tailweight + zgg$result_analysis$matrix[as.numeric(fat_tail_a$partner[h]),
+                                                                  as.numeric(fat_tail_a$orph[h])]
       fat_tail_a$weightlink <- get_link_weights(tailweight)
     }
   }
   if (!exists("fat_tail_a"))
     fat_tail_a <- data.frame(c())
-  if (zgg$orderkcoremaxby == "kdegree")
-    max_a_k <- zgg$list_dfs_a[[zgg$kcoremax]][which(zgg$list_dfs_a[[zgg$kcoremax]]$kdegree == max(zgg$list_dfs_a[[zgg$kcoremax]]$kdegree)),]$label
-  if (zgg$orderkcoremaxby == "kradius")
-    max_a_k <- zgg$list_dfs_a[[zgg$kcoremax]][which(zgg$list_dfs_a[[zgg$kcoremax]]$kradius == min(zgg$list_dfs_a[[zgg$kcoremax]]$kradius)),]$label
-  
+  max_a_kdegree <- zgg$list_dfs_a[[zgg$kcoremax]][which(zgg$list_dfs_a[[zgg$kcoremax]]$kdegree == max(zgg$list_dfs_a[[zgg$kcoremax]]$kdegree)),]$label
   if (exists("df_orph_b", envir = zgg)){
-    fat_tail_b <- zgg$df_orph_b[(zgg$df_orph_b$partner == max(max_a_k)) & (zgg$df_orph_b$repeated == "no"),]
+    fat_tail_b <- zgg$df_orph_b[(zgg$df_orph_b$partner == max(max_a_kdegree)) & (zgg$df_orph_b$repeated == "no"),]
     tailweight <- 0
     if (nrow(fat_tail_b)>0) {
       for (h in 1:nrow(fat_tail_b))
         tailweight <- tailweight+zgg$result_analysis$matrix[as.numeric(fat_tail_b$orph[h]),
-                                                            as.numeric(fat_tail_b$partner[h])]
+                                                    as.numeric(fat_tail_b$partner[h])]
       fat_tail_b$weightlink <- get_link_weights(tailweight)
     }
   }
@@ -1655,7 +1652,7 @@ handle_fat_tails <- function(p, svg)
     p <- f["p"][[1]]
     svg <- f["svg"][[1]]
   }
-  
+
   if ((exists("fat_tail_b")) & (zgg$kcoremax > 2)) {
     f <- draw_fat_tail(p,svg,fat_tail_b,nrows_fat,zgg$list_dfs_a,zgg$color_guild_b[2],zgg$pos_tail_x,
                        pos_tail_y,zgg$fattailjumphoriz[2],zgg$fattailjumpvert[2],fgap,inverse="no", is_guild_a = FALSE)
@@ -2057,8 +2054,6 @@ init_working_values <- function()
   zgg$outsider <- zgg$rg[zgg$rg$kradius == Inf]
   zgg$outsiders_a <- zgg$outsider$name[grep(zgg$str_guild_a,zgg$outsider$name)]
   zgg$outsiders_b <- zgg$outsider$name[grep(zgg$str_guild_b,zgg$outsider$name)]
-  zgg$outsiders_a <- sort(zgg$outsider$name[grep(zgg$str_guild_a,zgg$outsider$name)])
-  zgg$outsiders_b <- sort(zgg$outsider$name[grep(zgg$str_guild_b,zgg$outsider$name)])
   zgg$ind_cores <- rev(sort(unique(zgg$g$kcorenum)))
   zgg$kcoremax <- max(zgg$ind_cores)
   palcores <- colorRampPalette(c("salmon3","salmon4"))
@@ -2152,7 +2147,8 @@ draw_ziggurat_plot <- function(svg_scale_factor, progress)
   zgg$pointer_y <- zgg$ymax+zgg$height_y*max(zgg$df_cores$num_species_guild_a[zgg$kcoremax-1],zgg$df_cores$num_species_guild_b[zgg$kcoremax-1])
   zgg$width_zig <- 0.3*zgg$hop_x
   zgg$primerkcore <- TRUE
-  if (!is.null(progress)) progress$inc(1/11, detail=strings$value("MESSAGE_ZIGGURAT_PROGRESS_DRAWING_ZIGGURAT"))
+  if (!is.null(progress)) 
+    progress$inc(1/11, detail=strings$value("MESSAGE_ZIGGURAT_PROGRESS_DRAWING_ZIGGURAT"))
   f <- draw_all_ziggurats(p, svg)
   p <- f["p"][[1]]
   svg <- f["svg"][[1]]
@@ -2275,5 +2271,5 @@ draw_ziggurat_plot <- function(svg_scale_factor, progress)
 
   return(zgg)
 }
-
-#ziggurat_graph("../data/","example-try-this-first.csv")
+if (debugging)
+  ziggurat_graph("../data/","M_PL_032.csv",orderkcoremaxby = "kradius")
