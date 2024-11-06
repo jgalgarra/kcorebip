@@ -8,16 +8,16 @@ library(ggtext)
 
 debugging = FALSE
 if (debugging){
-source("network-kanalysis.R")
-source("SVG.R")
+  source("network-kanalysis.R")
+  source("SVG.R")
 }
 
-#' Plotting a ziggurat graph
+#' Plotting a bipartite graph
 #'
 #' This function plots the ziggurat graph of a bipartite network. Configuration parameters and
 #' results are stored in a global environment called zgg. This environment is not destroyed
 #' after the function is executed, so the developer can store it in a configuration file, retrieve
-#' network analysis variables and so on. If a new ziggurat_graph is called, zgg is destroyed and
+#' network analysis variables and so on. If a new bipartite_graph is called, zgg is destroyed and
 #' created again for the new plot. Plotting options are explained in the user manual.
 #'
 #' @param datadir the name of the file of the interaction matrix
@@ -26,6 +26,8 @@ source("SVG.R")
 #' @param plotsdir the directory where the plot is stored
 #' @param orderkcoremaxby sets order of kcoremax nodes, by kradius or kdegree
 #' @param isogonos equal side for all ziggurat nodes
+#' @param style bipartite representation style: legacy, kcoreorder, chilopodograph
+#' @param guild_gap_increase controls the disptance between guild rows
 #' @param flip_results displays the graph in portrait configuration
 #' @param aspect_ratio ziggurat plot default aspect ratio
 #' @param alpha_level transparency for ziggurats' filling
@@ -82,11 +84,12 @@ source("SVG.R")
 #' @param move_all_SVG_right move rightwards all the SVG plot by this fraction, useful to crop right white space
 #' @param progress only for interactive apps, do not modifiy
 #' @export
-#' @examples ziggurat_graph("data/","M_PL_001.csv",plotsdir="grafresults/",print_to_file = TRUE)
+#' @examples bipartite_graph("data/","M_PL_001.csv",plotsdir="grafresults/",print_to_file = TRUE)
 
-ziggurat_graph <- function(datadir,filename,
+bipartite_graph <- function(datadir,filename,
                            paintlinks = TRUE, print_to_file = FALSE, plotsdir ="plot_results/ziggurat/", 
-                           orderkcoremaxby = "kradius", isogonos= FALSE, flip_results = FALSE, aspect_ratio = 1,
+                           orderkcoremaxby = "kradius", isogonos= FALSE, style="legacy", guild_gap_increase = 1, 
+                           flip_results = FALSE, aspect_ratio = 1,
                            alpha_level = 0.2, color_guild_a = c("#4169E1","#00008B"), color_guild_b = c("#F08080","#FF0000"),
                            color_link = "slategray3", alpha_link = 0.5, size_link = 0.5,
                            displace_y_b = rep(0,20),
@@ -128,6 +131,9 @@ ziggurat_graph <- function(datadir,filename,
   zgg$name_guild_a <- f["name_guild_a"][[1]]
   zgg$name_guild_b <- f["name_guild_b"][[1]]
   zgg$network_name <- f["network_name"][[1]]
+  zgg$mtxlinks <- data.frame(igraph::get.edgelist(zgg$result_analysis$graph))
+  names(zgg$mtxlinks) <- c("guild_a","guild_b")
+  
   # Exit if kcore max == 1
   if (zgg$result_analysis$max_core == 1){
     msg = "Max core is 1. Ziggurat plot only works if max core is bigger than 1"
@@ -138,7 +144,8 @@ ziggurat_graph <- function(datadir,filename,
     return(zgg)
   }
   # Copy input parameters to the zgg environment
-  def_configuration(paintlinks, print_to_file, plotsdir, orderkcoremaxby, isogonos, flip_results, aspect_ratio,
+  def_configuration(paintlinks, print_to_file, plotsdir, orderkcoremaxby, isogonos, style,
+                    guild_gap_increase, flip_results, aspect_ratio,
                     alpha_level, color_guild_a, color_guild_b,
                     color_link, alpha_link, size_link,
                     displace_y_b, displace_y_a, lsize_kcoremax, lsize_zig, lsize_kcore1,
@@ -160,7 +167,7 @@ ziggurat_graph <- function(datadir,filename,
   # when performing destruction simulations
   strip_isolated_nodes()
   init_working_values()
-  draw_ziggurat_plot(svg_scale_factor, progress)
+  draw_bipartite_plot(svg_scale_factor, progress)
   # Copy input parameters as a string for reroducibility
   zgg$ziggurat_argg <- ziggurat_argg
   return(zgg)
@@ -189,6 +196,20 @@ gen_sq_label <- function(nodes, joinchars = "\n", is_guild_a = TRUE)
     if ((i %% lrow == 0) & (nnodes > 1) & (i<nnodes))
       ssal <- gsub("  "," ",paste(ssal,joinchars))
   }
+  return(ssal)
+}
+
+
+gen_vert_label <- function(nodes, joinchars = "\n")
+{
+  nnodes <- length(nodes)
+  if (nnodes == 1)
+    return(nodes)
+  ssal <- ""
+  for (i in 1:(nnodes-1))
+      ssal <- paste0(ssal,nodes[i],ifelse(i %% 2 == 0, "\n",joinchars))
+  ssal <- paste0(ssal,nodes[nnodes])
+  ssal <- gsub("  "," ",ssal)
   return(ssal)
 }
 
@@ -237,7 +258,7 @@ name_species_preprocess <- function (kcore, list_dfs, kcore_species_name_display
 # Draws a square, both in ggplot2 and SVG flavours
 draw_square<- function(idPrefix, grafo,svg,basex,basey,side,fillcolor,alphasq,labelcolor,
                        langle,hjust,vjust,slabel,lbsize = zgg$labels_size,
-                       inverse="no",adjustoxy = "yes", edgescolor="transparent")
+                       inverse="no",adjustoxy = "no", edgescolor="transparent")
 {
   x1 <- c(basex)
   x2 <- c(basex+side)
@@ -257,7 +278,11 @@ draw_square<- function(idPrefix, grafo,svg,basex,basey,side,fillcolor,alphasq,la
                          fill = fillcolor, alpha = alphasq, color="transparent")
   pxx <- x1+0.05*(x2-x1)
   pyy <- signo*(y1+(y2-y1)/2)
-  p <- p +annotate(geom="text", x=pxx, y=pyy, label=slabel,
+  if (adjustoxy == "yes"){
+    pxx <- (x2+x1)/2
+    pyy <- signo*(y1+y2)/2
+  }
+  p <- p + annotate(geom="text", x=pxx, y=pyy, label=slabel,
                    colour = labelcolor, size=lbsize, hjust = hjust,
                    vjust = vjust, angle = langle)
   svg$rect(idPrefix=idPrefix, data=ds, mapping=aes(xmin=x1, xmax=x2, ymin=y1, ymax=y2),
@@ -269,7 +294,8 @@ draw_square<- function(idPrefix, grafo,svg,basex,basey,side,fillcolor,alphasq,la
 }
 
 # Draw a rectangle. Nodes of inner ziggurats and coremax are rectangles
-draw_rectangle<- function(idPrefix,basex,basey,widthx,widthy,grafo,svg,bordercolor,fillcolor,palpha,slabel,inverse="no",sizelabel=3, bordersize =0.5 )
+draw_rectangle<- function(idPrefix,basex,basey,widthx,widthy,grafo,svg,bordercolor,fillcolor,palpha,slabel,
+                          inverse="no",sizelabel=3, bordersize =0.5 )
 {
 
   x1 <- c(basex)
@@ -375,12 +401,13 @@ get_link_weights <- function(matrixweight)
 }
 
 # Draw tail, species or set of species of 1-shell connected to higher k-index species
-draw_tail <- function(idPrefix, p,svg,fat_tail,lado,color,sqlabel,basex,basey,gap,
+draw_tail_bip <- function(idPrefix, p,svg,fat_tail,lado,color,sqlabel,basex,basey,gap,
                       lxx2=0,lyy2=0,sqinverse = "no",
                       position = "West", background = "no",
                       first_leaf = "yes", spline = "no",
-                      psize = zgg$lsize_kcore1, is_guild_a = TRUE, wlink=1)
+                      psize = zgg$lsize_kcore1, is_guild_a = TRUE, wlink=1, style = "ziggurat", lvp = 0)
 {
+ 
   adjust <- "yes"
   lvjust <- 0
   lhjust <- 0
@@ -389,8 +416,7 @@ draw_tail <- function(idPrefix, p,svg,fat_tail,lado,color,sqlabel,basex,basey,ga
   bgcolor <- color
   labelcolor <- ifelse(length(zgg$labels_color)>0,zgg$labels_color[2-as.numeric(is_guild_a)],color)
   palpha <- zgg$alpha_link
-  sidex <- lado*(0.5+sqrt(nrow(fat_tail)))
-  sidex <- sidex * sqrt(zgg$square_nodes_size_scale)
+  sidex <- lado
   paintsidex <- sidex
   signo <- 1
   yy <- abs(basey)
@@ -399,24 +425,38 @@ draw_tail <- function(idPrefix, p,svg,fat_tail,lado,color,sqlabel,basex,basey,ga
   # Lower half plane of the ziggurat
   if (sqinverse=="yes")
     signo <- -1
-  # Tails connected eastwards to inner ziggurats
+  # Tails connected eastwards to inner ziggurats. Fat tails
   if (position == "West"){
-    xx <- basex-gap
-    posxx1 <- xx+sidex
-    posyy1 = signo*(yy)+signo*(0.5*sidex/(zgg$aspect_ratio))
+    adjust = "yes"
+    lhjust <- 0.5
+    lvjust <- 0.5
+    if (style=="chilopodograph"){
+      xx <- basex-gap
+      posxx1 <- xx+zgg$xstep
+      posyy1 = signo*(yy)+signo*(0.5*zgg$xstep/(zgg$aspect_ratio))
+    } else {
+      xx <- basex-gap
+      posxx1 <- xx+sidex
+      posyy1 = signo*(yy)+signo*(0.5*gap/(zgg$aspect_ratio))
+    }
   }
-  # Fat tails, or group of species linked to the highest kdegree species in max shell
+  # Group of species linked to the highest kdegree species in max shell
   else if (position == "East"){
-    gap <- zgg$hop_x/2
-    xx <- basex+gap
-    posxx1 <- xx
-    posyy1 = signo*(yy+sidex/(2*zgg$aspect_ratio))
+      gap <- zgg$hop_x/2
+      xx <- basex+gap
+      posxx1 <- xx
+      posyy1 = signo*(yy+sidex/(2*zgg$aspect_ratio))
   }
   # Tails connected to other nodes of the max shell
   else if ((position == "North") |(position == "South")) {
-    xx <- basex-sidex/2
-    posxx1 <- xx+sidex/2
+    xx <- basex
+    posxx1 <- xx
     posyy1 = signo*(yy)
+    if (style=="chilopodograph"){
+      adjust = "yes"
+      lhjust <- 0.5
+      lvjust <- 0.5
+    }
   }
 
   if (background == "no")
@@ -424,48 +464,50 @@ draw_tail <- function(idPrefix, p,svg,fat_tail,lado,color,sqlabel,basex,basey,ga
     ecolor <- "transparent"
     if (zgg$alpha_level != 1)
       palpha <- max(zgg$alpha_level-0.09,0)
-
-    rot_angle <-30
-    if (position == "North")
-    {
-      langle <- rot_angle
-    }
-    if (position == "South")
-    {
-      langle <- -rot_angle
-      lvjust <- 0
-    }
-    if (position == "West"){
-      adjust <- "yes"
-    }
+      else if (position == "North")
+      {
+        langle <- rot_angle
+      }
+      else if (position == "South")
+      {
+        langle <- -rot_angle
+      }
+      else if (position == "West"){
+        adjust <- "yes"
+      }
   }
   if ((zgg$flip_results) & (langle == 0) & (position!="West") )
     langle <- langle + 70
   # Draw square node
-  f <- draw_square(idPrefix, p,svg, xx,yy,paintsidex*sqrt(zgg$square_nodes_size_scale),
+
+  f <- draw_square(idPrefix, p,svg, xx,yy,
+                   ifelse(zgg$style=="chilopodograph",lado,
+                   paintsidex*sqrt(zgg$square_nodes_size_scale)),
                    bgcolor,palpha,labelcolor,langle,lhjust,lvjust,
                    slabel=sqlabel,lbsize = psize,inverse = sqinverse,
                    adjustoxy = adjust, edgescolor = ecolor)
   p <- f["p"][[1]]
   svg <- f["svg"][[1]]
   # Add tail link
-  if (zgg$paintlinks)
+  if (zgg$paintlinks){
+    if ((position == "North") |(position == "South"))
+      posxx1 = posxx1+sidex/2
     add_link(xx1=posxx1, xx2 = plxx2,
                    yy1 = posyy1, yy2 = plyy2,
                    slink = zgg$size_link*wlink, clink = c(zgg$color_link),
-                   alpha_l = zgg$alpha_link , spline= spline)
+                   alpha_l = zgg$alpha_link)
+  }
   calc_vals <- list("p" = p, "svg" = svg, "sidex" = sidex, "xx" = posxx1, "yy" = posyy1)
   return(calc_vals)
 }
 
 
-draw_edge_tails <- function(p,svg,point_x,point_y,kcoreother,long_tail,list_dfs,color_guild, inverse = "no",
-                            vertical = "yes", orientation = "East", revanddrop = "no",
-                            pbackground = "yes", joinchars = "\n", tspline = "no", is_guild_a = TRUE, wlink = 1)
+draw_edge_tails_bip <- function(p,svg,point_x,point_y,kcoreother,long_tail,list_dfs,color_guild, inverse = "no",
+                            vertical = "yes", orientation = "South", revanddrop = "no",
+                            pbackground = "yes", joinchars = "\n", tspline = "no", 
+                            is_guild_a = TRUE, wlink = 1)
 {
 
-  if (orientation == "West")
-    point_y <- point_y - zgg$gap
   rxx <- point_x
   ryy <- point_y
   zgg$joinstr <- joinchars
@@ -480,35 +522,23 @@ draw_edge_tails <- function(p,svg,point_x,point_y,kcoreother,long_tail,list_dfs,
   llspec <- length(list_spec)
   m <- 0
   separacion <- 0.035*zgg$tot_width
+  last_vertical_position <- 0
   for (i in list_spec)
   {
     conn_species <- which(long_tail$partner == i)
     if (length(conn_species)>0)
     {
       little_tail <- long_tail[long_tail$partner == i,]
-      if ((orientation == "East") | (orientation == "West"))
-      {
-        data_row <- list_dfs[[kcoreother]][which(list_dfs[[kcoreother]]$label == i),]
-        xx2 <- data_row$x2
-        yy2 <- (data_row$y1 + data_row$y2)/2
-      }
-      else# if (orientation = "North")
-      {
-        rxx <- point_x*zgg$kcore1tail_disttocore[1]
-        ryy <- point_y*0.9*zgg$kcore1tail_disttocore[2]
-        data_row <- list_dfs[[kcoreother]][which(list_dfs[[kcoreother]]$label == i),]
-        xx2 <- (data_row$x2+data_row$x1)/2
-        yy2 <- data_row$y2
-      }
-      if (kcoreother == 2) {
-        yy2 <- ifelse (zgg$kcoremax > 2, (data_row$y1 + data_row$y2)/2, data_row$y2)
-        point_y <- (zgg$kcore2tail_vertical_separation-1)*sign(point_y)*zgg$height_y + point_y
-        ryy <- point_y
-      }
-      else if (kcoreother<zgg$kcoremax) {
-        point_y <- (zgg$innertail_vertical_separation-1)*sign(point_y)*zgg$height_y + point_y
-        ryy <- point_y
-      }
+      
+      data_row <- list_dfs[[kcoreother]][which(list_dfs[[kcoreother]]$label == i),]
+      xx2 <- (data_row$x2+data_row$x1)/2
+      rxx <- data_row$x1
+      yy2 <- data_row$y2
+      yfactor <- min(10,nrow(little_tail))
+      if (nrow(little_tail>1) & last_vertical_position == yfactor)
+        yfactor <- yfactor+1
+      ryy <- data_row$y2 + ifelse(yy2>0, yfactor*zgg$xstep, -yfactor*zgg$xstep )
+      print(paste(nrow(little_tail),"yfactor",yfactor))
       tailweight <- 0
       for (h in 1:nrow(little_tail))
         if (is_guild_a)
@@ -518,13 +548,15 @@ draw_edge_tails <- function(p,svg,point_x,point_y,kcoreother,long_tail,list_dfs,
           tailweight <- tailweight + zgg$result_analysis$matrix[as.numeric(little_tail$orph[h]),
                                                                 as.numeric(little_tail$partner[h])]
       little_tail$weightlink <- get_link_weights(tailweight)
-      v<- draw_tail(paste0(ifelse(is_guild_a, "edge-kcore1-a-", "edge-kcore1-b-"), i),
-                    p,svg,little_tail,zgg$lado,color_guild[2],
-                    gen_sq_label(little_tail$orph,joinchars = " ", is_guild_a = is_guild_a),
+      v<- draw_tail_bip(paste0(ifelse(is_guild_a, "edge-kcore1-a-", "edge-kcore1-b-"), i),
+                    p,svg,little_tail,0.9*zgg$xstep,color_guild[2],
+                    gen_vert_label(little_tail$orph,joinchars = " "),
                     rxx,ryy,zgg$gap,lxx2 = xx2,
                     lyy2 = yy2, sqinverse = inverse, position = orientation,
                     background = pbackground, spline = tspline, psize = zgg$lsize_kcore1,
-                    is_guild_a = is_guild_a, wlink = little_tail$weightlink[1])
+                    is_guild_a = is_guild_a, wlink = little_tail$weightlink[1],style=zgg$style,
+                    lvp = last_vertical_position)
+      last_vertical_position <- ifelse(yfactor==1, 0, yfactor)
       p <- v["p"][[1]]
       svg <- v["svg"][[1]]
       rxx <- v["xx"][[1]]
@@ -542,12 +574,14 @@ draw_edge_tails <- function(p,svg,point_x,point_y,kcoreother,long_tail,list_dfs,
           salto <- 0
         else
           salto <- 0.4*v["sidex"][[1]]/zgg$aspect_ratio
-        point_x <- point_x - separacion - v["sidex"][[1]]
-        point_y <- point_y - 1.4*signo*salto
+        point_x <- point_x #- separacion - v["sidex"][[1]]
+        point_y <- point_y #- 1.4*signo*salto
         ryy <- point_y
         rxx <- point_x
       }
     }
+    else
+      last_vertical_position <- 0
     m <- m +1
   }
   calc_vals <- list("p" = p, "svg" = svg, "lastx" = rxx, "lasty" = ryy)
@@ -674,8 +708,8 @@ handle_outsiders <- function(p,svg,outsiders,df_chains) {
 }
 
 # Draw one triangle of the innermost shell
-draw_coremax_triangle <- function(basex,topx,basey,topy,numboxes,fillcolor,strlabels,
-                                  igraphnet,strguild,orderby = "kradius")
+draw_parallel_guilds <- function(basex,topx,basey,topy,numboxes,nnodes,fillcolor,strlabels,
+                                 igraphnet,strguild,orderby = "kradius",style="legacy")
 {
   x1 <- c()
   x2 <- c()
@@ -686,11 +720,12 @@ draw_coremax_triangle <- function(basex,topx,basey,topy,numboxes,fillcolor,strla
   kradius <- c()
   col_row <- c()
   name_species <- c()
-  pbasex <- zgg$coremax_triangle_width_factor*( basex - (numboxes %/%8) * abs(topx-basex)/3)
-  xstep <- (topx-pbasex)*1/numboxes
+  pbasex <- zgg$coremax_triangle_width_factor*( basex - (nnodes %/%8) * abs(topx-basex)/3)
+  xstep <- (topx-pbasex)*1/nnodes
+  zgg$xstep <- xstep
   if (!(zgg$isogonos)){
     ptopy <- topy * zgg$coremax_triangle_height_factor
-    ystep <- (ptopy-basey)*0.7/numboxes
+    ystep <- (ptopy-basey)*0.7/nnodes
   } else {
     ptopy <- basey+(if (basey>0) 1 else -1)*xstep
     ystep <- 0
@@ -698,7 +733,7 @@ draw_coremax_triangle <- function(basex,topx,basey,topy,numboxes,fillcolor,strla
   for (j in (1:numboxes))
   {
     x1 <- c(x1, pbasex+(j-1)*xstep)
-    x2 <- c(x2, x1[j]+0.9*xstep)
+    x2 <- c(x2, x1[j]+0.9*zgg$xstep)
     y1 <- c(y1, basey)
     y2 <- c(y2, ptopy-(j-1)*ystep)
     r <- c(r,j)
@@ -709,25 +744,53 @@ draw_coremax_triangle <- function(basex,topx,basey,topy,numboxes,fillcolor,strla
   }
   d1 <- data.frame(x1, x2, y1, y2, r, col_row, kdegree, kradius, name_species, stringsAsFactors=FALSE)
   d1$label <- strlabels
+  
+  # Remove empty nodes
+  d1 <- d1[d1$label!="EMPTY",]
+  
+  if (style == "legacy")
+    nodelabels <- strlabels
+  else if ((style == "kcoreorder")||(style == "chilopodograph")) {
+    d1$kcore = 0
+    for (i in 1:nrow(d1)){
+      s <- strsplit(d1$label[i],"shell")
+      d1$label[i] <- s[[1]][1]
+      d1$kcore[i] <- s[[1]][2]
+    }
+  }
+  d1 <- d1[d1$label!="",]         # Remove empty kshell separator cells 
   for (i in 1:nrow(d1)){
     d1[i,]$kdegree <- igraphnet[paste0(strguild,d1[i,]$label)]$kdegree
     d1[i,]$kradius <- igraphnet[paste0(strguild,d1[i,]$label)]$kradius
     d1[i,]$name_species <- igraphnet[paste0(strguild,d1[i,]$label)]$name_species
   }
 
-  if (orderby == "kradius"){
-    ordvector <- order(1000*d1$kradius+d1$kdegree)
-    d1$label <- d1[ordvector,]$label
-    d1$kradius <- d1[ordvector,]$kradius
-    d1$kdegree <- d1[ordvector,]$kdegree
-    d1$name_species <- d1[ordvector,]$name_species
-  }
-  else if (orderby == "kdegree"){
-    ordvector <- rev(order(1000*d1$kdegree-d1$kradius))
-    d1$label <- d1[ordvector,]$label
-    d1$kradius <- d1[ordvector,]$kradius
-    d1$kdegree <- d1[ordvector,]$kdegree
-    d1$name_species <- d1[ordvector,]$name_species
+  if (style == "legacy"){
+    if (orderby == "kradius"){
+      ordvector <- order(1000*d1$kradius-d1$kdegree)
+      d1$label <- d1[ordvector,]$label
+      d1$kradius <- d1[ordvector,]$kradius
+      d1$kdegree <- d1[ordvector,]$kdegree
+      d1$name_species <- d1[ordvector,]$name_species
+    }
+    else if (orderby == "kdegree"){
+      ordvector <- rev(order(1000*d1$kdegree-d1$kradius))
+      d1$label <- d1[ordvector,]$label
+      d1$kradius <- d1[ordvector,]$kradius
+      d1$kdegree <- d1[ordvector,]$kdegree
+      d1$name_species <- d1[ordvector,]$name_species
+    }
+  } else if ((style=="kcoreorder") || (style=="chilopodograph")){
+    subscol <- which(names(d1)=="kdegree"):ncol(d1)
+    shells <- sort(unique(d1$kcore))
+    for (k in shells){
+      d2 <- d1[d1$kcore == k,]
+      if (nrow(d2)>1){
+        d2 <-d2[rev(order(1000*d2$kdegree-d2$kradius)),]
+        d1[d1$kcore==k,][,subscol] <- d2[,subscol]
+      }
+      
+    }
   }
   return(d1)
 }
@@ -973,7 +1036,7 @@ specialist_analysis <- function(specialists,opposite_specialists,species)
     return(ldf)
 }
 
-# Store speciailsts in initermediate df_store data frame and compute positions
+# Store speciailsts in intermediate df_store data frame and compute positions
 # Very hard, indeed
 store_specialist_species <- function (row_orph, df_store, strguild, lado, gap, original_specialists_a, original_specialists_b)
 {
@@ -1073,8 +1136,6 @@ store_specialist_species <- function (row_orph, df_store, strguild, lado, gap, o
       }
       else{
         df_store$x1[index] <- data_row$x1 - (4+0.2*sqrt(index))*sidex
-        # df_store$y1[index] <- data_row$y1+ sign(data_row$y1)*(zgg$specialists_boxes_separation_count*zgg$height_y + as.integer(data_row$partner)*sidex/zgg$aspect_ratio) +
-        #   (2+0.2*sqrt(index))*sign(data_row$y1)*(repetitions-1)*sidex/zgg$aspect_ratio
         df_store$y1[index] <- data_row$y1+ sign(data_row$y1)*(zgg$specialists_boxes_separation_count*zgg$height_y + sidex/zgg$aspect_ratio) +
           (2+0.2*sqrt(index))*sign(data_row$y1)*(repetitions-1)*sidex/zgg$aspect_ratio
       }
@@ -1110,6 +1171,7 @@ store_specialist_species <- function (row_orph, df_store, strguild, lado, gap, o
   }
   return(df_store)
 }
+
 
 # Draw a chain of specialists
 draw_specialist_chains <- function(grafo, svg, df_chains, ladosq)
@@ -1228,7 +1290,7 @@ store_branch_leaf <- function(specialists, specialists_opp,df_chains, pstrguild,
 }
 
 # Draw links among species of same k-index
-draw_innercores_tails <- function(p,svg,kc,list_dfs,df_orph,color_guild, inverse="no", is_guild_a = TRUE)
+draw_innercores_tails_bip <- function(p,svg,kc,list_dfs,df_orph,color_guild, inverse="no", is_guild_a = TRUE)
 {
   lastx <- 0
   lasty <- 0
@@ -1251,7 +1313,7 @@ draw_innercores_tails <- function(p,svg,kc,list_dfs,df_orph,color_guild, inverse
   }
   long_tail <- df_orph[(df_orph$kcore == kc) & (df_orph$repeated == "no"),]
   if (length(long_tail)>0){
-    v<-  draw_edge_tails(p,svg,lpoint_x,lpoint_y,kc,long_tail,list_dfs,color_guild,
+    v<-  draw_edge_tails_bip(p,svg,lpoint_x,lpoint_y,kc,long_tail,list_dfs,color_guild,
                          inverse = inverse, joinchars = zgg$joinstr,pbackground = "no",
                          tspline = "lshaped", is_guild_a = is_guild_a)
     p <- v["p"][[1]]
@@ -1353,22 +1415,32 @@ draw_inner_links <- function(p, svg)
 
 # Draw tail connected to highest kdegree node
 draw_fat_tail<- function(p,svg,fat_tail,nrows,list_dfs,color_guild,pos_tail_x,pos_tail_y,fattailjhoriz,fattailjvert,fgap,
-                         inverse="no", is_guild_a =TRUE)
+                         inverse="no", is_guild_a =TRUE, bipartite = FALSE, gstyle = "ziggurat")
 {
-  ppos_tail_x <- pos_tail_x * fattailjhoriz
-  pos_tail_y <- (0.25+0.1*sqrt(nrows))*(list_dfs[[zgg$kcoremax]][1,]$y2+list_dfs[[zgg$kcoremax]][1,]$y1)/2
-  ppos_tail_y <- pos_tail_y * fattailjvert
+
+  if (gstyle == "chilopodograph"){
+    ppos_tail_x <- pos_tail_x-(1+log10(nrows))*zgg$xstep
+    pos_tail_y <-list_dfs[[zgg$kcoremax]][1,]$y1# (list_dfs[[zgg$kcoremax]][1,]$y2+list_dfs[[zgg$kcoremax]][1,]$y1)/2
+    ppos_tail_y <- pos_tail_y
+  }
+  else{
+    ppos_tail_x <- pos_tail_x * fattailjhoriz
+    pos_tail_y <- (0.25+0.1*sqrt(nrows))*(list_dfs[[zgg$kcoremax]][1,]$y2+list_dfs[[zgg$kcoremax]][1,]$y1)/2
+    ppos_tail_y <- pos_tail_y * fattailjvert
+  }
+  
   if (nrow(fat_tail)>0)
   {
     nodekcoremax <- list_dfs[[zgg$kcoremax]][1,]
     plyy2 <-  (nodekcoremax$y1+nodekcoremax$y2)/2
-    v<- draw_tail(ifelse(is_guild_a, "fat-kcore1-a", "fat-kcore1-b"), p,svg,
-                  fat_tail,zgg$lado,color_guild,gen_sq_label(fat_tail$orph,is_guild_a = is_guild_a),
+    v<- draw_tail_bip(ifelse(is_guild_a, "fat-kcore1-a", "fat-kcore1-b"), p,svg,
+                  fat_tail,ifelse(zgg$style=="chilopodograph",zgg$xstep,zgg$lado),
+                  color_guild,gen_sq_label(fat_tail$orph,is_guild_a = is_guild_a),
                   ppos_tail_x,ppos_tail_y,fgap,
                   lxx2 = list_dfs[[zgg$kcoremax]][1,]$x1,
                   lyy2 = plyy2,
                   sqinverse = inverse, background = "no", psize = zgg$lsize_kcore1,
-                  is_guild_a = is_guild_a, wlink = fat_tail$weightlink[1])
+                  is_guild_a = is_guild_a, wlink = fat_tail$weightlink[1],style=zgg$style)
     p <- v["p"][[1]]
     svg <- v["svg"][[1]]
   }
@@ -1444,6 +1516,98 @@ handle_specialists <- function(p,svg,specialists_a,specialists_b,lado,gap)
   return(calc_vals)
 }
 
+find_specialists_bip <- function(specialists_a,specialists_b)
+{
+  specialists_a <- data.frame(c())
+  specialists_b <- data.frame(c())
+  if (exists("df_orph_a", envir = zgg))
+    if (nrow(zgg$df_orph_a)>0)
+    {
+      specialists_a <-  zgg$df_orph_a[zgg$df_orph_a$repeated== "yes",]
+      specialists_a <-  specialists_a[rev(order(specialists_a$orph,specialists_a$kcore)),]
+      if (nrow(specialists_a)>0)
+        specialists_a$drawn <- "no"
+    }
+  if (exists("df_orph_b", envir = zgg))
+    if (nrow(zgg$df_orph_b)>0)
+    {
+      specialists_b <-  zgg$df_orph_b[zgg$df_orph_b$repeated== "yes",]
+      specialists_b <-  specialists_b[rev(order(specialists_b$orph,specialists_b$kcore)),]
+      if (nrow(specialists_b)>0)
+        specialists_b$drawn <- "no"
+    }
+  
+  calc_vals <- list("specialists_a" = specialists_a, "specialists_b" = specialists_b)
+  return(calc_vals)
+}
+
+# Management of chains of specialists
+handle_specialists_bip <- function(p,svg,specialists_a,specialists_b,lado,gap)
+{
+  ladosq <- 2 * lado * sqrt(zgg$square_nodes_size_scale)
+  specialists_a <- data.frame(c())
+  specialists_b <- data.frame(c())
+  if (exists("df_orph_a", envir = zgg))
+    if (nrow(zgg$df_orph_a)>0)
+    {
+      specialists_a <-  zgg$df_orph_a[zgg$df_orph_a$repeated== "yes",]
+      specialists_a <-  specialists_a[rev(order(specialists_a$orph,specialists_a$kcore)),]
+      if (nrow(specialists_a)>0)
+        specialists_a$drawn <- "no"
+    }
+  if (exists("df_orph_b", envir = zgg))
+    if (nrow(zgg$df_orph_b)>0)
+    {
+      specialists_b <-  zgg$df_orph_b[zgg$df_orph_b$repeated== "yes",]
+      specialists_b <-  specialists_b[rev(order(specialists_b$orph,specialists_b$kcore)),]
+      if (nrow(specialists_b)>0)
+        specialists_b$drawn <- "no"
+    }
+  
+  # Create empty df_chains data frame
+  zgg$df_chains <- data.frame(x1 = numeric(0), x2 = numeric(0), y1 = numeric(0), y2 = numeric(0),
+                              guild = character(0), orph = integer(0), partner = integer(0),
+                              kcorepartner = integer(0), xx2 = numeric(0), yy2 = numeric(0), stringsAsFactors = FALSE )
+  
+  if  (( ( nrow(specialists_a)+nrow(specialists_b) )>0)) {
+    original_specialists_a <- specialists_a
+    original_specialists_b <- specialists_b
+    while (((nrow(specialists_a)+nrow(specialists_b))>0))
+    {
+      if (nrow(specialists_a)>0){
+        k <- store_root_leaf(specialists_a, zgg$df_chains, zgg$str_guild_a, ladosq, gap, original_specialists_a, original_specialists_b)
+        zgg$df_chains <- k["df_chains"][[1]]
+        specialists_a <- k["specialists"][[1]]
+      }
+      if (nrow(specialists_b)>0){
+        k <- store_root_leaf(specialists_b, zgg$df_chains, zgg$str_guild_b, ladosq, gap, original_specialists_a, original_specialists_b)
+        zgg$df_chains <- k["df_chains"][[1]]
+        specialists_b <- k["specialists"][[1]]
+      }
+      if (nrow(specialists_a)>0){
+        k <- store_branch_leaf(specialists_a, specialists_b, zgg$df_chains, zgg$str_guild_a, ladosq, gap, original_specialists_a, original_specialists_b)
+        zgg$df_chains <- k["df_chains"][[1]]
+        specialists_a <- k["specialists"][[1]]
+        specialists_b <- k["specialists_opp"][[1]]
+      }
+      if (nrow(specialists_b)>0){
+        k <- store_branch_leaf(specialists_b, specialists_a, zgg$df_chains, zgg$str_guild_b, ladosq, gap, original_specialists_a, original_specialists_b)
+        zgg$df_chains <- k["df_chains"][[1]]
+        specialists_b <- k["specialists"][[1]]
+        specialists_a <- k["specialists_opp"][[1]]
+      }
+      # Now they may be some specialists of core 1 linked to core 1 that were not
+      # stored in the previous procedure
+      specialists_a <- specialists_a[specialists_a$drawn == "no",]
+      specialists_b <- specialists_b[specialists_b$drawn == "no",]
+    }
+    f <- draw_specialist_chains(p, svg, zgg$df_chains, ladosq)
+    p <- f["p"][[1]]
+    svg <- f["svg"][[1]]
+  }
+  calc_vals <- list("p" = p, "svg" = svg, "df_chains" = zgg$df_chains)
+  return(calc_vals)
+}
 # Final annotations
 write_annotations <- function(p, svg)
 {
@@ -1455,7 +1619,7 @@ write_annotations <- function(p, svg)
   legends_text <- paste0(
     "<span style = 'color:",zgg$color_guild_a[1],"; font-size:",lzcf*zgg$lsize_legend,"pt'>",zgg$name_guild_a,
     "</span> <span style = 'color:",zgg$color_guild_b[1],"; font-size:",lzcf*zgg$lsize_legend,"pt'>",zgg$name_guild_b,"</span>")
-  p <- p+ ggtitle(title_text,subtitle=paste("<span align='right' size>",legends_text,"</span>"))
+  #p <- p+ ggtitle(title_text,subtitle=paste("<span align='right' size>",legends_text,"</span>"))
   p <- p + coord_fixed(ratio=zgg$aspect_ratio) +theme_bw() + theme(panel.grid.minor.x = element_blank(),
                                                                panel.grid.minor.y = element_blank(),
                                                                panel.grid.major.x = element_blank(),
@@ -1475,18 +1639,21 @@ write_annotations <- function(p, svg)
                                                                 )
   if (zgg$hide_plot_border)
     p <- p + theme(panel.border=element_blank())
-  landmark_top <- 1.2*max(zgg$last_ytail_b[!is.na(zgg$last_ytail_b)],zgg$ymax)*zgg$rescale_plot_area[2]
+  #landmark_top <- 1.2*max(zgg$last_ytail_b[!is.na(zgg$last_ytail_b)],zgg$ymax)*zgg$rescale_plot_area[2]
+  landmark_top <- 3*zgg$xstep+zgg$ymax*zgg$rescale_plot_area[2]
+  
   mlabel <- "."
-  #landmark_right <- (zgg$tot_width+2*zgg$hop_x)*zgg$rescale_plot_area[1]
-  landmark_right <- (zgg$tot_width+1.5*zgg$hop_x)*zgg$rescale_plot_area[1]
+  if (zgg$style != "ziggurat")
+    landmark_right <- (zgg$tot_width)*zgg$rescale_plot_area[1]
+  else
+    landmark_right <- (zgg$tot_width+1.5*zgg$hop_x)*zgg$rescale_plot_area[1]
   f <- draw_square("annotation",p,svg,landmark_right,0,1,"transparent",0.5,"transparent",0,0,0,slabel="")
   p <- f["p"][[1]]
   svg <- f["svg"][[1]]
   p <- p +annotate(geom="text", x= landmark_right, y=0, label=mlabel,
                    colour = "red", size=1, hjust = 0, vjust = 0, angle = 0)
   svg$text("annotation", data=data.frame(x=landmark_right, y=0), mapping=aes(x=x, y=y), color="red", label=mlabel, size=1, angle=0)
-  landmark_left <- min(zgg$last_xtail_a[[zgg$kcoremax]],zgg$last_xtail_b[[zgg$kcoremax]])-min(zgg$hop_x,0.2*min(zgg$last_xtail_a[[zgg$kcoremax]],zgg$last_xtail_b[[zgg$kcoremax]]))
-  landmark_left <- min(landmark_left, zgg$pos_tail_x)*zgg$rescale_plot_area[1]
+  landmark_left <- zgg$pos_tail_x*zgg$rescale_plot_area[1]
   
   p <- p +annotate(geom="text", x=landmark_left, y=0, label=mlabel,
                    colour = "red", size=2, hjust = 0, vjust = 0, angle = 0)
@@ -1500,30 +1667,6 @@ write_annotations <- function(p, svg)
     x_legend <- 0.8*landmark_top
     y_legend <- 0.8*landmark_right
   }
-  # p <- p + annotate(geom="text", x=x_legend,
-  #                   y=y_legend,
-  #                   label=zgg$name_guild_a,
-  #                   colour = zgg$color_guild_a[1], size=zgg$lsize_legend,
-  #                   hjust = 1, vjust = 0, angle = 0)
-  # p <- p + annotate(geom="text", x=x_legend,
-  #                   y=y_legend,
-  #                   label= paste(rep(" ",length(zgg$name_guild_a))," ",zgg$name_guild_b),
-  #                   colour = zgg$color_guild_b[1], size=zgg$lsize_legend,
-  #                   hjust = 0, vjust = 0, angle = 0)
-  # p <- p +annotate(geom="text", x=landmark_left,
-  #                  y = y_legend,
-  #                  label="1-shell",
-  #                  colour = zgg$corecols[2], size=zgg$lsize_core_box, hjust = 0, vjust = 0,
-  #                  angle = 0,
-  #                  fontface="italic")
-  # svg$text("core-1", data=data.frame(x=landmark_left, y=y_legend), mapping=aes(x=x, y=y), color=zgg$corecols[2],
-  #          label="1-shell",
-  #          size=zgg$lsize_core_box, angle=0)
-  # svg$text("core-1", data=data.frame(x=(0.8+(0.3*zgg$displace_legend[1]))*x_legend, y=y_legend), mapping=aes(x=x, y=y), size=zgg$lsize_legend,
-  #          label=zgg$name_guild_a, color=zgg$color_guild_a[1], angle=0)
-  # svg$text("core-1", data=data.frame(x=x_legend, y=y_legend), mapping=aes(x=x, y=y), size=zgg$lsize_legend,
-  #          label=zgg$name_guild_b, color=zgg$color_guild_b[1], angle=0)
-
   landmark_bottom <- min(zgg$last_ytail_a[!is.na(zgg$last_ytail_b)],1.2*zgg$ymin)*zgg$rescale_plot_area[2]
   
   zgg$landmark_left <<- landmark_left
@@ -1540,8 +1683,6 @@ handle_orphans <- function(vg)
 {
   zgg$df_orph_a <- data.frame(c())
   zgg$df_orph_b <- data.frame(c())
-  zgg$mtxlinks <- data.frame(igraph::get.edgelist(vg))
-  names(zgg$mtxlinks) <- c("guild_a","guild_b")
   if (length(grep(zgg$str_guild_b,zgg$mtxlinks[1,1]))>0)
     names(zgg$mtxlinks) <- rev(names(zgg$mtxlinks))
   zgg$orphans_a <- zgg$df_cores$species_guild_a[[1]]
@@ -1558,33 +1699,11 @@ handle_orphans <- function(vg)
 }
 
 # Draw specialist chains connected to inner ziggurats
-draw_inner_orphans <- function(p, svg)
+draw_bipartite_leafs <- function(p, svg)
 {
-  if (zgg$kcoremax >2)
-  {
-    for (kc in seq(from = zgg$kcoremax-1, to = 2))
-    {
-
-      if (exists("df_orph_a", envir = zgg)){
-        w <- draw_innercores_tails(p,svg,kc,zgg$list_dfs_b,zgg$df_orph_a,zgg$color_guild_a, inverse="no")
-        p <- w["p"][[1]]
-        svg <- w["svg"][[1]]
-        zgg$last_xtail_b[kc] <- w["lastx"][[1]]
-        zgg$last_ytail_b[kc] <-w["lasty"][[1]]
-      }
-
-      if (exists("df_orph_b", envir = zgg)){
-        w <- draw_innercores_tails(p,svg,kc,zgg$list_dfs_a,zgg$df_orph_b,zgg$color_guild_b, inverse="yes", is_guild_a = FALSE)
-        p <- w["p"][[1]]
-        svg <- w["svg"][[1]]
-        zgg$last_xtail_a[kc] <- w["lastx"][[1]]
-        zgg$last_ytail_a[kc] <-w["lasty"][[1]]
-      }
-    }
-  } else {                                  # orphans when kcoremax == 2
     zgg$kcore2tail_vertical_separation <- zgg$kcore2tail_vertical_separation + 2
     if (exists("df_orph_a", envir = zgg)){
-      w <- draw_innercores_tails(p,svg,2,zgg$list_dfs_b,zgg$df_orph_a,zgg$color_guild_a, inverse="yes")
+      w <- draw_innercores_tails_bip(p,svg,2,zgg$list_dfs_b,zgg$df_orph_a,zgg$color_guild_a, inverse="yes")
       p <- w["p"][[1]]
       svg <- w["svg"][[1]]
       zgg$last_xtail_b[2] <- w["lastx"][[1]]
@@ -1592,28 +1711,79 @@ draw_inner_orphans <- function(p, svg)
     }
 
     if (exists("df_orph_b", envir = zgg)){
-      w <- draw_innercores_tails(p,svg,2,zgg$list_dfs_a,zgg$df_orph_b,zgg$color_guild_b, inverse="no", is_guild_a = FALSE)
+      w <- draw_innercores_tails_bip(p,svg,2,zgg$list_dfs_a,zgg$df_orph_b,zgg$color_guild_b, inverse="no", is_guild_a = FALSE)
       p <- w["p"][[1]]
       svg <- w["svg"][[1]]
       zgg$last_xtail_a[2] <- w["lastx"][[1]]
       zgg$last_ytail_a[2] <- w["lasty"][[1]]
     }
-  }
+  #}
 
   calc_vals <- list("p" = p, "svg" = svg)
   return(calc_vals)
 }
 
+draw_bipartite_leafs <- function(p, svg)
+{
+  # if (zgg$kcoremax >2)
+  # {
+  #   for (kc in seq(from = zgg$kcoremax-1, to = 2))
+  #   {
+  #     
+  #     if (exists("df_orph_a", envir = zgg)){
+  #       w <- draw_innercores_tails(p,svg,kc,zgg$list_dfs_b,zgg$df_orph_a,zgg$color_guild_a, inverse="no")
+  #       p <- w["p"][[1]]
+  #       svg <- w["svg"][[1]]
+  #       zgg$last_xtail_b[kc] <- w["lastx"][[1]]
+  #       zgg$last_ytail_b[kc] <-w["lasty"][[1]]
+  #     }
+  #     
+  #     if (exists("df_orph_b", envir = zgg)){
+  #       w <- draw_innercores_tails(p,svg,kc,zgg$list_dfs_a,zgg$df_orph_b,zgg$color_guild_b, inverse="yes", is_guild_a = FALSE)
+  #       p <- w["p"][[1]]
+  #       svg <- w["svg"][[1]]
+  #       zgg$last_xtail_a[kc] <- w["lastx"][[1]]
+  #       zgg$last_ytail_a[kc] <-w["lasty"][[1]]
+  #     }
+  #   }
+  # } else {                                  # orphans when kcoremax == 2
+    zgg$kcore2tail_vertical_separation <- zgg$kcore2tail_vertical_separation + 2
+    if (exists("df_orph_a", envir = zgg)){
+      w <- draw_innercores_tails_bip(p,svg,2,zgg$list_dfs_b,zgg$df_orph_a,zgg$color_guild_a, inverse="yes")
+      p <- w["p"][[1]]
+      svg <- w["svg"][[1]]
+      zgg$last_xtail_b[2] <- w["lastx"][[1]]
+      zgg$last_ytail_b[2] <-w["lasty"][[1]]
+    }
+    
+    if (exists("df_orph_b", envir = zgg)){
+      w <- draw_innercores_tails_bip(p,svg,2,zgg$list_dfs_a,zgg$df_orph_b,zgg$color_guild_b, inverse="no", is_guild_a = FALSE)
+      p <- w["p"][[1]]
+      svg <- w["svg"][[1]]
+      zgg$last_xtail_a[2] <- w["lastx"][[1]]
+      zgg$last_ytail_a[2] <- w["lasty"][[1]]
+    }
+  #}
+  
+  calc_vals <- list("p" = p, "svg" = svg)
+  return(calc_vals)
+}
+
 # Manage fat tails
-handle_fat_tails <- function(p, svg)
+handle_fat_tails <- function(p, svg, style = "ziggurat")
 {
   fat_tail_x <- min(zgg$last_xtail_a[[zgg$kcoremax]],
                     zgg$last_xtail_b[[zgg$kcoremax]],
                     zgg$list_dfs_a[[zgg$kcoremax]][1,]$x1,
                     zgg$list_dfs_b[[zgg$kcoremax]][1,]$y2)
+  if (zgg$orderkcoremaxby == "kdegree")
+    max_b_k <- zgg$list_dfs_b[[zgg$kcoremax]][which(zgg$list_dfs_b[[zgg$kcoremax]]$kdegree == max(zgg$list_dfs_b[[zgg$kcoremax]]$kdegree)),]$label
+  if (zgg$orderkcoremaxby == "kradius")
+    max_b_k <- zgg$list_dfs_b[[zgg$kcoremax]][which(zgg$list_dfs_b[[zgg$kcoremax]]$kradius == min(zgg$list_dfs_b[[zgg$kcoremax]]$kradius)),]$label
+  
   if (exists("df_orph_a", envir = zgg)){
-    fat_tail_a <- zgg$df_orph_a[(zgg$df_orph_a$partner == zgg$list_dfs_b[[zgg$kcoremax]][1,]$label) & (zgg$df_orph_a$repeated == "no"),]
-    
+    fat_tail_a <- zgg$df_orph_a[(zgg$df_orph_a$partner == max(max_b_k)) 
+                                & (zgg$df_orph_a$repeated == "no"),]
     tailweight <- 0
     if (nrow(fat_tail_a)>0) {
     for (h in 1:nrow(fat_tail_a))
@@ -1624,8 +1794,13 @@ handle_fat_tails <- function(p, svg)
   }
   if (!exists("fat_tail_a"))
     fat_tail_a <- data.frame(c())
+  if (zgg$orderkcoremaxby == "kdegree")
+    max_a_k <- zgg$list_dfs_a[[zgg$kcoremax]][which(zgg$list_dfs_a[[zgg$kcoremax]]$kdegree == max(zgg$list_dfs_a[[zgg$kcoremax]]$kdegree)),]$label
+  if (zgg$orderkcoremaxby == "kradius")
+    max_a_k <- zgg$list_dfs_a[[zgg$kcoremax]][which(zgg$list_dfs_a[[zgg$kcoremax]]$kradius == min(zgg$list_dfs_a[[zgg$kcoremax]]$kradius)),]$label
+  
   if (exists("df_orph_b", envir = zgg)){
-    fat_tail_b <- zgg$df_orph_b[(zgg$df_orph_b$partner == zgg$list_dfs_a[[zgg$kcoremax]][1,]$label) & (zgg$df_orph_b$repeated == "no"),]
+    fat_tail_b <- zgg$df_orph_b[(zgg$df_orph_b$partner == max(max_a_k)) & (zgg$df_orph_b$repeated == "no"),]
     tailweight <- 0
     if (nrow(fat_tail_b)>0) {
       for (h in 1:nrow(fat_tail_b))
@@ -1637,8 +1812,10 @@ handle_fat_tails <- function(p, svg)
   if (!exists("fat_tail_b"))
     fat_tail_b <- data.frame(c())
   nrows_fat <- nrow(fat_tail_b)+nrow(fat_tail_a)
-  
-  fgap <- 0.7*zgg$hop_x + (1+sum(nrows_fat>40))*zgg$lado
+  if (style=="chilopodograph")
+    fgap <- 0.7*zgg$hop_x
+  else
+    fgap <- 0.7*zgg$hop_x + (1+sum(nrows_fat>40))*zgg$lado
   zgg$pos_tail_x <- min(zgg$last_xtail_a[[zgg$kcoremax]],
                         zgg$last_xtail_b[[zgg$kcoremax]],
                         zgg$list_dfs_b[[zgg$kcoremax]][1,]$x1-fgap,
@@ -1646,14 +1823,16 @@ handle_fat_tails <- function(p, svg)
   if ((exists("fat_tail_a")) & (zgg$kcoremax > 2)) {
     f <- draw_fat_tail(p,svg,fat_tail_a,nrows_fat,zgg$list_dfs_b,zgg$color_guild_a[2],
                        zgg$pos_tail_x,pos_tail_y,zgg$fattailjumphoriz[1],
-                       zgg$fattailjumpvert[1],fgap,inverse="yes")
+                       zgg$fattailjumpvert[1],fgap,inverse="yes", bipartite = TRUE, 
+                       gstyle = style)
     p <- f["p"][[1]]
     svg <- f["svg"][[1]]
   }
 
   if ((exists("fat_tail_b")) & (zgg$kcoremax > 2)) {
     f <- draw_fat_tail(p,svg,fat_tail_b,nrows_fat,zgg$list_dfs_a,zgg$color_guild_b[2],zgg$pos_tail_x,
-                       pos_tail_y,zgg$fattailjumphoriz[2],zgg$fattailjumpvert[2],fgap,inverse="no", is_guild_a = FALSE)
+                       pos_tail_y,zgg$fattailjumphoriz[2],zgg$fattailjumpvert[2],fgap,
+                       inverse="no", is_guild_a = FALSE, bipartite = TRUE, gstyle = style)
     p <- f["p"][[1]]
     svg <- f["svg"][[1]]
   }
@@ -1755,37 +1934,109 @@ draw_all_ziggurats <- function(p, svg)
 }
 
 
-draw_maxcore <- function(svg)
+draw_maxcore_bip <- function(svg)
 {
-  kcoremax_label_display <- function (idPrefix, gp,svg,kcoremaxlabel_angle,pdata,plabel,plabelsize,phjust=0, is_guild_a = TRUE) {
+  kcoremax_label_display <- function (idPrefix, gp,svg,kcoremaxlabel_angle,pdata,plabel,plabelsize,phjust=0, is_guild_a = TRUE) 
+  {
     labelcolor <- ifelse(length(zgg$labels_color)>0,zgg$labels_color[2-as.numeric(is_guild_a)], pdata$col_row)
-    if (kcoremaxlabel_angle == 0) {
-      gp <- gp +  geom_text(data=pdata, aes(x=x1+(x2-x1)/2, y=y1+(y2-y1)/2), label=plabel,
-                            color = labelcolor, size=plabelsize, angle = kcoremaxlabel_angle)
-      svg$text(idPrefix=idPrefix, data=pdata, mapping=aes(x=x1+(x2-x1)/2, y=y1+(y2-y1)/2), label=plabel, color=labelcolor, size=plabelsize, angle=kcoremaxlabel_angle)
-    } else {
-      gp <- gp + geom_text(data=pdata, aes(x=x1, y=y1+(y2-y1)/20), label=plabel,
-                           color = labelcolor, size=plabelsize, angle = kcoremaxlabel_angle,
-                           vjust = 1, hjust = phjust)
-      svg$text(idPrefix=idPrefix, data=pdata, mapping=aes(x=x1, y=y1+(y2-y1)/20), label=plabel, color=labelcolor, size=plabelsize, angle=kcoremaxlabel_angle)
-    }
+    if (kcoremaxlabel_angle == 0) 
+    {
+        gp <- gp +  geom_text(data=pdata, aes(x=x1+(x2-x1)/2, y=y1+(y2-y1)/2), label=plabel,
+                              color = labelcolor, size=plabelsize, angle = kcoremaxlabel_angle)
+        svg$text(idPrefix=idPrefix, data=pdata, mapping=aes(x=x1+(x2-x1)/2, y=y1+(y2-y1)/2), label=plabel, color=labelcolor, size=plabelsize, angle=kcoremaxlabel_angle)
+    } 
+    else {
+        gp <- gp + geom_text(data=pdata, aes(x=x1, y=y1+(y2-y1)/20), label=plabel,
+                             color = labelcolor, size=plabelsize, angle = kcoremaxlabel_angle,
+                             vjust = 1, hjust = phjust)
+        svg$text(idPrefix=idPrefix, data=pdata, mapping=aes(x=x1, y=y1+(y2-y1)/20), label=plabel, color=labelcolor, size=plabelsize, angle=kcoremaxlabel_angle)
+            }
     calc_vals <- list("p" = gp, "svg" = svg)
+    return(calc_vals)
+  }
+  
+  adjust_lengths <- function(spA,spB,fill="right"){
+    diff_lengths <- length(spA) - length(spB)
+    if (fill=="right"){
+      specA <- c(rep("EMPTY",abs(diff_lengths)*(diff_lengths<0)),spA)
+      specB <- c(rep("EMPTY",diff_lengths*(diff_lengths>0)),spB)
+    }
+    else{
+      specA <- c(spA,rep("EMPTY",abs(diff_lengths)*(diff_lengths<0)))
+      specB <- c(spB,rep("EMPTY",diff_lengths*(diff_lengths>0)))
+    }
+    calc_vals <- list("specA" = specA, "specB" = specB)
     return(calc_vals)
   }
 
   zgg$last_ytail_a[zgg$kcoremax]<- zgg$toopy
   zgg$last_xtail_a[zgg$kcoremax]<- zgg$topxa
-  zgg$list_dfs_a[[zgg$kcoremax]]<- draw_coremax_triangle(zgg$basex,zgg$topxa,zgg$basey,zgg$toopy,
-                                                  zgg$num_a_coremax,zgg$color_guild_a,
-                                                  zgg$df_cores$species_guild_a[[zgg$kcoremax]],
-                                                  zgg$g, zgg$str_guild_a, orderby = zgg$orderkcoremaxby)
-
+  #Species outside the giant component
+  outsiders_A <- gsub(zgg$str_guild_a,"",zgg$outsiders_a)
+  outsiders_B <- gsub(zgg$str_guild_b,"",zgg$outsiders_b)
+  if (zgg$style == "legacy"){
+    species_A <- unlist(zgg$df_cores$species_guild_a)
+    species_B <- unlist(zgg$df_cores$species_guild_b)
+    species_A <- c(species_A,outsiders_A,"EMPTY")
+    species_B <- c(species_B,outsiders_B,"EMPTY")
+  }
+  else if ((zgg$style == "kcoreorder") ||(zgg$style == "chilopodograph")) {
+    species_A <- c()
+    species_B <- c()
+    if (zgg$style == "kcoreorder"){
+      # Kcore-1 on the left side of the plot
+      # shell number is passed together with node label
+      spA1 <- paste0(zgg$df_cores$species_guild_a[[1]],"shell1")
+      spB1 <- paste0(zgg$df_cores$species_guild_b[[1]],"shell1")
+      sadj <- adjust_lengths(spA1,spB1)
+      species_A <- sadj$specA
+      species_B <- sadj$specB
+    }
+    if (zgg$style == "chilopodograph"){
+      spA1_spec <- c()
+      spB1_spec <- c()
+      # specialist chains
+      sbip <- find_specialists_bip(specialists_a,specialists_b)
+      if (nrow(sbip$specialists_a)>0)
+        spA1_spec <- paste0(unique(sbip$specialists_a$orph),"shell1")
+      if (nrow(sbip$specialists_b)>0)
+        spB1_spec <- paste0(unique(sbip$specialists_b$orph),"shell1")
+      # shell number is passed together with node label
+      sadj <- adjust_lengths(spA1_spec,spB1_spec,fill="right")
+      spA1_spec <- sadj$specA
+      spB1_spec <- sadj$specB
+    }
+    for (k in zgg$kcoremax:2) {
+      sadj <- adjust_lengths(paste0(rev(unlist(zgg$df_cores[k,]$species_guild_a)),"shell",k),
+                             paste0(rev(unlist(zgg$df_cores[k,]$species_guild_b)),"shell",k),
+                             fill = "left")  
+      species_A <- c(species_A, "EMPTY", sadj$specA) 
+      species_B <- c(species_B, "EMPTY", sadj$specB) 
+    }
+    # Specialist chains 
+    if (zgg$style == "chilopodograph"){
+      species_A <- c(species_A, "EMPTY", spA1_spec) 
+      species_B <- c(species_B, "EMPTY", spB1_spec)
+    }  
+    if (length(outsiders_A>0)){
+      sadj <- adjust_lengths(outsiders_A,outsiders_B)
+      species_A <- c(species_A, "EMPTY", paste0(sadj$specA,"shell",0))
+      species_B <- c(species_B, "EMPTY", paste0(sadj$specB,"shell",0))
+      species_A[grepl("EMPTY",species_A)] <- "EMPTY"
+      species_B[grepl("EMPTY",species_B)] <- "EMPTY"
+    }
+  }
+ nnodes <- max(length(species_A), length(species_B))
+ zgg$list_dfs_a[[zgg$kcoremax]]<- draw_parallel_guilds(zgg$basex,zgg$topxa,zgg$basey*zgg$guild_gap_increase,zgg$toopy,
+                                                         length(species_A),nnodes,zgg$color_guild_a,
+                                                         species_A,
+                                                         zgg$rg, zgg$str_guild_a, 
+                                                         orderby = "kdegree",
+                                                         style=zgg$style)
   nsp <- name_species_preprocess(zgg$kcoremax,zgg$list_dfs_a[[zgg$kcoremax]],zgg$kcore_species_name_display,
                                  zgg$kcore_species_name_break)
-
   kcoremaxlabel_angle <- nsp$kcoremaxlabel_angle
   labelszig <- nsp$labelszig
-
   p <- ggplot() +
     scale_x_continuous(name="x") +
     scale_y_continuous(name="y") +
@@ -1794,21 +2045,24 @@ draw_maxcore <- function(svg)
               fill = zgg$list_dfs_a[[zgg$kcoremax]]$col_row,  
               color="transparent",alpha=zgg$alpha_level)
   svg$rect(paste0("kcore", zgg$kcoremax, "-a"), data=zgg$list_dfs_a[[zgg$kcoremax]],
-           mapping=aes(xmin=x1, xmax=x2, ymin=y1, ymax=y2), fill=zgg$list_dfs_a[[zgg$kcoremax]]$col_row, alpha=zgg$alpha_level,
+           mapping=aes(xmin=x1, xmax=x2, ymin=y1, ymax=y2), 
+           fill=zgg$list_dfs_a[[zgg$kcoremax]]$col_row, alpha=zgg$alpha_level,
            color="transparent", size=0.5)
-  f <- kcoremax_label_display(paste0("kcore", zgg$kcoremax, "-a"),p,svg,kcoremaxlabel_angle,zgg$list_dfs_a[[zgg$kcoremax]],labelszig,zgg$lsize_kcoremax)
+  f <- kcoremax_label_display(paste0("kcore", zgg$kcoremax, "-a"),p,svg,
+                              kcoremaxlabel_angle,zgg$list_dfs_a[[zgg$kcoremax]],
+                              labelszig,zgg$lsize_kcoremax)
   p <- f["p"][[1]]
   svg <- f["svg"][[1]]
   num_b_coremax <- zgg$df_cores[zgg$kcoremax,]$num_species_guild_b
   zgg$basey <- - zgg$basey
   zgg$topxb <- zgg$topxa
   zgg$toopy <- - zgg$toopy
-  zgg$list_dfs_b[[zgg$kcoremax]] <- draw_coremax_triangle(zgg$basex,zgg$topxb,zgg$basey,zgg$toopy,
-                                                          num_b_coremax,
+  zgg$list_dfs_b[[zgg$kcoremax]] <- draw_parallel_guilds(zgg$basex,zgg$topxb,zgg$basey*zgg$guild_gap_increase,zgg$toopy,
+                                                          length(species_B),nnodes,
                                                           zgg$color_guild_b,
-                                                          zgg$df_cores$species_guild_b[[zgg$kcoremax]],
-                                                          zgg$g, zgg$str_guild_b, orderby = zgg$orderkcoremaxby)
-
+                                                          species_B,zgg$rg,
+                                                          zgg$str_guild_b,  orderby = "kdegree",
+                                                          style=zgg$style)
   zgg$last_ytail_b[zgg$kcoremax]<- zgg$toopy
   zgg$last_xtail_b[zgg$kcoremax]<- zgg$topxb
   nsp <- name_species_preprocess(zgg$kcoremax,zgg$list_dfs_b[[zgg$kcoremax]],zgg$kcore_species_name_display,
@@ -1822,7 +2076,8 @@ draw_maxcore <- function(svg)
   svg$rect(paste0("kcore", zgg$kcoremax, "-b"), zgg$list_dfs_b[[zgg$kcoremax]] , mapping=aes(xmin=x1, xmax=x2, ymin=y1, ymax=y2),
            fill=zgg$list_dfs_b[[zgg$kcoremax]]$col_row, alpha=zgg$alpha_level,
            color="transparent", size=0.5)
-  f <- kcoremax_label_display(paste0("kcore", zgg$kcoremax, "-b"),p,svg,kcoremaxlabel_angle,zgg$list_dfs_b[[zgg$kcoremax]],labelszig,
+  f <- kcoremax_label_display(paste0("kcore", zgg$kcoremax, "-b"),p,svg,kcoremaxlabel_angle,
+                              zgg$list_dfs_b[[zgg$kcoremax]],labelszig,
                               zgg$lsize_kcoremax, phjust = 1, is_guild_a = FALSE)
   p <- f["p"][[1]]
   svg <- f["svg"][[1]]
@@ -1834,19 +2089,21 @@ draw_maxcore <- function(svg)
   return(calc_vals)
 }
 
-draw_coremax_tails <- function(p, svg)
+draw_maxcore_tails_bip <- function(p, svg)
 {
   long_kcoremax_tail <- FALSE
-  leftjump <- (1.2-0.02*nrow(zgg$list_dfs_a[[zgg$kcoremax]])) * zgg$hop_x
-  point_x <- zgg$list_dfs_a[[zgg$kcoremax]][nrow(zgg$list_dfs_a[[zgg$kcoremax]]),]$x2 - leftjump
-  point_y <- zgg$posic_zig * 0.8
+  #leftjump <- (1.2-0.02*nrow(zgg$list_dfs_a[[zgg$kcoremax]])) * zgg$hop_x
+  point_x <- zgg$list_dfs_a[[zgg$kcoremax]][nrow(zgg$list_dfs_a[[zgg$kcoremax]]),]$x2 #- leftjump
+  #point_y <- zgg$posic_zig * 0.8
+  point_y <- zgg$xstep
   if (exists("df_orph_a", envir = zgg))
-    long_tail_a <- zgg$df_orph_a[(zgg$df_orph_a$kcore == zgg$kcoremax) & (zgg$df_orph_a$repeated == "no"),]
+    #long_tail_a <- zgg$df_orph_a[(zgg$df_orph_a$kcore == zgg$kcoremax) & (zgg$df_orph_a$repeated == "no"),]
+    long_tail_a <- zgg$df_orph_a[(zgg$df_orph_a$repeated == "no"),]
   if ((exists("long_tail_a")) & (zgg$kcoremax > 2))
   {
     if (length(long_tail_a)>5)
       long_kcoremax_tail <- TRUE
-    v<-  draw_edge_tails(p,svg,point_x,(point_y+zgg$height_y*zgg$aspect_ratio),zgg$kcoremax,
+    v<-  draw_edge_tails_bip(p,svg,point_x,point_y*zgg$aspect_ratio,zgg$kcoremax,
                          long_tail_a,zgg$list_dfs_b,zgg$color_guild_a, inverse = "yes",
                          vertical = "no", orientation = "South", revanddrop = "yes",
                          pbackground = "no", tspline = "arc", joinchars=zgg$joinstr)
@@ -1859,10 +2116,10 @@ draw_coremax_tails <- function(p, svg)
       zgg$last_ytail_b[zgg$kcoremax] <- zgg$toopy
   }
   leftjump <- (1.2-0.02*nrow(zgg$list_dfs_b[[zgg$kcoremax]]))* zgg$hop_x
-  point_x <- zgg$list_dfs_b[[zgg$kcoremax]][nrow(zgg$list_dfs_b[[zgg$kcoremax]]),]$x2 - leftjump
-  point_y <- -1* zgg$posic_zig * 0.8
+  point_x <- zgg$list_dfs_b[[zgg$kcoremax]][nrow(zgg$list_dfs_b[[zgg$kcoremax]]),]$x2
+  point_y <- -zgg$xstep
   if (exists("df_orph_b", envir = zgg))
-    long_tail_b <- zgg$df_orph_b[(zgg$df_orph_b$kcore == zgg$kcoremax) & (zgg$df_orph_b$repeated == "no"),]
+    long_tail_b <- zgg$df_orph_b[(zgg$df_orph_b$repeated == "no"),]
   if ( (exists("long_tail_b")) & (zgg$kcoremax > 2) ){
     if (nrow(long_tail_b)>5)
       long_kcoremax_tail <- TRUE
@@ -1874,7 +2131,8 @@ draw_coremax_tails <- function(p, svg)
       long_tail_b$weightlink <- get_link_weights(tailweight)
     }
 
-    v <-  draw_edge_tails(p,svg,point_x,point_y,zgg$kcoremax,long_tail_b,zgg$list_dfs_a,zgg$color_guild_b,
+    v <-  draw_edge_tails_bip(p,svg,point_x,point_y*zgg$aspect_ratio,
+                              zgg$kcoremax,long_tail_b,zgg$list_dfs_a,zgg$color_guild_b,
                          inverse = "no",
                          vertical = "no", orientation = "North", revanddrop = "yes",
                          pbackground = "no", tspline = "arc", joinchars=zgg$joinstr, is_guild_a = FALSE,
@@ -1960,7 +2218,8 @@ read_and_analyze <- function(directorystr,network_file,label_strguilda,label_str
   return(calc_vals)
 }
 
-def_configuration <- function(paintlinks, print_to_file, plotsdir, orderkcoremaxby, isogonos, flip_results, aspect_ratio,
+def_configuration <- function(paintlinks, print_to_file, plotsdir, orderkcoremaxby, isogonos, style, 
+                              guild_gap_increase, flip_results, aspect_ratio,
                               alpha_level, color_guild_a, color_guild_b,
                               color_link, alpha_link, size_link,
                               displace_y_b, displace_y_a, lsize_kcoremax, lsize_zig, lsize_kcore1,
@@ -1986,6 +2245,8 @@ def_configuration <- function(paintlinks, print_to_file, plotsdir, orderkcoremax
   zgg$plotsdir <- plotsdir
   zgg$orderkcoremaxby <- orderkcoremaxby
   zgg$isogonos <- isogonos
+  zgg$style <- style
+  zgg$guild_gap_increase <- guild_gap_increase
   zgg$flip_results <- flip_results
   zgg$alpha_level <- alpha_level
   zgg$color_guild_a <- color_guild_a
@@ -2051,8 +2312,8 @@ init_working_values <- function()
   zgg$rg <- V(zgg$result_analysis$graph)
   zgg$g <- zgg$rg[zgg$rg$kradius != Inf]
   zgg$outsider <- zgg$rg[zgg$rg$kradius == Inf]
-  zgg$outsiders_a <- zgg$outsider$name[grep(zgg$str_guild_a,zgg$outsider$name)]
-  zgg$outsiders_b <- zgg$outsider$name[grep(zgg$str_guild_b,zgg$outsider$name)]
+  zgg$outsiders_a <- sort(zgg$outsider$name[grep(zgg$str_guild_a,zgg$outsider$name)])
+  zgg$outsiders_b <- sort(zgg$outsider$name[grep(zgg$str_guild_b,zgg$outsider$name)])
   zgg$ind_cores <- rev(sort(unique(zgg$g$kcorenum)))
   zgg$kcoremax <- max(zgg$ind_cores)
   palcores <- colorRampPalette(c("salmon3","salmon4"))
@@ -2076,7 +2337,7 @@ init_working_values <- function()
 }
 
 
-draw_ziggurat_plot <- function(svg_scale_factor, progress)
+draw_bipartite_plot <- function(svg_scale_factor, progress)
 {
   if (!is.null(progress)) progress$inc(1/11, detail=strings$value("MESSAGE_ZIGGURAT_PROGRESS_PROCESSING_NODES"))
   zinit_time <- proc.time()
@@ -2091,7 +2352,8 @@ draw_ziggurat_plot <- function(svg_scale_factor, progress)
   zgg$num_a_coremax <- zgg$df_cores[zgg$kcoremax,]$num_species_guild_a
   base_width <- 2000
   zgg$ymax <- 2*base_width/zgg$aspect_ratio
-  zgg$tot_width <- zgg$ymax * (1+0.25*(zgg$kcoremax - 2))
+  zgg$tot_width <- zgg$ymax # * (1+0.25*(zgg$kcoremax - 2))
+  
   zgg$species_in_core2_a <- sum(zgg$df_cores[2,]$num_species_guild_a)
   zgg$species_in_core2_b <- sum(zgg$df_cores[2,]$num_species_guild_b)
   zgg$species_in_almond_a <- sum(zgg$df_cores[2:(zgg$kcoremax-1),]$num_species_guild_a)
@@ -2126,121 +2388,96 @@ draw_ziggurat_plot <- function(svg_scale_factor, progress)
   zgg$strips_height <- 0.6*(zgg$ymax-zgg$yoffset)/max(1,(zgg$kcoremax-2))
   # Draw max core triangles
   svg <-SVG(svg_scale_factor)
-  if (!is.null(progress)) progress$inc(1/11, detail=strings$value("MESSAGE_ZIGGURAT_PROGRESS_DRAWING_MAXCORE"))
-  f <- draw_maxcore(svg)
-  p <- f["p"][[1]]
-  svg <- f["svg"][[1]]
-
-  zgg$posic_zig <- f["posic_zig"][[1]]
-  zgg$list_dfs_a <- f["list_dfs_a"][[1]]
-  zgg$list_dfs_b <- f["list_dfs_b"][[1]]
-  zgg$last_xtail_a <- f["last_xtail_a"][[1]]
-  zgg$last_ytail_a <- f["last_ytail_a"][[1]]
-  zgg$last_xtail_b <- f["last_xtail_b"][[1]]
-  zgg$last_ytail_b <- f["last_ytail_b"][[1]]
-  zgg$topy <- f["topy"][[1]]
-  zgg$topxa <- f["topxa"][[1]]
-  zgg$topxb <- f["topxb"][[1]]
-  # Draw inner almond ziggurats
-  zgg$pointer_x <- max(zgg$topxa, zgg$topxb)+zgg$hop_x
-  zgg$pointer_y <- zgg$ymax+zgg$height_y*max(zgg$df_cores$num_species_guild_a[zgg$kcoremax-1],zgg$df_cores$num_species_guild_b[zgg$kcoremax-1])
-  zgg$width_zig <- 0.3*zgg$hop_x
-  zgg$primerkcore <- TRUE
-  if (!is.null(progress)) 
-    progress$inc(1/11, detail=strings$value("MESSAGE_ZIGGURAT_PROGRESS_DRAWING_ZIGGURAT"))
-  f <- draw_all_ziggurats(p, svg)
-  p <- f["p"][[1]]
-  svg <- f["svg"][[1]]
-
-  zgg$posic_zig <- f["posic_zig"][[1]]
-  zgg$list_dfs_a <- f["list_dfs_a"][[1]]
-  zgg$list_dfs_b <- f["list_dfs_b"][[1]]
-  zgg$last_xtail_a <- f["last_xtail_a"][[1]]
-  zgg$last_ytail_a <- f["last_ytail_a"][[1]]
-  zgg$last_xtail_b <- f["last_xtail_b"][[1]]
-  zgg$last_ytail_b <- f["last_ytail_b"][[1]]
-  # Add kcore1 information
-  if (!is.null(zgg$df_cores[1,])){
-    if (zgg$df_cores[1,]$num_species_guild_a > 0)
-      zgg$list_dfs_a[[1]] <- conf_kcore1_info(zgg$str_guild_a)
-    if (zgg$df_cores[1,]$num_species_guild_b > 0)
-      zgg$list_dfs_b[[1]] <- conf_kcore1_info(zgg$str_guild_b)
-  }
-  # Add outsiders information
-  info_out_a <- conf_outsiders_info(zgg$str_guild_a)
-  info_out_b <- conf_outsiders_info(zgg$str_guild_b)
-  zgg$list_dfs_a[[1]] <- rbind(zgg$list_dfs_a[[1]], info_out_a)
-  zgg$list_dfs_b[[1]] <- rbind(zgg$list_dfs_b[[1]], info_out_b)
-  # Draw core boxex
-  for (i in seq(zgg$kcoremax,2))
-    if ((length(zgg$list_dfs_a[[i]])+length(zgg$list_dfs_b[[i]]))>0){
-      v <- draw_core_box(p, svg, i)
-      p <- v[["p"]]
-      svg <- v[["svg"]]
-      zgg$max_position_y_text_core <- v[["max_position_y_text_core"]]
-    }
-
-  # Hanlde orphans, species outside the ziggurat
-  if (!is.null(progress)) 
-    progress$inc(1/11, detail=strings$value("MESSAGE_ZIGGURAT_PROGRESS_DRAWING_ORPHANS"))
+  
   f <- handle_orphans(zgg$result_analysis$graph)
   zgg$mtxlinks <- f["mtxlinks"][[1]]
   zgg$orphans_a <- f["orphans_a"][[1]]
   zgg$orphans_b <- f["orphans_b"][[1]]
   zgg$df_orph_a <- f["df_orph_a"][[1]]
   zgg$df_orph_b <- f["df_orph_b"][[1]]
-  # Species of core 1 linked to max core (except the most generalist)
-  zgg$gap <-  4*zgg$height_y
-  if (!is.null(progress)) progress$inc(1/11, detail=strings$value("MESSAGE_ZIGGURAT_PROGRESS_DRAWING_MAXCORE_TAILS"))
-  f <- draw_coremax_tails(p, svg)
+  
+  sbip <- find_specialists_bip(specialists_a,specialists_b)
+  
+  if (!is.null(progress))
+    progress$inc(1/11, detail=strings$value("MESSAGE_ZIGGURAT_PROGRESS_DRAWING_MAXCORE"))
+  f <- draw_maxcore_bip(svg)
   p <- f["p"][[1]]
   svg <- f["svg"][[1]]
+  if ((zgg$style=="legacy") || (zgg$style=="kcoreorder"))
+    zgg$pos_tail_x <- min(zgg$list_dfs_a[[zgg$kcoremax]]$x1)  # Leftmost side of the leftmost node
+  
 
-  zgg$last_xtail_a <- f["last_xtail_a"][[1]]
-  zgg$last_ytail_a <- f["last_ytail_a"][[1]]
-  zgg$last_xtail_b <- f["last_xtail_b"][[1]]
-  zgg$last_ytail_b <- f["last_ytail_b"][[1]]
-  # Fat tails - nodes of core 1 linked to most generalist of opposite guild. Left side of panel
-  z <- handle_fat_tails(p, svg)
-  p <- z["p"][[1]]
-  svg <- z["svg"][[1]]
-  zgg$pos_tail_x <- z["pos_tail_x"][[1]]
-  # Nodes of core 1 linked to species in cores kcoremax-1 to core 2.
-  if (!is.null(progress)) progress$inc(1/11, detail=strings$value("MESSAGE_ZIGGURAT_PROGRESS_DRAWING_INNER_ORPHANS"))
-  z <- draw_inner_orphans(p, svg)
-  p <- z["p"][[1]]
-  svg <- z["svg"][[1]]
-
-  # Draw inner links
-  if (!is.null(progress)) progress$inc(1/11, detail=strings$value("MESSAGE_ZIGGURAT_PROGRESS_DRAWING_INNER_LINKS"))
   if (zgg$paintlinks) {
     z <- draw_inner_links(p, svg)
     p <- z["p"][[1]]
     svg <- z["svg"][[1]]
   }
-
-  # specialists management
-  if (!is.null(progress)) progress$inc(1/11, detail=strings$value("MESSAGE_ZIGGURAT_PROGRESS_DRAWING_SPECIALISTS"))
-  v <- handle_specialists(p,svg,specialists_a,specialists_b,zgg$lado,zgg$gap)
-  p <- v["p"][[1]]
-  svg <- v["svg"][[1]]
-
-  zgg$df_chains <- v["df_chains"][[1]]
-  # Specied outside the giant component
-  if (!is.null(progress)) progress$inc(1/11, detail=strings$value("MESSAGE_ZIGGURAT_PROGRESS_DRAWING_OUTSIDERS"))
-  if (zgg$paint_outsiders) {
-    v <- handle_outsiders(p,svg,outsiders,zgg$df_chains)
-    p <- v["p"][[1]]
-    svg <- v["svg"][[1]]
+  
+  if (zgg$style=="chilopodograph"){
+    zgg$posic_zig <- f["posic_zig"][[1]] 
+    zgg$list_dfs_a <- f["list_dfs_a"][[1]]
+    zgg$list_dfs_b <- f["list_dfs_b"][[1]] 
+    zgg$last_xtail_a <-  f["last_xtail_a"][[1]] 
+    zgg$last_ytail_a <- f["last_ytail_a"][[1]]
+    zgg$last_xtail_b <- f["last_xtail_b"][[1]] 
+    zgg$last_ytail_b <-  f["last_ytail_b"][[1]]
+    zgg$topy <- f["topy"][[1]] 
+    zgg$topxa <-f["topxa"][[1]] 
+    zgg$topxb <- f["topxb"][[1]] 
+    zgg$posic_zig <- f["posic_zig"][[1]] 
+    zgg$list_dfs_a <- f["list_dfs_a"][[1]]
+    zgg$list_dfs_b <- f["list_dfs_b"][[1]] 
+    zgg$last_xtail_a <-f["last_xtail_a"][[1]] 
+    zgg$last_ytail_a <- f["last_ytail_a"][[1]]
+    zgg$last_xtail_b <- f["last_xtail_b"][[1]] 
+    zgg$last_ytail_b <- f["last_ytail_b"][[1]] # Add kcore1 information
+    if (!is.null(zgg$df_cores[1,])){
+      if (zgg$df_cores[1,]$num_species_guild_a > 0)
+        zgg$list_dfs_a[[1]] <- conf_kcore1_info(zgg$str_guild_a)
+      if (zgg$df_cores[1,]$num_species_guild_b > 0)
+        zgg$list_dfs_b[[1]] <- conf_kcore1_info(zgg$str_guild_b)
+    }
+    # Hanlde orphans, species outside the ziggurat
+    if (!is.null(progress))
+      progress$inc(1/11,  detail=strings$value("MESSAGE_ZIGGURAT_PROGRESS_DRAWING_ORPHANS"))
+    # f <- handle_orphans(zgg$result_analysis$graph)
+    # zgg$mtxlinks <- f["mtxlinks"][[1]]
+    # zgg$orphans_a <- f["orphans_a"][[1]]
+    # zgg$orphans_b <- f["orphans_b"][[1]]
+    # zgg$df_orph_a <- f["df_orph_a"][[1]]
+    # zgg$df_orph_b <- f["df_orph_b"][[1]]
+    #  Species of core 1 linked to both parallel guilds 
+    zgg$gap <- 4*zgg$height_y 
+    if (!is.null(progress)) 
+      progress$inc(1/11,detail=strings$value("MESSAGE_ZIGGURAT_PROGRESS_DRAWING_MAXCORE_TAILS")) 
+    f <- draw_maxcore_tails_bip(p, svg) 
+    p <- f["p"][[1]] 
+    svg <- f["svg"][[1]]
+    
+    zgg$last_xtail_a <- f["last_xtail_a"][[1]] 
+    zgg$last_ytail_a <-f["last_ytail_a"][[1]] 
+    zgg$last_xtail_b <- f["last_xtail_b"][[1]]
+    zgg$last_ytail_b <- f["last_ytail_b"][[1]] 
+    # Fat tails - nodes of core 1  linked to most generalist of opposite guild. Left side of panel 
+    z <-  handle_fat_tails(p, svg,style = zgg$style ) 
+    p <- z["p"][[1]] 
+    svg <- z["svg"][[1]]
+    zgg$pos_tail_x <- z["pos_tail_x"][[1]] 
+    # Nodes of core 1 linked to species in cores kcoremax-1 to core 2. 
+    if (!is.null(progress)) 
+      progress$inc(1/11,detail=strings$value("MESSAGE_ZIGGURAT_PROGRESS_DRAWING_INNER_ORPHANS")) 
+    z <- draw_bipartite_leafs(p, svg) 
+    p <- z["p"][[1]] 
+    svg <- z["svg"][[1]]
   }
 
   # Legend, title and final annotations
   v <- write_annotations(p, svg)
   p <- v["p"][[1]]
   svg <- v["svg"][[1]]
-
   # Plot straight links
-  if (!is.null(progress)) progress$inc(1/11, detail=strings$value("MESSAGE_ZIGGURAT_PROGRESS_DRAWING_LINKS"))
+  if (!is.null(progress))
+    progress$inc(1/11, detail=strings$value("MESSAGE_ZIGGURAT_PROGRESS_DRAWING_LINKS"))
   if (zgg$paintlinks){
     if (nrow(zgg$straight_links)>0) {
       p <- p+ geom_segment(data=zgg$straight_links, aes(x=x1, y=y1, xend=x2, yend=y2),
@@ -2251,7 +2488,7 @@ draw_ziggurat_plot <- function(svg_scale_factor, progress)
     }
     if (nrow(zgg$bent_links)>0) {
       p <- p + geom_path(data =zgg$bent_links,aes(x,y,group=number), linewidth=zgg$bent_links$weightlink,
-                       color=zgg$color_link ,alpha=zgg$alpha_link)
+                         color=zgg$color_link ,alpha=zgg$alpha_link)
       svg$path(idPrefix="link", data=zgg$bent_links, mapping=aes(x, y, group=number), alpha=zgg$alpha_link,
                color=zgg$color_link,size=zgg$bent_links$weightlink)
     }
@@ -2262,14 +2499,11 @@ draw_ziggurat_plot <- function(svg_scale_factor, progress)
   # Stores results
   zgg$plot  <- p
   zgg$svg   <- svg
-  
-#html<-svg$html()
-#cat(html, file = "tmp.svg")
-
-  if (!is.null(progress)) 
-    progress$inc(0, detail=strings$value("MESSAGE_ZIGGURAT_PROGRESS_DONE"))
-
   return(zgg)
+
 }
 if (debugging)
-  ziggurat_graph("../data/","RA_HP_042.csv",orderkcoremaxby = "kradius")
+  bipartite_graph("../data/","RA_HP_042.csv", isogonos = TRUE, style="chilopodograph",orderkcoremaxby = "kdegree",
+               guild_gap_increase = 4,weighted_links = "none",
+                coremax_triangle_height_factor = 3, coremax_triangle_width_factor = 3,
+               hide_plot_border = TRUE)
