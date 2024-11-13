@@ -256,14 +256,19 @@ draw_square<- function(idPrefix, grafo,svg,basex,basey,side,fillcolor,alphasq,la
                          mapping=aes(xmin=x1, xmax=x2, ymin=y1, ymax=y2),
                          fill = fillcolor, alpha = alphasq, color="transparent")
   pxx <- x1+0.05*(x2-x1)
-  pyy <- signo*(y1+(y2-y1)/2)
+  pyy <- signo*((y1+y2)/2)
   p <- p +annotate(geom="text", x=pxx, y=pyy, label=slabel,
                    colour = labelcolor, size=lbsize, hjust = hjust,
                    vjust = vjust, angle = langle)
   svg$rect(idPrefix=idPrefix, data=ds, mapping=aes(xmin=x1, xmax=x2, ymin=y1, ymax=y2),
            fill = fillcolor, alpha=alphasq, size=0.5, color="transparent")
-  svg$text(idPrefix=idPrefix, data=data.frame(x=x1+(x2-x1)/2,y=pyy),
-                                              mapping=aes(x=x, y=y),color=labelcolor, label=slabel, size=lbsize, angle=langle)
+  if (grepl("fat-kcore1",idPrefix))
+    xf <- pxx#(x2+x1)/2
+  else
+    xf <- (x2+x1)/2
+  svg$text(idPrefix=idPrefix, data=data.frame(x=xf,y=pyy),
+                                              mapping=aes(x=x, y=y),color=labelcolor, 
+                                              label=slabel, size=lbsize, angle=langle)
   calc_vals <- list("p" = p, "svg" = svg)
   return(calc_vals)
 }
@@ -404,6 +409,10 @@ draw_tail <- function(idPrefix, p,svg,fat_tail,lado,color,sqlabel,basex,basey,ga
     xx <- basex-gap
     posxx1 <- xx+sidex
     posyy1 = signo*(yy)+signo*(0.5*sidex/(zgg$aspect_ratio))
+    
+    adjust = "yes"
+    lhjust <- 0.5
+    lvjust <- 0.5
   }
   # Fat tails, or group of species linked to the highest kdegree species in max shell
   else if (position == "East"){
@@ -622,10 +631,10 @@ handle_outsiders <- function(p,svg,outsiders,df_chains) {
     guild_sep <- poy-max(1,length(zgg$outsider)/10)*6*zgg$lado*sqrt(zgg$square_nodes_size_scale)*zgg$outsiders_separation_expand/zgg$aspect_ratio
     dfo_b <- conf_outsiders(zgg$outsiders_b,pox,guild_sep,
                             zgg$lado*sqrt(zgg$square_nodes_size_scale),zgg$color_guild_b[2],zgg$str_guild_b)
-    f <- draw_sq_outsiders("outsiders-kcore1-a",p,svg,dfo_a,paintsidex,zgg$alpha_level,zgg$lsize_kcore1)
+    f <- draw_sq_outsiders("edge-kcore1-a",p,svg,dfo_a,paintsidex,zgg$alpha_level,zgg$lsize_kcore1)
     p <- f["p"][[1]]
     svg <- f["svg"][[1]]
-    f <- draw_sq_outsiders("outsiders-kcore1-b",p,svg,dfo_b,paintsidex,zgg$alpha_level,zgg$lsize_kcore1, is_guild_a = FALSE)
+    f <- draw_sq_outsiders("edge-kcore1-b",p,svg,dfo_b,paintsidex,zgg$alpha_level,zgg$lsize_kcore1, is_guild_a = FALSE)
     p <- f["p"][[1]]
     svg <- f["svg"][[1]]
     for (j in 1:nrow(dfo_a))
@@ -1131,7 +1140,7 @@ draw_specialist_chains <- function(grafo, svg, df_chains, ladosq)
     vjust <- 0
     labelcolor <- ifelse(length(zgg$labels_color)>0,zgg$labels_color[2-as.numeric(is_guild_a)], bgcolor)
     sqlabel = gen_sq_label(df_chains[i,]$orph,is_guild_a = is_guild_a)
-    f <- draw_square(paste0(ifelse(is_guild_a, "specialist-chains-kcore1-a-", "specialist-chains-kcore1-b-"), i),p,
+    f <- draw_square(paste0(ifelse(is_guild_a, "edge-kcore1-a-", "edge-kcore1-b-"), i),p,
                      svg,df_chains[i,]$x1,df_chains[i,]$y1, ladosq,
                      bgcolor,zgg$alpha_level,
                      labelcolor,0,hjust,vjust,
@@ -1362,11 +1371,11 @@ draw_fat_tail<- function(p,svg,fat_tail,nrows,list_dfs,color_guild,pos_tail_x,po
   {
     nodekcoremax <- list_dfs[[zgg$kcoremax]][1,]
     plyy2 <-  (nodekcoremax$y1+nodekcoremax$y2)/2
-    v<- draw_tail(ifelse(is_guild_a, "fat-kcore1-a", "fat-kcore1-b"), p,svg,
+    v<- draw_tail(ifelse(is_guild_a, "edge-kcore1-a", "edge-kcore1-b"), p,svg,
                   fat_tail,zgg$lado,color_guild,gen_sq_label(fat_tail$orph,is_guild_a = is_guild_a),
                   ppos_tail_x,ppos_tail_y,fgap,
                   lxx2 = list_dfs[[zgg$kcoremax]][1,]$x1,
-                  lyy2 = plyy2,
+                  lyy2 = plyy2,position="West",
                   sqinverse = inverse, background = "no", psize = zgg$lsize_kcore1,
                   is_guild_a = is_guild_a, wlink = fat_tail$weightlink[1])
     p <- v["p"][[1]]
@@ -2272,4 +2281,4 @@ draw_ziggurat_plot <- function(svg_scale_factor, progress)
   return(zgg)
 }
 if (debugging)
-  ziggurat_graph("../data/","RA_HP_042.csv",orderkcoremaxby = "kradius")
+  ziggurat_graph("../data/","M_PL_006.csv",orderkcoremaxby = "kradius")

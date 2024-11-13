@@ -22,9 +22,12 @@ library(rlang)
 #' @examples
 #' SVG()
 
-SVG<-function(scale_factor) {
+SVG<-function(scale_factor,style="ziggurat") {
+  plottype = style
+  fontscale = ifelse (style=="ziggurat", 3, 50)
+  flinkscale = ifelse (style=="ziggurat", 1, 15)
   # crea el objeto SVG
-  this<-list(content=c(""), minx=0, miny=0, maxx=0, maxy=0, scale_factor=scale_factor, font_scale_factor=3)
+  this<-list(content=c(""), minx=0, miny=0, maxx=0, maxy=0, scale_factor=scale_factor, font_scale_factor=fontscale)
 
   # guarda el contenido del svg en un fichero
   this$save <- function(fileName, svg) {
@@ -36,16 +39,38 @@ SVG<-function(scale_factor) {
 
 
   # devuelve el HTML correspondiente al objeto
+  zr <- 1
+  zl <- 1
+  zu <- 1
   this$html<-function() {
+    if (exists("zgg")){
+      zr <- zgg$move_all_SVG_right
+      zl <- zgg$landmark_right
+      zu <- zgg$move_all_SVG_up
+    }
+    else if (exists("bpp")){
+      zr <- bpp$move_all_SVG_right
+      zl <- bpp$landmark_right
+      print(paste("zl",zl))
+      zu <- bpp$move_all_SVG_up
+    }
     #redondea el viewBox a la decena mas cercana
-    minx  <- (1+zgg$move_all_SVG_right)*floor(this$minx/10)*10
-    maxx  <- min(ceiling(this$maxx/10)*10, ceiling(1.1*zgg$landmark_right/100)*10)
-    miny  <- (1-zgg$move_all_SVG_up)*floor(this$miny/10)*10
-    maxy  <- ceiling(this$maxy/10)*10
-    fscale <- 1.05
-    viewBox<-paste0(minx, " ", miny, " ", fscale*(maxx-minx), " ", fscale*(maxy-miny))
-    #svg0<-paste0("<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"", viewBox, "\" width=\"", maxx-minx, "\" height=\"", maxy-miny, "\">")
+    minx  <- (1+zr)*floor(this$minx/10)*10
+    if (exists("zgg"))
+      maxx  <- min(ceiling(this$maxx/10)*10, ceiling(1.1*zl/100)*10)
+    else if (exists("bpp"))
+      maxx  <- ceiling(4*zl/100)*10
+    print(paste("minx",minx,"maxx",maxx))
+    miny  <- (1-zu)*floor(this$miny/10)*10
+    if (exists("zgg"))
+      maxy  <- ceiling(this$maxy/10)*10
+    else if (exists("bpp"))
+      maxy  <- ceiling(4*this$maxy/10)*10
+    fzcale <- 1.05
+    viewBox<-paste0(minx, " ", miny, " ", (maxx-minx), " ", (maxy-miny))
     svg0<-paste0("<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"", viewBox, "\">\n")
+    #svg0<-paste0("<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"", viewBox, "\" width=\"", max(600,maxx-minx), "\" height=\"", max(300,maxy-miny), "\">")
+      
     svg1<-paste0("</svg>")
     return(paste0(svg0, paste0(this$content, collapse=""), svg1, sep=""))
   }
@@ -68,10 +93,9 @@ SVG<-function(scale_factor) {
     ymin  <- -this$round_coords(eval_tidy(mapping$ymin, data)/this$scale_factor)
     ymax  <- -this$round_coords(eval_tidy(mapping$ymax, data)/this$scale_factor)
 
-
     # itera para cada rectangulo
     for (i in 1:nrow(data)) {
-      rect2<-this$rect2(id=paste0(idPrefix, "-", i, "-rect"), xmin=xmin[i], xmax=xmax[i], ymin=ymin[i], ymax=ymax[i], fill=fill[i], alpha=alpha, color=color[i], size=size, linetype=linetype)
+      rect2<-this$rect2(id=paste0(plottype,idPrefix, "-", i, "-rect"), xmin=xmin[i], xmax=xmax[i], ymin=ymin[i], ymax=ymax[i], fill=fill[i], alpha=alpha, color=color[i], size=size, linetype=linetype)
       result<-paste0(result, rect2)
     }
 
@@ -108,6 +132,7 @@ SVG<-function(scale_factor) {
       result <- paste0(result, "stroke-dasharray=\"", this$stroke_dasharray(linetype), "\" ")
     }
     result <- paste0(result, "stroke-width=\"", size, "\" ")
+    
     result <- paste0(result, "x=\"", min(xmin, xmax), "\" ")
     result <- paste0(result, "y=\"", min(ymin, ymax), "\" ")
     result <- paste0(result, "width=\"", abs(xmax-xmin), "\" ")
@@ -135,7 +160,7 @@ SVG<-function(scale_factor) {
     y <- -this$round_coords(eval_tidy(mapping$y, data)/this$scale_factor)
     # itera para cada texto
     for (i in 1:nrow(data)) {
-      text2<-this$text2(id=paste0(idPrefix, "-", i, "-text"), x=x[i], y=y[i], label=label[i], color[i], size, angle)
+      text2<-this$text2(id=paste0(plottype,idPrefix, "-", i, "-text"), x=x[i], y=y[i], label=label[i], color[i], size, angle)
       result<-paste0(result, text2)
     }
 
@@ -174,7 +199,7 @@ SVG<-function(scale_factor) {
     }
     else {
       halignstr = "start"
-      valignstr = "baseline"
+      valignstr = "middle"
     }
     result <- paste0(result, "style=\"text-anchor:",halignstr,";dominant-baseline:",valignstr,
                      ";font-family:Arial;font-size:", size*this$font_scale_factor, "px;fill:", color, "\"")
@@ -223,9 +248,11 @@ SVG<-function(scale_factor) {
     yend  <- -this$round_coords(eval_tidy(mapping$yend, data)/this$scale_factor)
     # itera para cada segmento
     for (i in 1:nrow(data)) {
-      segment2<-this$segment2(id=paste0(idPrefix, "-", i, "-segment"),
+      segment2<-this$segment2(id=paste0(plottype,idPrefix, "-", i, "-segment"),
                               x=x[i], xend=xend[i], y=y[i], yend=yend[i],
-                              alpha=alpha, color=color[i], size=size[i], linetype=linetype)
+                              alpha=alpha, color=color[i], 
+                              size=flinkscale*size[i], 
+                              linetype=linetype)
       result<-paste0(result, segment2)
     }
 
@@ -254,6 +281,8 @@ SVG<-function(scale_factor) {
       result <- paste0(result, "stroke-dasharray=\"", this$stroke_dasharray(linetype), "\" ")
     }
     result <- paste0(result, "stroke-width=\"", size , "\" ")
+
+    
     result <- paste0(result, "stroke-opacity=\"", alpha , "\"")
     result <- paste0(result, ">\n")
 
@@ -285,7 +314,7 @@ SVG<-function(scale_factor) {
       g <- data[data[quo_text(mapping$group)]==i,]
       x <- this$round_coords(g[,c(quo_text(mapping$x))]/this$scale_factor)
       y <- -this$round_coords(g[,c(quo_text(mapping$y))]/this$scale_factor)
-      path2<-this$path2(id=paste0(idPrefix, "-", i, "-path"), x=x, y=y, alpha=alpha, color=color[i], size=size, linetype=linetype)
+      path2<-this$path2(id=paste0(plottype,idPrefix, "-", i, "-path"), x=x, y=y, alpha=alpha, color=color[i], size=size, linetype=linetype)
       result<-paste0(result, path2)
     }
 
@@ -319,7 +348,7 @@ SVG<-function(scale_factor) {
     if (linetype>0 && linetype<7) {
       result <- paste0(result, "stroke-dasharray=\"", this$stroke_dasharray(linetype), "\" ")
     }
-    result <- paste0(result, "stroke-width=\"", size , "\" ")
+    result <- paste0(result, "stroke-width=\"", flinkscale*size , "\" ")
     result <- paste0(result, "stroke-opacity=\"", alpha , "\"")
     result <- paste0(result, ">\n")
 
