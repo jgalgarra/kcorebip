@@ -25,7 +25,7 @@ library(rlang)
 SVG<-function(scale_factor,style="ziggurat") {
   plottype = style
   fontscale = ifelse (style=="ziggurat", 3, 50)
-  flinkscale = ifelse (style=="ziggurat", 1, 15)
+  flinkscale = ifelse (style=="ziggurat", 1, 50)
   # crea el objeto SVG
   this<-list(content=c(""), minx=0, miny=0, maxx=0, maxy=0, scale_factor=scale_factor, font_scale_factor=fontscale)
 
@@ -348,7 +348,7 @@ SVG<-function(scale_factor,style="ziggurat") {
     if (linetype>0 && linetype<7) {
       result <- paste0(result, "stroke-dasharray=\"", this$stroke_dasharray(linetype), "\" ")
     }
-    result <- paste0(result, "stroke-width=\"", flinkscale*size , "\" ")
+    result <- paste0(result, "stroke-width=\"", size , "\" ")
     result <- paste0(result, "stroke-opacity=\"", alpha , "\"")
     result <- paste0(result, ">\n")
 
