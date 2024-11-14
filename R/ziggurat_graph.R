@@ -1,10 +1,10 @@
+library(ggtext)
 library(grid)
 library(gridExtra)
 library(bipartite)
 library(igraph)
 library(ggplot2)
 library(rlang)
-library(ggtext)
 
 debugging = FALSE
 if (debugging){
