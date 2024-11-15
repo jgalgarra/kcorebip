@@ -5,8 +5,12 @@
 \title{Functions for k-core decompose a bipartite graph and computing some newtork indexes
 Reads a network interaction matrix from a CSV file}
 \usage{
-read_network(namenetwork, guild_astr = "pl", guild_bstr = "pol",
-  directory = "")
+read_network(
+  namenetwork,
+  guild_astr = "pl",
+  guild_bstr = "pol",
+  directory = ""
+)
 }
 \description{
 Args:
@@ -24,4 +28,3 @@ Return List:
   names_guild_a : names of nodes of guild_a
   names_guild_b : names of species of guild_b
 }
-

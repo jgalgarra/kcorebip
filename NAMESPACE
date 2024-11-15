@@ -2,6 +2,7 @@
 
 export(SVG)
 export(analyze_network)
+export(bipartite_graph)
 export(get_bipartite)
 export(polar_graph)
 export(ziggurat_graph)

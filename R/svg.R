@@ -160,7 +160,8 @@ SVG<-function(scale_factor,style="ziggurat") {
     y <- -this$round_coords(eval_tidy(mapping$y, data)/this$scale_factor)
     # itera para cada texto
     for (i in 1:nrow(data)) {
-      text2<-this$text2(id=paste0(plottype,idPrefix, "-", i, "-text"), x=x[i], y=y[i], label=label[i], color[i], size, angle)
+      text2<-this$text2(id=paste0(plottype,idPrefix, "-", i, "-text"), 
+                        x=x[i], y=y[i], label=label[i], color[i], size, angle)
       result<-paste0(result, text2)
     }
 
@@ -204,7 +205,6 @@ SVG<-function(scale_factor,style="ziggurat") {
     result <- paste0(result, "style=\"text-anchor:",halignstr,";dominant-baseline:",valignstr,
                      ";font-family:Arial;font-size:", size*this$font_scale_factor, "px;fill:", color, "\"")
     result <- paste0(result, ">\n")
-
     # tspan
     first   <- TRUE
     dy      <- 1.4*size*this$font_scale_factor

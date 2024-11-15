@@ -4,7 +4,7 @@
 \alias{SVG}
 \title{SVG aux function}
 \usage{
-SVG(scale_factor)
+SVG(scale_factor, style = "ziggurat")
 }
 \arguments{
 \item{love}{Do you love cats? Defaults to TRUE.}
@@ -16,4 +16,3 @@ SVG aux function
 SVG()
 }
 \keyword{cats}
-

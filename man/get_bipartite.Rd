@@ -4,8 +4,12 @@
 \alias{get_bipartite}
 \title{Get bipartite labels}
 \usage{
-get_bipartite(g, str_guild_a = "Plant", str_guild_b = "Pollinator",
-  plot_graphs = FALSE)
+get_bipartite(
+  g,
+  str_guild_a = "Plant",
+  str_guild_b = "Pollinator",
+  plot_graphs = FALSE
+)
 }
 \arguments{
 \item{g}{is the newtork in \code{igraph::graph} format}
@@ -22,4 +26,3 @@ Add guild labels to a bipartite network
 \examples{
 get_bipartite(result_analysis$graph, str_guild_a = "Plant", str_guild_b = "Fungus")
 }
-
