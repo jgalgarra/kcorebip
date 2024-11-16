@@ -530,7 +530,7 @@ draw_edge_tails <- function(p,svg,point_x,point_y,kcoreother,long_tail,list_dfs,
           tailweight <- tailweight + zgg$result_analysis$matrix[as.numeric(little_tail$orph[h]),
                                                                 as.numeric(little_tail$partner[h])]
       little_tail$weightlink <- get_link_weights(tailweight)
-      v<- draw_tail(paste0(ifelse(is_guild_a, "edge-kcore1-a-", "edge-kcore1-b-"),i),
+      v<- draw_tail(paste0(ifelse(is_guild_a, "edge-kcore1-a-tail-", "edge-kcore1-b-tail-"),i),
                     p,svg,little_tail,zgg$lado,color_guild[2],
                     gen_sq_label(little_tail$orph,joinchars = " ", is_guild_a = is_guild_a),
                     rxx,ryy,zgg$gap,lxx2 = xx2,
@@ -634,10 +634,10 @@ handle_outsiders <- function(p,svg,outsiders,df_chains) {
     guild_sep <- poy-max(1,length(zgg$outsider)/10)*6*zgg$lado*sqrt(zgg$square_nodes_size_scale)*zgg$outsiders_separation_expand/zgg$aspect_ratio
     dfo_b <- conf_outsiders(zgg$outsiders_b,pox,guild_sep,
                             zgg$lado*sqrt(zgg$square_nodes_size_scale),zgg$color_guild_b[2],zgg$str_guild_b)
-    f <- draw_sq_outsiders("edge-kcore1-a",p,svg,dfo_a,paintsidex,zgg$alpha_level,zgg$lsize_kcore1)
+    f <- draw_sq_outsiders("edge-kcore1-a-out",p,svg,dfo_a,paintsidex,zgg$alpha_level,zgg$lsize_kcore1)
     p <- f["p"][[1]]
     svg <- f["svg"][[1]]
-    f <- draw_sq_outsiders("edge-kcore1-b",p,svg,dfo_b,paintsidex,zgg$alpha_level,zgg$lsize_kcore1, is_guild_a = FALSE)
+    f <- draw_sq_outsiders("edge-kcore1-b-out",p,svg,dfo_b,paintsidex,zgg$alpha_level,zgg$lsize_kcore1, is_guild_a = FALSE)
     p <- f["p"][[1]]
     svg <- f["svg"][[1]]
     for (j in 1:nrow(dfo_a))
@@ -721,9 +721,12 @@ draw_coremax_triangle <- function(basex,topx,basey,topy,numboxes,fillcolor,strla
   }
   d1 <- data.frame(x1, x2, y1, y2, r, col_row, kdegree, kradius, name_species, stringsAsFactors=FALSE)
   d1$label <- strlabels
+  d1$kcorelabel = 0
   for (i in 1:nrow(d1)){
     d1[i,]$kdegree <- igraphnet[paste0(strguild,d1[i,]$label)]$kdegree
     d1[i,]$kradius <- igraphnet[paste0(strguild,d1[i,]$label)]$kradius
+    d1[i,]$kcorelabel <- igraphnet[paste0(strguild,d1[i,]$label)]$kcorenum
+    
     d1[i,]$name_species <- igraphnet[paste0(strguild,d1[i,]$label)]$name_species
   }
 print(paste("orderby",orderby))
@@ -747,13 +750,16 @@ print(paste("orderby",orderby))
 # This function adds the following information for species of kcore 1 in lists_dfs_x: label, name_species, kdegree, kradius
 conf_kcore1_info <- function(strguild, myenv=zgg)
 {
-  auxlistdf <- data.frame(x1=NA,x2=NA,y1=NA,y2=NA,r=NA,col_row=NA,kdegree=NA,kradius=NA,name_species=NA,label=NA)
-  retlistdf <- data.frame(x1=c(),x2=c(),y1=c(),y2=c(),r=c(),col_row=c(),kdegree=c(),kradius=c(),name_species=c(),label=c())
+  auxlistdf <- data.frame(x1=NA,x2=NA,y1=NA,y2=NA,r=NA,col_row=NA,kdegree=NA,kradius=NA,name_species=NA,label=NA,kcore=NA,kcorelabel=NA)
+  retlistdf <- data.frame(x1=c(),x2=c(),y1=c(),y2=c(),r=c(),col_row=c(),kdegree=c(),kradius=c(),name_species=c(),label=c(),
+                          kcore=c(),kcorelabel=c())
   num_s <- myenv$df_cores[1,]$num_species_guild_a
   if (strguild == myenv$str_guild_a)
     listspecies = myenv$df_cores[1,]$species_guild_a
   else
     listspecies = myenv$df_cores[1,]$species_guild_b
+  auxlistdf$kcore = 1
+  auxlistdf$kcorelabel = 1
   for (j in listspecies[[1]])
   {
     ind <- paste0(strguild,j)
@@ -769,27 +775,30 @@ conf_kcore1_info <- function(strguild, myenv=zgg)
 # Similar to conf_kcore1_info for species outside the giant component
 conf_outsiders_info <- function(strguild)
 {
-  auxlistdf <- data.frame(x1=NA,x2=NA,y1=NA,y2=NA,r=NA,col_row=NA,kdegree=NA,kradius=NA,name_species=NA,label=NA)
-  retlistdf <- data.frame(x1=c(),x2=c(),y1=c(),y2=c(),r=c(),col_row=c(),kdegree=c(),kradius=c(),name_species=c(),label=c())
+  auxlistdf <- data.frame(x1=NA,x2=NA,y1=NA,y2=NA,r=NA,col_row=NA,kdegree=NA,kradius=NA,name_species=NA,label=NA,kcore=NA,kcorelabel=NA)
+  retlistdf <- data.frame(x1=c(),x2=c(),y1=c(),y2=c(),r=c(),col_row=c(),kdegree=c(),kradius=c(),name_species=c(),label=c(),kcore=c(),kcorelabel=c())
   listspecies <- NULL
   num_s <- zgg$cores[1,]$num_species_guild_a
   if (strguild == zgg$str_guild_a)
       listspecies = zgg$outsiders_a
   else
       listspecies = zgg$outsiders_b
+
   for (j in listspecies)
   {
     auxlistdf$label <- gsub(strguild,"",j)
     auxlistdf$kdegree <-  V(zgg$result_analysis$graph)[j]$kdegree
     auxlistdf$kradius <-  V(zgg$result_analysis$graph)[j]$kradius
     auxlistdf$name_species <-  V(zgg$result_analysis$graph)[j]$name_species
+    auxlistdf$kcore = -1
+    auxlistdf$kcorelabel = 1
     retlistdf <- rbind(retlistdf,auxlistdf)
   }
   return(retlistdf)
 }
 
 # Configuration of inner ziggurats coordinates
-conf_ziggurat <- function(igraphnet, basex,widthx,basey,ystep,numboxes,fillcolor, strlabels, strguild, inverse = "no", edge_tr = "no")
+conf_ziggurat <- function(kc,igraphnet, basex,widthx,basey,ystep,numboxes,fillcolor, strlabels, strguild, inverse = "no", edge_tr = "no")
 {
   kdeg <- rep(0,length(strlabels))
   kdist <- rep(1,length(strlabels))
@@ -846,8 +855,10 @@ conf_ziggurat <- function(igraphnet, basex,widthx,basey,ystep,numboxes,fillcolor
   label <- d2$label
   kdegree <- d2$kdegree
   kradius <- d2$kradius
+  kcore <- rep(kc,nrow(d2))
+  kcorelabel <- kcore
   name_species <- as.character(d2$name_species)
-  d1 <- data.frame(x1, x2, y1, y2, r, col_row, label, kdegree, kradius, name_species, stringsAsFactors=FALSE)
+  d1 <- data.frame(x1, x2, y1, y2, r, col_row, label, kcore, kcorelabel, kdegree, kradius, name_species, stringsAsFactors=FALSE)
   if (inverse == "yes")
   {
     d1$y1 <- -(d1$y1)
@@ -860,7 +871,7 @@ conf_ziggurat <- function(igraphnet, basex,widthx,basey,ystep,numboxes,fillcolor
 draw_individual_ziggurat <- function(idPrefix, igraphnet, kc, basex = 0, widthx = 0, basey = 0, ystep = 0, numboxes = 0, strlabels = "", strguild = "",
                           sizelabels = 3, colorb = "", grafo = "", svg, zinverse ="no", edge = "no", angle = 0)
 {
-  dr <- conf_ziggurat(igraphnet, basex,widthx,basey,ystep,numboxes,colorb, strlabels,
+  dr <- conf_ziggurat(kc,igraphnet, basex,widthx,basey,ystep,numboxes,colorb, strlabels,
                       strguild, inverse = zinverse, edge_tr = edge)
   nsp <- name_species_preprocess(kc,dr,zgg$kcore_species_name_display,
                                  zgg$kcore_species_name_break)
@@ -1377,7 +1388,7 @@ draw_fat_tail<- function(p,svg,fat_tail,nrows,list_dfs,color_guild,pos_tail_x,po
     nodekcoremax <- list_dfs[[zgg$kcoremax]][1,]
     plyy2 <-  (nodekcoremax$y1+nodekcoremax$y2)/2
     
-    v<- draw_tail(ifelse(is_guild_a, "edge-kcore1-a", "edge-kcore1-b"), p,svg,
+    v<- draw_tail(ifelse(is_guild_a, "edge-kcore1-a-fattail", "edge-kcore1-b-fattail"), p,svg,
                   fat_tail,zgg$lado,color_guild,gen_sq_label(fat_tail$orph,is_guild_a = is_guild_a),
                   ppos_tail_x,ppos_tail_y,fgap,
                   lxx2 = list_dfs[[zgg$kcoremax]][1,]$x1,

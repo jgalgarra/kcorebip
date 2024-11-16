@@ -417,14 +417,13 @@ draw_parallel_guilds <- function(basex,topx,basey,topy,numboxes,nnodes,fillcolor
   }
   d1 <- data.frame(x1, x2, y1, y2, r, col_row, kdegree, kradius, name_species, stringsAsFactors=FALSE)
   d1$label <- strlabels
-  
+  d1$kcorelabel = 0
   # Remove empty nodes
   d1 <- d1[d1$label!="EMPTY",]
   
   if (style == "legacy")
     nodelabels <- strlabels
   else if ((style == "kcoreorder")||(style == "chilopodograph")) {
-    d1$kcore = 0
     for (i in 1:nrow(d1)){
       s <- strsplit(d1$label[i],"shell")
       d1$label[i] <- s[[1]][1]
@@ -436,6 +435,7 @@ draw_parallel_guilds <- function(basex,topx,basey,topy,numboxes,nnodes,fillcolor
   for (i in 1:nrow(d1)){
     d1[i,]$kdegree <- igraphnet[paste0(strguild,d1[i,]$label)]$kdegree
     d1[i,]$kradius <- igraphnet[paste0(strguild,d1[i,]$label)]$kradius
+    d1[i,]$kcorelabel <- igraphnet[paste0(strguild,d1[i,]$label)]$kcorenum
     d1[i,]$name_species <- igraphnet[paste0(strguild,d1[i,]$label)]$name_species
   }
 
@@ -449,10 +449,12 @@ draw_parallel_guilds <- function(basex,topx,basey,topy,numboxes,nnodes,fillcolor
     for (i in 1:nrow(d1))
       if(sum(gsub("\\."," ",names(degrees))==d1$name_species[i])>0)
         d1$degree[i]=degrees[which(gsub("\\."," ",names(degrees))==d1$name_species[i])]
+    
     ordvector <- rev(order(d1$degree))
     d1$label <- d1[ordvector,]$label
     d1$kradius <- d1[ordvector,]$kradius
     d1$kdegree <- d1[ordvector,]$kdegree
+    d1$kcorelabel <- d1[ordvector,]$kcorelabel
     d1$name_species <- d1[ordvector,]$name_species
     d1$degree <- d1[ordvector,]$degree
   } else if ((style=="kcoreorder") || (style=="chilopodograph")){
@@ -467,9 +469,8 @@ draw_parallel_guilds <- function(basex,topx,basey,topy,numboxes,nnodes,fillcolor
       
     }
   }
-  
   # Fixed aspect ratio of bipartite plot
-  
+  bpp$landmark_right <- max(bpp$landmark_right,max(d1$x2))
   bpp$tot_width <- max(max(d1$x2)+xstep,bpp$tot_width)
   bpp$tot_height <- (9/16)*bpp$tot_width
 
