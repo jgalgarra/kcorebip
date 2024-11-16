@@ -347,6 +347,8 @@ draw_edge_tails_bip <- function(p,svg,point_x,point_y,kcoreother,long_tail,list_
                     background = pbackground, spline = tspline, psize = bpp$lsize_kcore1,
                     is_guild_a = is_guild_a, wlink = little_tail$weightlink[1],style=bpp$style,
                     lvp = last_vertical_position)
+      bpp$landmark_top <- max(bpp$landmark_top,ryy)
+      bpp$landmark_bottom <- min(bpp$landmark_bottom,ryy)
       last_vertical_position <- ifelse(yfactor==1, 0, yfactor)
       p <- v["p"][[1]]
       svg <- v["svg"][[1]]
@@ -397,6 +399,8 @@ draw_parallel_guilds <- function(basex,topx,basey,topy,numboxes,nnodes,fillcolor
   bpp$xstep <- xstep
   vertsep <- 3
   ptopy <- vertsep*basey+ifelse(basey>0,1,-1)*xstep
+  bpp$landmark_top <- max(bpp$landmark_top,ptopy)
+  bpp$landmark_bottom <- min(bpp$landmark_bottom,-ptopy)
   ystep <- 0
   
   for (j in (1:numboxes))
@@ -441,13 +445,10 @@ draw_parallel_guilds <- function(basex,topx,basey,topy,numboxes,nnodes,fillcolor
       degrees <- colSums(mlinks)
     else if (guild=="B")
       degrees <- rowSums(mlinks)
-    
     d1$degree <- 0
     for (i in 1:nrow(d1))
-      if(sum(names(degrees)==d1[i,]$name_species)>0)
-        d1$degree[i]=degrees[which(names(degrees)==d1[i,]$name_species)]
-      else
-        d1$degree[i]=0
+      if(sum(gsub("\\."," ",names(degrees))==d1$name_species[i])>0)
+        d1$degree[i]=degrees[which(gsub("\\."," ",names(degrees))==d1$name_species[i])]
     ordvector <- rev(order(d1$degree))
     d1$label <- d1[ordvector,]$label
     d1$kradius <- d1[ordvector,]$kradius
@@ -935,7 +936,8 @@ write_annotations_bip <- function(p, svg)
   if (bpp$hide_plot_border)
     p <- p + theme(panel.border=element_blank())
   #landmark_top <- 1.2*max(bpp$last_ytail_b[!is.na(bpp$last_ytail_b)],bpp$ymax)*bpp$rescale_plot_area[2]
-  landmark_top <- 4*bpp$xstep+bpp$ymax*bpp$rescale_plot_area[2]
+  landmark_top <- (2*bpp$xstep+bpp$landmark_top)*bpp$rescale_plot_area[2]
+  landmark_bottom <- (-2*bpp$xstep+bpp$landmark_bottom)*bpp$rescale_plot_area[2]
   
   # This dot marks the right edge of the plot
   mlabel <- "."
@@ -947,11 +949,17 @@ write_annotations_bip <- function(p, svg)
                    colour = "red", size=1, hjust = 0, vjust = 0, angle = 0)
   svg$text("annotation", data=data.frame(x=landmark_right, y=0), 
            mapping=aes(x=x, y=y), color="red", label=mlabel, size=1, angle=0)
-  landmark_left <- bpp$pos_tail_x*bpp$rescale_plot_area[1]
+  landmark_left <- (bpp$pos_tail_x-bpp$xstep)*bpp$rescale_plot_area[1]
+ 
+  
   mlabel <- "."
-  p <- p +annotate(geom="text", x=landmark_left, y=0, label=mlabel,
+  p <- p +annotate(geom="text", x=landmark_left, y=landmark_top, label=mlabel,
                    colour = "red", size=2, hjust = 0, vjust = 0, angle = 0)
-  svg$text("annotation", data=data.frame(x=landmark_left, y=0), mapping=aes(x=x, y=y), color="red", label=mlabel, size=1, angle=0)
+  svg$text("annotation", data=data.frame(x=landmark_left, y=landmark_top), mapping=aes(x=x, y=y), color="red", label=mlabel, size=1, angle=0)
+  p <- p +annotate(geom="text", x=landmark_left, y=landmark_bottom, label=mlabel,
+                   colour = "red", size=2, hjust = 0, vjust = 0, angle = 0)
+  svg$text("annotation", data=data.frame(x=landmark_left, y=landmark_bottom), mapping=aes(x=x, y=y), color="red", label=mlabel, size=1, angle=0)
+  
   x_span <- landmark_right - landmark_left
 
   if (!(bpp$flip_results)){
@@ -1048,6 +1056,7 @@ handle_fat_tails_bip <- function(p, svg, style = "legacy")
                     bpp$last_xtail_b[[bpp$kcoremax]],
                     bpp$list_dfs_a[[bpp$kcoremax]][1,]$x1,
                     bpp$list_dfs_b[[bpp$kcoremax]][1,]$y2)
+  bpp$landmark_left <- min(bpp$landmark_left,fat_tail_x)
   if (bpp$orderkcoremaxby == "kdegree")
     max_b_k <- bpp$list_dfs_b[[bpp$kcoremax]][which(bpp$list_dfs_b[[bpp$kcoremax]]$kdegree == max(bpp$list_dfs_b[[bpp$kcoremax]]$kdegree)),]$label
   if (bpp$orderkcoremaxby == "kradius")
@@ -1562,7 +1571,8 @@ draw_bipartite_plot <- function(svg_scale_factor, progress)
   bpp$posic_zig_b <- 0
   bpp$toopy <- 0.3*bpp$ymax+bpp$basey
   # Draw max core 
-  svg <-SVG(svg_scale_factor, style = bpp$style)
+  svg <-SVG(svg_scale_factor, style = bpp$style, nnodes=bpp$result_analysis$num_guild_a+
+                                                        bpp$result_analysis$num_guild_b)
   
   f <- handle_orphans_bip(bpp$result_analysis$graph)
   bpp$mtxlinks <- f["mtxlinks"][[1]]

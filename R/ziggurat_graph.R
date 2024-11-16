@@ -1493,7 +1493,7 @@ write_annotations <- function(p, svg)
   landmark_top <- 1.2*max(zgg$last_ytail_b[!is.na(zgg$last_ytail_b)],zgg$ymax)*zgg$rescale_plot_area[2]
   mlabel <- "."
   #landmark_right <- (zgg$tot_width+2*zgg$hop_x)*zgg$rescale_plot_area[1]
-  landmark_right <- (zgg$tot_width+1.5*zgg$hop_x)*zgg$rescale_plot_area[1]
+  landmark_right <- (zgg$tot_width+1.6*zgg$hop_x)*zgg$rescale_plot_area[1]
   f <- draw_square("annotation",p,svg,landmark_right,0,1,"transparent",0.5,
                    "transparent",0,0,0,slabel="", aspect_ratio = zgg$aspect_ratio)
   p <- f["p"][[1]]
@@ -2141,7 +2141,8 @@ draw_ziggurat_plot <- function(svg_scale_factor, progress)
   zgg$toopy <- 0.3*zgg$ymax+zgg$basey
   zgg$strips_height <- 0.6*(zgg$ymax-zgg$yoffset)/max(1,(zgg$kcoremax-2))
   # Draw max core triangles
-  svg <-SVG(svg_scale_factor)
+  svg <-SVG(svg_scale_factor,nnodes=zgg$result_analysis$num_guild_a+
+              zgg$result_analysis$num_guild_b)
   if (!is.null(progress)) progress$inc(1/11, detail=strings$value("MESSAGE_ZIGGURAT_PROGRESS_DRAWING_MAXCORE"))
   f <- draw_maxcore(svg)
   p <- f["p"][[1]]
