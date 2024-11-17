@@ -4,12 +4,28 @@
 \alias{polar_graph}
 \title{Plotting a polar graph}
 \usage{
-polar_graph(red, directorystr = "data/", plotsdir = "plot_results/polar/",
-  print_to_file = FALSE, pshowtext = FALSE, show_histograms = TRUE,
-  glabels = c("Plant", "Pollinator"), gshortened = c("pl", "pol"),
-  lsize_title = 22, lsize_axis = 16, lsize_legend = 16,
-  lsize_axis_title = 16, lsize_legend_title = 16, file_name_append = "",
-  print_title = TRUE, progress = NULL, printable_labels = 0)
+polar_graph(
+  red,
+  directorystr = "data/",
+  plotsdir = "plot_results/polar/",
+  print_to_file = FALSE,
+  pshowtext = FALSE,
+  show_histograms = TRUE,
+  glabels = c("Plant", "Pollinator"),
+  gshortened = c("pl", "pol"),
+  lsize_title = 22,
+  lsize_axis = 16,
+  lsize_legend = 16,
+  lsize_axis_title = 16,
+  lsize_legend_title = 16,
+  file_name_append = "",
+  print_title = TRUE,
+  progress = NULL,
+  printable_labels = 0,
+  fill_nodes = TRUE,
+  alpha_nodes = 0.5,
+  max_kradius = 0
+)
 }
 \arguments{
 \item{red}{the name of the file of the interaction matrix}
@@ -45,6 +61,12 @@ polar_graph(red, directorystr = "data/", plotsdir = "plot_results/polar/",
 \item{progress}{auxiliar for interactive apps, do not modify}
 
 \item{printable_labels}{range of labeled species}
+
+\item{fill_nodes}{if set to FALSE nodes are transparent}
+
+\item{alpha_nodes}{fill transparency level}
+
+\item{max_kradius}{if bigger than 0 sets an upper limit different of the default. Useful for comparisons}
 }
 \description{
 This function plots the polar graph of a bipartite network and the histograms of kshell
@@ -53,4 +75,3 @@ kradius and kdegree
 \examples{
 polar_graph("M_PL_007.csv","data/",plotsdir="grafresults/",print_to_file = TRUE)
 }
-

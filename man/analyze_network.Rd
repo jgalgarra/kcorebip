@@ -4,8 +4,15 @@
 \alias{analyze_network}
 \title{Network analysis using k core decomposition}
 \usage{
-analyze_network(namenetwork, directory = "", guild_a = "pl",
-  guild_b = "pol", plot_graphs = FALSE, only_NODF = FALSE)
+analyze_network(
+  namenetwork,
+  directory = "",
+  guild_a = "pl",
+  guild_b = "pol",
+  plot_graphs = FALSE,
+  only_NODF = FALSE,
+  weight_direction = "none"
+)
 }
 \arguments{
 \item{namenetwork}{is the file name that contains the interaction matrix}
@@ -48,4 +55,3 @@ If it is weighted, to a real number different of 0.
 \examples{
 result_analysis <- analyze_network("M_PL_007.csv", directory = "data/", guild_a = "Plant", guild_b = "Pollinator")
 }
-

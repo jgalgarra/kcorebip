@@ -56,7 +56,8 @@ analyze_network <- function(namenetwork, directory="", guild_a = "pl", guild_b =
   # Read interaction matrix file
   nread <- read_network(namenetwork, directory = directory, guild_astr = guild_a, guild_bstr = guild_b)
   # create empty graph
-  an$g <- as.undirected(nread$g)
+  #an$g <- as.undirected(nread$g)
+  an$g <- as_undirected(nread$g)
   m <- nread$matrix
   names_guild_a <- nread$names_guild_a
   names_guild_b <- nread$names_guild_b
@@ -65,11 +66,14 @@ analyze_network <- function(namenetwork, directory="", guild_a = "pl", guild_b =
   # Get egde matrix
   edge_matrix <- igraph::get.edges(an$g, E(an$g))
   # Compute all shortest paths in network
-  spaths_mat <- shortest.paths(an$g)
+  #spaths_mat <- shortest.paths(an$g)
+  spaths_mat <- distances(an$g)
   # k-core decompose the network
-  g_cores <- graph.coreness(an$g)
+  #g_cores <- graph.coreness(an$g)
+  g_cores <- coreness(an$g)
 
-  wtc <- walktrap.community(an$g)
+  #wtc <- walktrap.community(an$g)
+  wtc <- cluster_walktrap(an$g)
   #modularity(wtc)
   modularity_measure <- modularity(an$g, membership(wtc))
 
@@ -260,6 +264,7 @@ read_network <- function(namenetwork, guild_astr = "pl", guild_bstr = "pol", dir
   num_guild_b <- nrow(m)
   # Create an graph object
   g <- graph.empty()
+  #g <- empty_graph()
   # Add one node for each species and name it
   for (i in 1:num_guild_a){
     g <- g + vertices(paste0(guild_astr,i),color="white",guild_id="a",name_species=names_guild_a[i],id=i)
@@ -275,6 +280,7 @@ read_network <- function(namenetwork, guild_astr = "pl", guild_bstr = "pol", dir
   listedgesn[,1] <- paste0(guild_bstr,listedgesn[,1])
   listedgesn[,2] <- paste0(guild_astr,listedgesn[,2])
   g <- g + graph.edgelist(listedgesn)
+  #g <- g + as_edgelist(listedgesn)
   # Return values
   calc_values <- list("graph" = g, "matrix" = m, "num_guild_b" = num_guild_b, "num_guild_a" = num_guild_a,
                       "names_guild_a" = names_guild_a, "names_guild_b"=names_guild_b)
@@ -283,6 +289,38 @@ read_network <- function(namenetwork, guild_astr = "pl", guild_bstr = "pol", dir
 }
 
 
+read_and_analyze <- function(directorystr,network_file,label_strguilda,label_strguildb)
+{
+  
+  str_guild_a <- "pl"
+  str_guild_b <- "pol"
+  name_guild_a <- "Plants"
+  name_guild_b <- "Pollinators"
+  network_name <- strsplit(network_file,".csv")[[1]][1]
+  slabels <- c("Plant", "Pollinator")
+  if (grepl("_SD_",network_name)){
+    str_guild_b <- "disp"
+    name_guild_b <- "Dispersers"
+  }
+  
+  if (nchar(label_strguilda)>0){
+    slabels <- c(label_strguilda, label_strguildb)
+    name_guild_a <- label_strguilda
+    name_guild_b <- label_strguildb
+  }
+  
+  result_analysis <- analyze_network(network_file, directory = directorystr, guild_a = str_guild_a,
+                                     guild_b = str_guild_b, only_NODF = TRUE)
+  
+  
+  calc_vals <- list("result_analysis" = result_analysis, "str_guild_a" = str_guild_a, "str_guild_b" = str_guild_b,
+                    "name_guild_a" = name_guild_a, "name_guild_b" = name_guild_b,
+                    "network_name" = network_name)
+  return(calc_vals)
+}
+
+
+
 # EXAMPLE. Cut and paste to test.
-#result_analysis <- analyze_network("M_SD_008.csv", directory = "data/", guild_a = "Plant", guild_b = "Pollinator", plot_graphs = FALSE)
+#result_analysis <- analyze_network("M_PL_011.csv", directory = "../data/", guild_a = "Plant", guild_b = "Pollinator", plot_graphs = FALSE)
 
