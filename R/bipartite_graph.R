@@ -195,7 +195,8 @@ draw_tail_bip <- function(idPrefix, p,svg,fat_tail,lado,color,sqlabel,basex,base
                       lxx2=0,lyy2=0,sqinverse = "no",
                       position = "West", background = "no",
                       first_leaf = "yes", spline = "no",
-                      psize = bpp$lsize_kcore1, is_guild_a = TRUE, wlink=1, style = "ziggurat", lvp = 0)
+                      psize = bpp$lsize_kcore1, is_guild_a = TRUE, wlink=1, 
+                      style = "ziggurat", lvp = 0)
 {
  
   adjust <- "yes"
@@ -325,7 +326,7 @@ draw_edge_tails_bip <- function(p,svg,point_x,point_y,kcoreother,long_tail,list_
       xx2 <- (data_row$x2+data_row$x1)/2
       rxx <- data_row$x1
       yy2 <- data_row$y2
-      yfactor <- min(10,nrow(little_tail))
+      yfactor <- min(5,nrow(little_tail))
       if (nrow(little_tail>1) & last_vertical_position == yfactor)
         yfactor <- yfactor+1
       ryy <- data_row$y2 + ifelse(yy2>0, yfactor*bpp$xstep, -yfactor*bpp$xstep )

@@ -25,7 +25,7 @@ library(rlang)
 SVG<-function(scale_factor,style="ziggurat",nnodes=50) {
   plottype = style
   fontscale = ifelse (style=="ziggurat", 3+(nnodes<50), max(25,50-(nnodes/5)))
-  flinkscale = ifelse (style=="ziggurat", 1, 50)
+  flinkscale = ifelse (style=="ziggurat", 1, 100)
   # crea el objeto SVG
   this<-list(content=c(""), minx=0, miny=0, maxx=0, maxy=0, scale_factor=scale_factor, font_scale_factor=fontscale)
 
