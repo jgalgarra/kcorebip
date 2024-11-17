@@ -261,7 +261,6 @@ draw_square<- function(idPrefix, grafo,svg,basex,basey,side,fillcolor,alphasq,la
   p <- p +annotate(geom="text", x=pxx, y=pyy, label=slabel,
                    colour = labelcolor, size=lbsize, hjust = hjust,
                    vjust = vjust, angle = langle)
-  print(paste("idprefix",idPrefix))
   svg$rect(idPrefix=idPrefix, data=ds, mapping=aes(xmin=x1, xmax=x2, ymin=y1, ymax=y2),
            fill = fillcolor, alpha=alphasq, size=0.5, color="transparent")
   if (grepl("fat-kcore1",idPrefix))
@@ -729,7 +728,6 @@ draw_coremax_triangle <- function(basex,topx,basey,topy,numboxes,fillcolor,strla
     
     d1[i,]$name_species <- igraphnet[paste0(strguild,d1[i,]$label)]$name_species
   }
-print(paste("orderby",orderby))
   if (orderby == "kradius"){
     ordvector <- order(1000*d1$kradius+d1$kdegree)
     d1$label <- d1[ordvector,]$label

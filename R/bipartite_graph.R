@@ -1618,15 +1618,12 @@ draw_bipartite_plot <- function(svg_scale_factor, progress)
     bpp$last_xtail_b <- f["last_xtail_b"][[1]] 
     bpp$last_ytail_b <- f["last_ytail_b"][[1]] # Add kcore1 information
     
-    print(bpp$df_cores[1,])
-    
     if (!is.null(bpp$df_cores[1,])){
       if (bpp$df_cores[1,]$num_species_guild_a > 0)
         bpp$list_dfs_a[[1]] <- conf_kcore1_info(bpp$str_guild_a,myenv=bpp)
       if (bpp$df_cores[1,]$num_species_guild_b > 0)
         bpp$list_dfs_b[[1]] <- conf_kcore1_info(bpp$str_guild_b,myenv=bpp)
     }
-    
     
     # Fat tails - nodes of core 1  linked to most generalist of opposite guild. Left side of panel 
     z <-  handle_fat_tails_bip(p, svg,style = bpp$style ) 

@@ -51,7 +51,6 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50) {
     else if (exists("bpp")){
       zr <- bpp$move_all_SVG_right
       zl <- bpp$landmark_right
-      print(paste("zl",zl))
       zu <- bpp$move_all_SVG_up
     }
     #redondea el viewBox a la decena mas cercana
@@ -60,7 +59,6 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50) {
       maxx  <- min(ceiling(this$maxx/10)*10, ceiling(1.1*zl/100)*10)
     else if (exists("bpp"))
       maxx  <- ceiling(4*zl/100)*10
-    print(paste("minx",minx,"maxx",maxx))
     miny  <- (1-zu)*floor(this$miny/10)*10
     if (exists("zgg"))
       maxy  <- ceiling(this$maxy/10)*10
