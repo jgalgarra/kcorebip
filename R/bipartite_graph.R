@@ -787,6 +787,8 @@ draw_fat_tail_bip<- function(p,svg,fat_tail,nrows,list_dfs,color_guild,pos_tail_
     ppos_tail_x <- pos_tail_x-2*bpp$xstep
     pos_tail_y <-list_dfs[[bpp$kcoremax]][1,]$y1
     ppos_tail_y <- pos_tail_y
+    bpp$landmark_left <- min(bpp$landmark_left,ppos_tail_x)
+    
   # }
   # else{
   #   ppos_tail_x <- pos_tail_x
@@ -810,7 +812,7 @@ draw_fat_tail_bip<- function(p,svg,fat_tail,nrows,list_dfs,color_guild,pos_tail_
     p <- v["p"][[1]]
     svg <- v["svg"][[1]]
   }
-  calc_vals <- list("p" = p, "svg" = svg, "pos_tail_x" = bpp$pos_tail_x)
+  calc_vals <- list("p" = p, "svg" = svg, "pos_tail_x" = bpp$pos_tail_x-bpp$xstep)
   return(calc_vals)
 }
 
@@ -943,7 +945,9 @@ write_annotations_bip <- function(p, svg)
   
   # This dot marks the right edge of the plot
   mlabel <- "."
-  landmark_right <- (bpp$tot_width+1.5*bpp$hop_x)*bpp$rescale_plot_area[1]
+  landmark_right <- max(bpp$landmark_right,(bpp$tot_width+1.5*bpp$hop_x)*bpp$rescale_plot_area[1])
+  landmark_left <- min(bpp$landmark_left,
+                       (bpp$pos_tail_x-2*bpp$xstep)*bpp$rescale_plot_area[1])
   f <- draw_square("annotation",p,svg,landmark_right,0,1,"transparent",0.5,"transparent",0,0,0,slabel="")
   p <- f["p"][[1]]
   svg <- f["svg"][[1]]
@@ -951,7 +955,7 @@ write_annotations_bip <- function(p, svg)
                    colour = "red", size=1, hjust = 0, vjust = 0, angle = 0)
   svg$text("annotation", data=data.frame(x=landmark_right, y=0), 
            mapping=aes(x=x, y=y), color="red", label=mlabel, size=1, angle=0)
-  landmark_left <- (bpp$pos_tail_x-bpp$xstep)*bpp$rescale_plot_area[1]
+
  
   
   mlabel <- "."
@@ -1058,7 +1062,6 @@ handle_fat_tails_bip <- function(p, svg, style = "legacy")
                     bpp$last_xtail_b[[bpp$kcoremax]],
                     bpp$list_dfs_a[[bpp$kcoremax]][1,]$x1,
                     bpp$list_dfs_b[[bpp$kcoremax]][1,]$y2)
-  bpp$landmark_left <- min(bpp$landmark_left,fat_tail_x)
   if (bpp$orderkcoremaxby == "kdegree")
     max_b_k <- bpp$list_dfs_b[[bpp$kcoremax]][which(bpp$list_dfs_b[[bpp$kcoremax]]$kdegree == max(bpp$list_dfs_b[[bpp$kcoremax]]$kdegree)),]$label
   if (bpp$orderkcoremaxby == "kradius")
@@ -1109,8 +1112,6 @@ handle_fat_tails_bip <- function(p, svg, style = "legacy")
   if (exists("fat_tail_a")) {
     f <- draw_fat_tail_bip(p,svg,fat_tail_a,nrows_fat,bpp$list_dfs_b,bpp$color_guild_a[2],
                        bpp$pos_tail_x,pos_tail_y,fgap,inverse="yes")
-                      # , bipartite = TRUE, 
-                      #  gstyle = style)
     p <- f["p"][[1]]
     svg <- f["svg"][[1]]
   }
