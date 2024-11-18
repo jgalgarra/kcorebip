@@ -792,7 +792,7 @@ draw_fat_tail_bip<- function(p,svg,fat_tail,nrows,list_dfs,color_guild,pos_tail_
   {
     nodekcoremax <- list_dfs[[bpp$kcoremax]][1,]
     plyy2 <-  (nodekcoremax$y1+nodekcoremax$y2)/2
-    v<- draw_tail_bip(ifelse(is_guild_a, "edge-kcore1-a", "edge-kcore1-b"), p,svg,
+    v<- draw_tail_bip(ifelse(is_guild_a, "edge-kcore1-a-fat", "edge-kcore1-b-fat"), p,svg,
                   fat_tail,ifelse(bpp$style=="chilopodograph",bpp$xstep,bpp$lado),
                   color_guild,gen_sq_label(fat_tail$orph,is_guild_a = is_guild_a, myenv=bpp),
                   ppos_tail_x,ppos_tail_y,fgap,
@@ -1059,9 +1059,9 @@ handle_fat_tails_bip <- function(p, svg, style = "legacy")
     max_b_k <- bpp$list_dfs_b[[bpp$kcoremax]][which(bpp$list_dfs_b[[bpp$kcoremax]]$kdegree == max(bpp$list_dfs_b[[bpp$kcoremax]]$kdegree)),]$label
   if (bpp$orderkcoremaxby == "kradius")
     max_b_k <- bpp$list_dfs_b[[bpp$kcoremax]][which(bpp$list_dfs_b[[bpp$kcoremax]]$kradius == min(bpp$list_dfs_b[[bpp$kcoremax]]$kradius)),]$label
-  
+
   if (exists("df_orph_a", envir = bpp)){
-    fat_tail_a <- bpp$df_orph_a[(bpp$df_orph_a$partner == max(max_b_k)) 
+    fat_tail_a <- bpp$df_orph_a[(bpp$df_orph_a$partner == max(max_b_k[1])) 
                                 & (bpp$df_orph_a$repeated == "no"),]
     if (nrow(fat_tail_a)>1)
       bpp$df_orph_a <- bpp$df_orph_a[!(bpp$df_orph_a$orph %in% fat_tail_a$orph),]

@@ -989,12 +989,12 @@ add_link <- function(xx1 = 0,xx2 = 0,yy1 = 0,yy2 = 0,
 }
 
 # Analysis of the chains of specialists
-specialist_analysis <- function(specialists,opposite_specialists,species)
-{
-  ldf <- specialists[specialists$orph == species,]
-  if (max(ldf$kcore)>1)
-    return(ldf)
-}
+# specialist_analysis <- function(specialists,opposite_specialists,species)
+# {
+#   ldf <- specialists[specialists$orph == species,]
+#   if (max(ldf$kcore)>1)
+#     return(ldf)
+# }
 
 # Store speciailsts in initermediate df_store data frame and compute positions
 # Very hard, indeed
@@ -1004,7 +1004,7 @@ store_specialist_species <- function (row_orph, df_store, strguild, lado, gap, o
   sidex <- lado
   index <- nrow(df_store)+1
   df_store[index,]$kcorepartner <- row_orph$kcore
-  separation <- (1+zgg$specialists_boxes_separation_count)*sidex
+  separation <- max(3,(1+zgg$specialists_boxes_separation_count))*sidex
   tot_specialists <- nrow(original_specialists_a)+nrow(original_specialists_b)
   jumpfactor <- (4-min(3,(tot_specialists%/%10)))
   cgap <- (lado+gap/(5-min(3,(tot_specialists%/%10))))
@@ -1021,19 +1021,19 @@ store_specialist_species <- function (row_orph, df_store, strguild, lado, gap, o
     {
       if (strguild == zgg$str_guild_b){
         edge_row <- zgg$list_dfs_a[[zgg$kcoremax]][1,]
-        xbase <-  min(zgg$last_xtail_a[[zgg$kcoremax]],edge_row$x1 - 2*gap) - gap
+        xbase <-  min(zgg$last_xtail_a[[zgg$kcoremax]],edge_row$x1 - 1.5*gap) - gap
       }
       else{
         edge_row <- zgg$list_dfs_b[[zgg$kcoremax]][1,]
-        xbase <-  min(zgg$last_xtail_b[[zgg$kcoremax]],edge_row$x1 - 2*gap)- gap
+        xbase <-  min(zgg$last_xtail_b[[zgg$kcoremax]],edge_row$x1 - 1.5*gap)- gap
       }
       df_store$x1[index] <- xbase - 2 * gap
 
       if (zgg$kcoremax > 2)
-        df_store$y1[index] <- max(abs(edge_row$y2),abs(edge_row$y1)) + 6*cgap/(zgg$aspect_ratio)
+        df_store$y1[index] <- max(abs(edge_row$y2),abs(edge_row$y1)) + 4*cgap/(zgg$aspect_ratio)
       else{
         xbase <- 0
-        df_store$y1[index] <- max(abs(edge_row$y2),abs(edge_row$y1)) + 6*cgap/(zgg$aspect_ratio)
+        df_store$y1[index] <- max(abs(edge_row$y2),abs(edge_row$y1)) + 4*cgap/(zgg$aspect_ratio)
       }
 
       if (df_store$guild[index] == zgg$str_guild_a){
@@ -1511,7 +1511,7 @@ write_annotations <- function(p, svg)
                    colour = "red", size=1, hjust = 0, vjust = 0, angle = 0)
   svg$text("annotation", data=data.frame(x=landmark_right, y=0), mapping=aes(x=x, y=y), color="red", label=mlabel, size=1, angle=0)
   landmark_left <- min(zgg$last_xtail_a[[zgg$kcoremax]],zgg$last_xtail_b[[zgg$kcoremax]])-min(zgg$hop_x,0.2*min(zgg$last_xtail_a[[zgg$kcoremax]],zgg$last_xtail_b[[zgg$kcoremax]]))
-  landmark_left <- min(landmark_left, zgg$pos_tail_x)*zgg$rescale_plot_area[1]
+  landmark_left <- (min(landmark_left, zgg$pos_tail_x)- zgg$hop_x/4)*zgg$rescale_plot_area[1]
   
   p <- p +annotate(geom="text", x=landmark_left, y=0, label=mlabel,
                    colour = "red", size=2, hjust = 0, vjust = 0, angle = 0)
