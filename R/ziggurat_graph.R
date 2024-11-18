@@ -729,14 +729,14 @@ draw_coremax_triangle <- function(basex,topx,basey,topy,numboxes,fillcolor,strla
     d1[i,]$name_species <- igraphnet[paste0(strguild,d1[i,]$label)]$name_species
   }
   if (orderby == "kradius"){
-    ordvector <- order(1000*d1$kradius+d1$kdegree)
+    ordvector <- order(1000*d1$kradius-d1$kdegree)
     d1$label <- d1[ordvector,]$label
     d1$kradius <- d1[ordvector,]$kradius
     d1$kdegree <- d1[ordvector,]$kdegree
     d1$name_species <- d1[ordvector,]$name_species
   }
   else if (orderby == "kdegree"){
-    ordvector <- rev(order(1000*d1$kdegree-d1$kradius))
+    ordvector <- rev(order(1000*d1$kdegree+d1$kradius))
     d1$label <- d1[ordvector,]$label
     d1$kradius <- d1[ordvector,]$kradius
     d1$kdegree <- d1[ordvector,]$kdegree

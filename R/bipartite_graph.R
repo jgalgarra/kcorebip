@@ -783,19 +783,11 @@ draw_fat_tail_bip<- function(p,svg,fat_tail,nrows,list_dfs,color_guild,pos_tail_
                              inverse="no", is_guild_a =TRUE, bipartite = FALSE, gstyle = "ziggurat")
 {
 
-  #if (gstyle == "chilopodograph"){
-    ppos_tail_x <- pos_tail_x-2*bpp$xstep
-    pos_tail_y <-list_dfs[[bpp$kcoremax]][1,]$y1
-    ppos_tail_y <- pos_tail_y
-    bpp$landmark_left <- min(bpp$landmark_left,ppos_tail_x)
-    
-  # }
-  # else{
-  #   ppos_tail_x <- pos_tail_x
-  #   pos_tail_y <- list_dfs[[bpp$kcoremax]][1,]$y1
-  #   ppos_tail_y <- pos_tail_y 
-  # }
-  
+  tailgap <- max(2,nrows/4)*bpp$xstep
+  ppos_tail_x <- pos_tail_x-tailgap
+  pos_tail_y <-list_dfs[[bpp$kcoremax]][1,]$y1
+  ppos_tail_y <- pos_tail_y
+
   if (nrow(fat_tail)>0)
   {
     nodekcoremax <- list_dfs[[bpp$kcoremax]][1,]
@@ -812,7 +804,7 @@ draw_fat_tail_bip<- function(p,svg,fat_tail,nrows,list_dfs,color_guild,pos_tail_
     p <- v["p"][[1]]
     svg <- v["svg"][[1]]
   }
-  calc_vals <- list("p" = p, "svg" = svg, "pos_tail_x" = bpp$pos_tail_x-bpp$xstep)
+  calc_vals <- list("p" = p, "svg" = svg, "pos_tail_x" = bpp$pos_tail_x-tailgap)
   return(calc_vals)
 }
 
@@ -940,14 +932,14 @@ write_annotations_bip <- function(p, svg)
   if (bpp$hide_plot_border)
     p <- p + theme(panel.border=element_blank())
   #landmark_top <- 1.2*max(bpp$last_ytail_b[!is.na(bpp$last_ytail_b)],bpp$ymax)*bpp$rescale_plot_area[2]
-  landmark_top <- (2*bpp$xstep+bpp$landmark_top)*bpp$rescale_plot_area[2]
-  landmark_bottom <- (-2*bpp$xstep+bpp$landmark_bottom)*bpp$rescale_plot_area[2]
+  landmark_top <- (1.5*bpp$xstep+bpp$landmark_top)*bpp$rescale_plot_area[2]
+  landmark_bottom <- (-1.5*bpp$xstep+bpp$landmark_bottom)*bpp$rescale_plot_area[2]
   
-  # This dot marks the right edge of the plot
+  # This dot marks the plot edges
   mlabel <- "."
-  landmark_right <- max(bpp$landmark_right,(bpp$tot_width+1.5*bpp$hop_x)*bpp$rescale_plot_area[1])
+  landmark_right <- (bpp$landmark_right+2*bpp$xstep)*bpp$rescale_plot_area[1]
   landmark_left <- min(bpp$landmark_left,
-                       (bpp$pos_tail_x-2*bpp$xstep)*bpp$rescale_plot_area[1])
+                       (bpp$pos_tail_x)*bpp$rescale_plot_area[1])-bpp$xstep*ifelse(bpp$exists_fat_tail,4,1)
   f <- draw_square("annotation",p,svg,landmark_right,0,1,"transparent",0.5,"transparent",0,0,0,slabel="")
   p <- f["p"][[1]]
   svg <- f["svg"][[1]]
@@ -1058,6 +1050,7 @@ draw_bipartite_leafs <- function(p, svg)
 # Manage fat tails
 handle_fat_tails_bip <- function(p, svg, style = "legacy")
 {
+  exists_fat_tail <- FALSE
   fat_tail_x <- min(bpp$last_xtail_a[[bpp$kcoremax]],
                     bpp$last_xtail_b[[bpp$kcoremax]],
                     bpp$list_dfs_a[[bpp$kcoremax]][1,]$x1,
@@ -1110,6 +1103,7 @@ handle_fat_tails_bip <- function(p, svg, style = "legacy")
   bpp$pos_tail_x <- min(bpp$list_dfs_b[[bpp$kcoremax]][1,]$x1-bpp$xstep,
                         bpp$list_dfs_a[[bpp$kcoremax]][1,]$x1-bpp$xstep)
   if (exists("fat_tail_a")) {
+    exists_fat_tail <- TRUE
     f <- draw_fat_tail_bip(p,svg,fat_tail_a,nrows_fat,bpp$list_dfs_b,bpp$color_guild_a[2],
                        bpp$pos_tail_x,pos_tail_y,fgap,inverse="yes")
     p <- f["p"][[1]]
@@ -1117,6 +1111,7 @@ handle_fat_tails_bip <- function(p, svg, style = "legacy")
   }
 
   if (exists("fat_tail_b")) {
+    exists_fat_tail <- TRUE
     f <- draw_fat_tail_bip(p,svg,fat_tail_b,nrows_fat,bpp$list_dfs_a,bpp$color_guild_b[2],bpp$pos_tail_x,
                        pos_tail_y,fgap,
                        inverse="no", is_guild_a = FALSE)
@@ -1124,7 +1119,8 @@ handle_fat_tails_bip <- function(p, svg, style = "legacy")
     p <- f["p"][[1]]
     svg <- f["svg"][[1]]
   }
-  calc_vals <- list("p" = p, "svg" = svg, "pos_tail_x" = bpp$pos_tail_x)
+  bpp$landmark_left <- min(bpp$landmark_left,bpp$pos_tail_x-2*bpp$step)
+  calc_vals <- list("p" = p, "svg" = svg, "pos_tail_x" = bpp$pos_tail_x, "exists_fat_tail" = exists_fat_tail)
   return(calc_vals)
 }
 
@@ -1541,7 +1537,6 @@ draw_inner_links_bip <- function(p, svg)
 draw_bipartite_plot <- function(svg_scale_factor, progress)
 {
   
-  
   if (!is.null(progress)) 
     progress$inc(1/11, detail=strings$value("MESSAGE_ZIGGURAT_PROGRESS_PROCESSING_NODES"))
   zinit_time <- proc.time()
@@ -1573,6 +1568,10 @@ draw_bipartite_plot <- function(svg_scale_factor, progress)
   bpp$posic_zig_a <- 0
   bpp$posic_zig_b <- 0
   bpp$toopy <- 0.3*bpp$ymax+bpp$basey
+  bpp$exists_fat_tail <- FALSE
+  bpp$landmark_left <- 0
+  bpp$landmark_right <- 0
+  
   # Draw max core 
   svg <-SVG(svg_scale_factor, style = bpp$style, nnodes=bpp$result_analysis$num_guild_a+
                                                         bpp$result_analysis$num_guild_b)
@@ -1632,6 +1631,7 @@ draw_bipartite_plot <- function(svg_scale_factor, progress)
     p <- z["p"][[1]] 
     svg <- z["svg"][[1]]
     bpp$pos_tail_x <- z["pos_tail_x"][[1]] 
+    bpp$exists_fat_tail <- ifelse(!is.null(z["exists_fat_tail"][[1]]),z["exists_fat_tail"][[1]],FALSE)
     
     # Hanlde orphans, species outside the ziggurat
     if (!is.null(progress))
