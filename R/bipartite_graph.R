@@ -900,14 +900,19 @@ write_annotations_bip <- function(p, svg)
   stext = ""
   ctext = ""
   lzcf <- 2.5
+  myvjust <- 0
   legsize <- round(lzcf*(bpp$lsize_legend-1))
   legends_text <- paste0(
     "<span style = 'text-align: left; color:",bpp$color_guild_a[1],"; font-size:",legsize,"pt'>",paste('&#9632;',bpp$name_guild_a),
     "</span> <span style = 'text-align: left;color:",bpp$color_guild_b[1],"; font-size:",legsize,"pt'>",paste('&nbsp; &#9632;',bpp$name_guild_b),"</span>")
-  if (bpp$show_legend=="TOP")
+  if (bpp$show_legend=="TOP"){
     stext = legends_text
-  if (bpp$show_legend=="BOTTOM")
+    myvjust = -1
+  }
+  if (bpp$show_legend=="BOTTOM"){
     ctext = legends_text
+    myvjust = 1
+  }
   if (bpp$show_title)
     title_text <- paste0("Network: ",bpp$network_name)
   # Legend size conversion factor
@@ -928,8 +933,8 @@ write_annotations_bip <- function(p, svg)
                                                                plot.title = element_text(size = lzcf*(bpp$lsize_legend+1.5),
                                                                                          hjust = 0.5,
                                                                                          face="plain"),
-                                                               plot.subtitle = ggtext::element_markdown(size=lzcf*bpp$lsize_legend,hjust=0.9),
-                                                               plot.caption = ggtext::element_markdown(size=lzcf*bpp$lsize_legend,hjust=0.9))
+                                                               plot.subtitle = ggtext::element_markdown(size=lzcf*bpp$lsize_legend,hjust=0.9,vjust=myvjust),
+                                                               plot.caption = ggtext::element_markdown(size=lzcf*bpp$lsize_legend,hjust=0.9,vjust=myvjust))
 
   if (bpp$hide_plot_border)
     p <- p + theme(panel.border=element_blank())
@@ -958,6 +963,7 @@ write_annotations_bip <- function(p, svg)
                    colour = "red", size=1, hjust = 0, vjust = 0, angle = 0)
   svg$text("annotation", data=data.frame(x=landmark_right, y=0), 
            mapping=aes(x=x, y=y), color="red", label=mlabel, size=1, angle=0)
+  p <- p+theme(plot.margin=unit(c(0.5,0.5,0.5,0.5),"cm"))
 
  
   
