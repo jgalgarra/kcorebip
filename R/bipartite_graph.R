@@ -1,11 +1,3 @@
-# library(grid)
-# library(gridExtra)
-# library(bipartite)
-# library(igraph)
-# library(ggplot2)
-# library(rlang)
-# library(ggtext)
-
 debugging = FALSE
 if (debugging){
    source("network-kanalysis.R")
@@ -73,6 +65,7 @@ if (debugging){
 #' @param landscape_plot paper landscape configuration
 #' @param backg_color plot background color
 #' @param show_title show plot title
+#' @param show_legend show plot legend position
 #' @param use_spline use splines to draw links
 #' @param spline_points number of points for each spline
 #' @param file_name_append a label that the user may append to the plot file name for convenience
@@ -109,7 +102,7 @@ bipartite_graph <- function(datadir,filename,
                            kcore_species_name_display = c(), kcore_species_name_break = c(),
                            shorten_species_name = 0, exclude_species_number = FALSE, label_strguilda = "",
                            label_strguildb = "", landscape_plot = TRUE,
-                           backg_color = "white", show_title = TRUE, use_spline =TRUE, spline_points = 10,
+                           backg_color = "white", show_title = TRUE, show_legend = 'TOP', use_spline =TRUE, spline_points = 10,
                            file_name_append = "", svg_scale_factor= 10, weighted_links = "none",
                            square_nodes_size_scale = 1, move_all_SVG_up = 0, move_all_SVG_right = 0,
                            progress=NULL
@@ -126,7 +119,7 @@ bipartite_graph <- function(datadir,filename,
   if (!is.null(progress)) 
     progress$inc(1/11, detail=strings$value("MESSAGE_ZIGGURAT_PROGRESS_ANALYZING_NETWORK"))
   # Analyze network
-  f <- read_and_analyze(datadir,filename,label_strguilda, label_strguildb)
+  f <- kcorebip:::read_and_analyze(datadir,filename,label_strguilda, label_strguildb)
   bpp$result_analysis <- f["result_analysis"][[1]]
   bpp$str_guild_a <- f["str_guild_a"][[1]]
   bpp$str_guild_b <- f["str_guild_b"][[1]]
@@ -161,7 +154,7 @@ bipartite_graph <- function(datadir,filename,
                     specialistskcore2_vertical_dist_rootleaf_expand , specialists_boxes_separation_count,
                     root_specialist_expand, hide_plot_border, rescale_plot_area,kcore1specialists_leafs_vertical_separation,
                     corebox_border_size, kcore_species_name_display,kcore_species_name_break,shorten_species_name,exclude_species_number,
-                    label_strguilda, label_strguildb, landscape_plot, backg_color, show_title,
+                    label_strguilda, label_strguildb, landscape_plot, backg_color, show_title, show_legend,
                     use_spline, spline_points, file_name_append, svg_scale_factor, weighted_links,
                     square_nodes_size_scale, move_all_SVG_up, move_all_SVG_right, progress
                     )
@@ -219,12 +212,12 @@ draw_tail_bip <- function(idPrefix, p,svg,fat_tail,lado,color,sqlabel,basex,base
   # Tails connected eastwards to inner ziggurats. Fat tails
   if (position == "West"){
     adjust = "yes"
-    lhjust <- 0.5
-    lvjust <- 0.5
+    lhjust <- ifelse(bpp$flip_results, 0, 0.5)
+    lvjust = ifelse(bpp$flip_results, 1, 0.5)
     if (style=="chilopodograph"){
       xx <- basex-gap
       posxx1 <- xx+bpp$xstep
-      posyy1 = plyy2#signo*(yy)+signo*(0.5*bpp$xstep/(bpp$aspect_ratio))
+      posyy1 = plyy2
     } else {
       xx <- basex-gap
       posxx1 <- xx+sidex
@@ -245,8 +238,8 @@ draw_tail_bip <- function(idPrefix, p,svg,fat_tail,lado,color,sqlabel,basex,base
     posyy1 = signo*(yy)
     if (style=="chilopodograph"){
       adjust = "yes"
-      lhjust <- 0.5
-      lvjust <- 0.5
+      lvjust = ifelse(bpp$flip_results, 1, 0)
+      lhjust = ifelse(bpp$flip_results, 0.5, 0)
     }
   }
 
@@ -341,7 +334,7 @@ draw_edge_tails_bip <- function(p,svg,point_x,point_y,kcoreother,long_tail,list_
       little_tail$weightlink <- get_link_weights(tailweight, myenv=bpp)
 
       v<- draw_tail_bip(paste0(ifelse(is_guild_a, "edge-kcore1-a-", "edge-kcore1-b-"), i),
-                    p,svg,little_tail,0.9*bpp$xstep,color_guild[2],
+                    p,svg,little_tail,0.95*bpp$xstep,color_guild[2],
                     gen_vert_label(little_tail$orph,joinchars = " "),
                     rxx,ryy,bpp$gap,lxx2 = xx2,
                     lyy2 = yy2, sqinverse = inverse, position = orientation,
@@ -904,14 +897,22 @@ handle_specialists_bip <- function(p,svg,specialists_a,specialists_b,lado,gap)
 write_annotations_bip <- function(p, svg)
 {
   title_text = ""
+  stext = ""
+  ctext = ""
+  lzcf <- 2.5
+  legsize <- round(lzcf*(bpp$lsize_legend-1))
+  legends_text <- paste0(
+    "<span style = 'text-align: left; color:",bpp$color_guild_a[1],"; font-size:",legsize,"pt'>",paste('&#9632;',bpp$name_guild_a),
+    "</span> <span style = 'text-align: left;color:",bpp$color_guild_b[1],"; font-size:",legsize,"pt'>",paste('&nbsp; &#9632;',bpp$name_guild_b),"</span>")
+  if (bpp$show_legend=="TOP")
+    stext = legends_text
+  if (bpp$show_legend=="BOTTOM")
+    ctext = legends_text
   if (bpp$show_title)
     title_text <- paste0("Network: ",bpp$network_name)
   # Legend size conversion factor
-  lzcf <- 3
-  legends_text <- paste0(
-    "<span style = 'color:",bpp$color_guild_a[1],"; font-size:",lzcf*bpp$lsize_legend,"pt'>",bpp$name_guild_a,
-    "</span> <span style = 'color:",bpp$color_guild_b[1],"; font-size:",lzcf*bpp$lsize_legend,"pt'>",bpp$name_guild_b,"</span>")
-  #p <- p+ ggtitle(title_text,subtitle=paste("<span align='right' size>",legends_text,"</span>"))
+  p <- p+ ggtitle(title_text,subtitle=stext)
+  p <- p +labs(caption = ctext)
   p <- p + coord_fixed(ratio=bpp$aspect_ratio) +theme_bw() + theme(panel.grid.minor.x = element_blank(),
                                                                panel.grid.minor.y = element_blank(),
                                                                panel.grid.major.x = element_blank(),
@@ -921,17 +922,17 @@ write_annotations_bip <- function(p, svg)
                                                                axis.ticks.x=element_blank(),
                                                                axis.ticks.y=element_blank(),
                                                                axis.title.x = element_blank(),
-                                                               axis.title.y = element_blank(),                                                               plot.background = element_rect(fill = bpp$backg_color),
+                                                               axis.title.y = element_blank(),                                                               
+                                                               plot.background = element_rect(fill = bpp$backg_color),
                                                                panel.background = element_rect(fill = bpp$backg_color),
-                                                               plot.title = element_text(size = lzcf*(bpp$lsize_legend+1),
+                                                               plot.title = element_text(size = lzcf*(bpp$lsize_legend+1.5),
                                                                                          hjust = 0.5,
                                                                                          face="plain"),
-                                                               
-                                                               plot.subtitle = ggtext::element_markdown()
-                                                                )
+                                                               plot.subtitle = ggtext::element_markdown(size=lzcf*bpp$lsize_legend,hjust=0.9),
+                                                               plot.caption = ggtext::element_markdown(size=lzcf*bpp$lsize_legend,hjust=0.9))
+
   if (bpp$hide_plot_border)
     p <- p + theme(panel.border=element_blank())
-  #landmark_top <- 1.2*max(bpp$last_ytail_b[!is.na(bpp$last_ytail_b)],bpp$ymax)*bpp$rescale_plot_area[2]
   landmark_top <- (1.5*bpp$xstep+bpp$landmark_top)*bpp$rescale_plot_area[2]
   landmark_bottom <- (-1.5*bpp$xstep+bpp$landmark_bottom)*bpp$rescale_plot_area[2]
   
@@ -939,7 +940,17 @@ write_annotations_bip <- function(p, svg)
   mlabel <- "."
   landmark_right <- (bpp$landmark_right+2*bpp$xstep)*bpp$rescale_plot_area[1]
   landmark_left <- min(bpp$landmark_left,
-                       (bpp$pos_tail_x)*bpp$rescale_plot_area[1])-bpp$xstep*ifelse(bpp$exists_fat_tail,4,1)
+                       (bpp$pos_tail_x)*bpp$rescale_plot_area[1])-bpp$xstep*ifelse(bpp$exists_fat_tail,4,3)
+  if (bpp$flip_results){
+    landmark_right <- landmark_right -3*bpp$xstep
+    landmark_left <- landmark_left +4*bpp$xstep
+    landmark_top <- landmark_top - bpp$xstep
+    landmark_bottom <- landmark_bottom + bpp$xstep
+  }
+  # else {
+  #   landmark_right <- landmark_right -3*bpp$xstep
+  #   landmark_left <- landmark_left +3*bpp$xstep
+  # }
   f <- draw_square("annotation",p,svg,landmark_right,0,1,"transparent",0.5,"transparent",0,0,0,slabel="")
   p <- f["p"][[1]]
   svg <- f["svg"][[1]]
@@ -1050,7 +1061,6 @@ draw_bipartite_leafs <- function(p, svg)
 # Manage fat tails
 handle_fat_tails_bip <- function(p, svg, style = "legacy")
 {
-  exists_fat_tail <- FALSE
   fat_tail_x <- min(bpp$last_xtail_a[[bpp$kcoremax]],
                     bpp$last_xtail_b[[bpp$kcoremax]],
                     bpp$list_dfs_a[[bpp$kcoremax]][1,]$x1,
@@ -1103,7 +1113,6 @@ handle_fat_tails_bip <- function(p, svg, style = "legacy")
   bpp$pos_tail_x <- min(bpp$list_dfs_b[[bpp$kcoremax]][1,]$x1-bpp$xstep,
                         bpp$list_dfs_a[[bpp$kcoremax]][1,]$x1-bpp$xstep)
   if (exists("fat_tail_a")) {
-    exists_fat_tail <- TRUE
     f <- draw_fat_tail_bip(p,svg,fat_tail_a,nrows_fat,bpp$list_dfs_b,bpp$color_guild_a[2],
                        bpp$pos_tail_x,pos_tail_y,fgap,inverse="yes")
     p <- f["p"][[1]]
@@ -1111,7 +1120,6 @@ handle_fat_tails_bip <- function(p, svg, style = "legacy")
   }
 
   if (exists("fat_tail_b")) {
-    exists_fat_tail <- TRUE
     f <- draw_fat_tail_bip(p,svg,fat_tail_b,nrows_fat,bpp$list_dfs_a,bpp$color_guild_b[2],bpp$pos_tail_x,
                        pos_tail_y,fgap,
                        inverse="no", is_guild_a = FALSE)
@@ -1119,6 +1127,7 @@ handle_fat_tails_bip <- function(p, svg, style = "legacy")
     p <- f["p"][[1]]
     svg <- f["svg"][[1]]
   }
+  exists_fat_tail <- (nrows_fat > 0)
   bpp$landmark_left <- min(bpp$landmark_left,bpp$pos_tail_x-2*bpp$step)
   calc_vals <- list("p" = p, "svg" = svg, "pos_tail_x" = bpp$pos_tail_x, "exists_fat_tail" = exists_fat_tail)
   return(calc_vals)
@@ -1378,7 +1387,7 @@ def_configuration_bip <- function(paintlinks, print_to_file, plotsdir, orderkcor
                               root_specialist_expand,hide_plot_border,rescale_plot_area,kcore1specialists_leafs_vertical_separation,
                               corebox_border_size, kcore_species_name_display,kcore_species_name_break,
                               shorten_species_name,exclude_species_number,
-                              label_strguilda, label_strguildb, landscape_plot, backg_color, show_title,
+                              label_strguilda, label_strguildb, landscape_plot, backg_color, show_title, show_legend,
                               use_spline, spline_points, file_name_append, svg_scale_factor, weighted_links, square_nodes_size_scale,
                               move_all_SVG_up, move_all_SVG_right, progress
                               )
@@ -1437,6 +1446,7 @@ def_configuration_bip <- function(paintlinks, print_to_file, plotsdir, orderkcor
   bpp$landscape_plot <- landscape_plot
   bpp$backg_color <- backg_color
   bpp$show_title <- show_title
+  bpp$show_legend <- show_legend
   bpp$use_spline <- use_spline
   bpp$spline_points <- spline_points
   bpp$file_name_append <- file_name_append
@@ -1573,8 +1583,10 @@ draw_bipartite_plot <- function(svg_scale_factor, progress)
   bpp$landmark_right <- 0
   
   # Draw max core 
-  svg <-SVG(svg_scale_factor, style = bpp$style, nnodes=bpp$result_analysis$num_guild_a+
-                                                        bpp$result_analysis$num_guild_b)
+  svg <-SVG(svg_scale_factor, style = bpp$style, 
+            nnodes=bpp$result_analysis$num_guild_a+
+            bpp$result_analysis$num_guild_b,
+            flip_coordinates=bpp$flip_results)
   
   f <- handle_orphans_bip(bpp$result_analysis$graph)
   bpp$mtxlinks <- f["mtxlinks"][[1]]
@@ -1632,7 +1644,6 @@ draw_bipartite_plot <- function(svg_scale_factor, progress)
     svg <- z["svg"][[1]]
     bpp$pos_tail_x <- z["pos_tail_x"][[1]] 
     bpp$exists_fat_tail <- ifelse(!is.null(z["exists_fat_tail"][[1]]),z["exists_fat_tail"][[1]],FALSE)
-    
     # Hanlde orphans, species outside the ziggurat
     if (!is.null(progress))
       progress$inc(1/11,  detail=strings$value("MESSAGE_ZIGGURAT_PROGRESS_DRAWING_ORPHANS"))
@@ -1655,8 +1666,6 @@ draw_bipartite_plot <- function(svg_scale_factor, progress)
     svg <- z["svg"][[1]]
   }
   
-
-  # Legend, title and final annotations
   v <- write_annotations_bip(p, svg)
   p <- v["p"][[1]]
   svg <- v["svg"][[1]]
@@ -1695,7 +1704,7 @@ if (debugging)
   # bipartite_graph("../data/","dattilo2014.csv", style="chilopodograph",orderkcoremaxby = "kdegree",
   #              guild_gap_increase = 1,weighted_links = "none",square_nodes_size_scale=1,backg_color = "white",
   #              hide_plot_border = FALSE, flip_results=FALSE)
-  bipartite_graph("../data/","RA_HP_042.csv",square_nodes_size_scale = 2,
+  bipartite_graph("../data/","RA_HP_042.csv",square_nodes_size_scale = 2,show_title = TRUE,
                        style="chilopodograph",orderkcoremaxby = "kdegree",
                        guild_gap_increase = 1,weighted_links = "none",
                        svg_scale_factor = 1,color_link = "#6d6d6e",

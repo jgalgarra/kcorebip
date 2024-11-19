@@ -72,6 +72,7 @@ source("SVG.R")
 #' @param landscape_plot paper landscape configuration
 #' @param backg_color plot background color
 #' @param show_title show plot title
+#' @param show_legend show plot legend position
 #' @param use_spline use splines to draw links
 #' @param spline_points number of points for each spline
 #' @param file_name_append a label that the user may append to the plot file name for convenience
@@ -106,7 +107,7 @@ ziggurat_graph <- function(datadir,filename,
                            kcore_species_name_display = c(), kcore_species_name_break = c(),
                            shorten_species_name = 0, exclude_species_number = FALSE, label_strguilda = "",
                            label_strguildb = "", landscape_plot = TRUE,
-                           backg_color = "white", show_title = TRUE, use_spline =TRUE, spline_points = 10,
+                           backg_color = "white", show_title = TRUE, show_legend='BOTTOM', use_spline =TRUE, spline_points = 10,
                            file_name_append = "", svg_scale_factor= 10, weighted_links = "none",
                            square_nodes_size_scale = 1, move_all_SVG_up = 0, move_all_SVG_right = 0,
                            progress=NULL
@@ -121,7 +122,7 @@ ziggurat_graph <- function(datadir,filename,
   zgg <<- new.env()
   if (!is.null(progress)) progress$inc(1/11, detail=strings$value("MESSAGE_ZIGGURAT_PROGRESS_ANALYZING_NETWORK"))
   # Analyze network
-  f <- read_and_analyze(datadir,filename,label_strguilda, label_strguildb)
+  f <- kcorebip:::read_and_analyze(datadir,filename,label_strguilda, label_strguildb)
   zgg$result_analysis <- f["result_analysis"][[1]]
   zgg$str_guild_a <- f["str_guild_a"][[1]]
   zgg$str_guild_b <- f["str_guild_b"][[1]]
@@ -152,7 +153,7 @@ ziggurat_graph <- function(datadir,filename,
                     specialistskcore2_vertical_dist_rootleaf_expand , specialists_boxes_separation_count,
                     root_specialist_expand, hide_plot_border, rescale_plot_area,kcore1specialists_leafs_vertical_separation,
                     corebox_border_size, kcore_species_name_display,kcore_species_name_break,shorten_species_name,exclude_species_number,
-                    label_strguilda, label_strguildb, landscape_plot, backg_color, show_title,
+                    label_strguilda, label_strguildb, landscape_plot, backg_color, show_title, show_legend,
                     use_spline, spline_points, file_name_append, svg_scale_factor, weighted_links,
                     square_nodes_size_scale, move_all_SVG_up, move_all_SVG_right, progress
   )
@@ -1470,16 +1471,26 @@ handle_specialists <- function(p,svg,specialists_a,specialists_b,lado,gap)
 
 # Final annotations
 write_annotations <- function(p, svg)
-{
+{ 
   title_text = ""
+  stext = ""
+  ctext = ""
+  lzcf <- 2.5
+  legsize <- round(lzcf*(zgg$lsize_legend-1))
+  legends_text <- paste0(
+    "<span style = 'text-align: left; color:",zgg$color_guild_a[1],"; font-size:",legsize,"pt'>",
+    paste('&#9632;',zgg$name_guild_a),
+    "</span> <span style = 'text-align: left;color:",zgg$color_guild_b[1],"; font-size:",legsize,"pt'>",
+    paste('&nbsp; &#9632;',zgg$name_guild_b),"</span>")
+  if (zgg$show_legend=="TOP")
+    stext = legends_text
+  if (zgg$show_legend=="BOTTOM")
+    ctext = legends_text
   if (zgg$show_title)
     title_text <- paste0("Network: ",zgg$network_name)
   # Legend size conversion factor
-  lzcf <- 3
-  legends_text <- paste0(
-    "<span style = 'color:",zgg$color_guild_a[1],"; font-size:",lzcf*zgg$lsize_legend,"pt'>",zgg$name_guild_a,
-    "</span> <span style = 'color:",zgg$color_guild_b[1],"; font-size:",lzcf*zgg$lsize_legend,"pt'>",zgg$name_guild_b,"</span>")
-  p <- p+ ggtitle(title_text,subtitle=paste("<span align='right' size>",legends_text,"</span>"))
+  p <- p+ ggtitle(title_text,subtitle=stext)
+  p <- p +labs(caption = ctext)
   p <- p + coord_fixed(ratio=zgg$aspect_ratio) +theme_bw() + theme(panel.grid.minor.x = element_blank(),
                                                                panel.grid.minor.y = element_blank(),
                                                                panel.grid.major.x = element_blank(),
@@ -1491,17 +1502,19 @@ write_annotations <- function(p, svg)
                                                                axis.title.x = element_blank(),
                                                                axis.title.y = element_blank(),                                                               plot.background = element_rect(fill = zgg$backg_color),
                                                                panel.background = element_rect(fill = zgg$backg_color),
-                                                               plot.title = element_text(size = lzcf*(zgg$lsize_legend+1),
+                                                               plot.title = element_text(size = lzcf*(zgg$lsize_legend+1.5),
                                                                                          hjust = 0.5,
                                                                                          face="plain"),
                                                                
-                                                               plot.subtitle = ggtext::element_markdown()
+                                                               plot.subtitle = ggtext::element_markdown(size=lzcf*zgg$lsize_legend,hjust=0.9),
+                                                               plot.caption = ggtext::element_markdown(size=lzcf*zgg$lsize_legend,hjust=0.9)
+                                                               
+                                                               
                                                                 )
   if (zgg$hide_plot_border)
     p <- p + theme(panel.border=element_blank())
   landmark_top <- 1.2*max(zgg$last_ytail_b[!is.na(zgg$last_ytail_b)],zgg$ymax)*zgg$rescale_plot_area[2]
   mlabel <- "."
-  #landmark_right <- (zgg$tot_width+2*zgg$hop_x)*zgg$rescale_plot_area[1]
   landmark_right <- (zgg$tot_width+1.6*zgg$hop_x)*zgg$rescale_plot_area[1]
   f <- draw_square("annotation",p,svg,landmark_right,0,1,"transparent",0.5,
                    "transparent",0,0,0,slabel="", aspect_ratio = zgg$aspect_ratio)
@@ -1525,32 +1538,8 @@ write_annotations <- function(p, svg)
     x_legend <- 0.8*landmark_top
     y_legend <- 0.8*landmark_right
   }
-  # p <- p + annotate(geom="text", x=x_legend,
-  #                   y=y_legend,
-  #                   label=zgg$name_guild_a,
-  #                   colour = zgg$color_guild_a[1], size=zgg$lsize_legend,
-  #                   hjust = 1, vjust = 0, angle = 0)
-  # p <- p + annotate(geom="text", x=x_legend,
-  #                   y=y_legend,
-  #                   label= paste(rep(" ",length(zgg$name_guild_a))," ",zgg$name_guild_b),
-  #                   colour = zgg$color_guild_b[1], size=zgg$lsize_legend,
-  #                   hjust = 0, vjust = 0, angle = 0)
-  # p <- p +annotate(geom="text", x=landmark_left,
-  #                  y = y_legend,
-  #                  label="1-shell",
-  #                  colour = zgg$corecols[2], size=zgg$lsize_core_box, hjust = 0, vjust = 0,
-  #                  angle = 0,
-  #                  fontface="italic")
-  # svg$text("core-1", data=data.frame(x=landmark_left, y=y_legend), mapping=aes(x=x, y=y), color=zgg$corecols[2],
-  #          label="1-shell",
-  #          size=zgg$lsize_core_box, angle=0)
-  # svg$text("core-1", data=data.frame(x=(0.8+(0.3*zgg$displace_legend[1]))*x_legend, y=y_legend), mapping=aes(x=x, y=y), size=zgg$lsize_legend,
-  #          label=zgg$name_guild_a, color=zgg$color_guild_a[1], angle=0)
-  # svg$text("core-1", data=data.frame(x=x_legend, y=y_legend), mapping=aes(x=x, y=y), size=zgg$lsize_legend,
-  #          label=zgg$name_guild_b, color=zgg$color_guild_b[1], angle=0)
 
   landmark_bottom <- min(zgg$last_ytail_a[!is.na(zgg$last_ytail_b)],1.2*zgg$ymin)*zgg$rescale_plot_area[2]
-  
   zgg$landmark_left <<- landmark_left
   zgg$landmark_right <<- landmark_right
   zgg$landmark_top <<- landmark_top
@@ -1956,35 +1945,6 @@ strip_isolated_nodes <- function(myenv)
 }
 
 
-read_and_analyze <- function(directorystr,network_file,label_strguilda,label_strguildb)
-{
-
-  str_guild_a <- "pl"
-  str_guild_b <- "pol"
-  name_guild_a <- "Plants"
-  name_guild_b <- "Pollinators"
-  network_name <- strsplit(network_file,".csv")[[1]][1]
-  slabels <- c("Plant", "Pollinator")
-  if (grepl("_SD_",network_name)){
-    str_guild_b <- "disp"
-    name_guild_b <- "Dispersers"
-  }
-
-  if (nchar(label_strguilda)>0){
-    slabels <- c(label_strguilda, label_strguildb)
-    name_guild_a <- label_strguilda
-    name_guild_b <- label_strguildb
-  }
-
-  result_analysis <- analyze_network(network_file, directory = directorystr, guild_a = str_guild_a,
-                                     guild_b = str_guild_b, only_NODF = TRUE)
-
-
-  calc_vals <- list("result_analysis" = result_analysis, "str_guild_a" = str_guild_a, "str_guild_b" = str_guild_b,
-                    "name_guild_a" = name_guild_a, "name_guild_b" = name_guild_b,
-                    "network_name" = network_name)
-  return(calc_vals)
-}
 
 def_configuration <- function(paintlinks, print_to_file, plotsdir, orderkcoremaxby, isogonos, flip_results, aspect_ratio,
                               alpha_level, color_guild_a, color_guild_b,
@@ -2001,7 +1961,7 @@ def_configuration <- function(paintlinks, print_to_file, plotsdir, orderkcoremax
                               root_specialist_expand,hide_plot_border,rescale_plot_area,kcore1specialists_leafs_vertical_separation,
                               corebox_border_size, kcore_species_name_display,kcore_species_name_break,
                               shorten_species_name,exclude_species_number,
-                              label_strguilda, label_strguildb, landscape_plot, backg_color, show_title,
+                              label_strguilda, label_strguildb, landscape_plot, backg_color, show_title, show_legend,
                               use_spline, spline_points, file_name_append, svg_scale_factor, weighted_links, square_nodes_size_scale,
                               move_all_SVG_up, move_all_SVG_right, progress
                               )
@@ -2059,6 +2019,8 @@ def_configuration <- function(paintlinks, print_to_file, plotsdir, orderkcoremax
   zgg$landscape_plot <- landscape_plot
   zgg$backg_color <- backg_color
   zgg$show_title <- show_title
+  zgg$show_legend <- show_legend
+print(paste("show_title",show_title,"show_legend",show_legend))
   zgg$use_spline <- use_spline
   zgg$spline_points <- spline_points
   zgg$file_name_append <- file_name_append

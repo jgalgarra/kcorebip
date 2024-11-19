@@ -288,6 +288,23 @@ read_network <- function(namenetwork, guild_astr = "pl", guild_bstr = "pol", dir
 
 }
 
+#' Reads and analyzes a network from a file
+#'
+#' @param directorystr where the network file is stored
+#' @param network_file is the file name that contains the interaction matrix
+#' @param label_strguilda name of the guild A of nodes
+#' @param label_strguilda name of the guild B of nodes
+#' @return \code{calc_vals} a list containing the following objects
+#' \itemize{
+#'  \item{\code{"result_analysis"}}{ a full network analysis}
+#'  \item{\code{"str_guild_a"}}{ list of nodes of Guild A}
+#'  \item{\code{"str_guild_b"}}{ list of nodes of Guild B}
+#'  \item{\code{"name_guild_a"}}{ name of Guild A}
+#'  \item{\code{"network_name"}}{ network name}
+#'  }
+#' @export
+#' @examples p <- read_and_analyze("../data","M_PL_003.csv","Plant","Pollinator")
+
 
 read_and_analyze <- function(directorystr,network_file,label_strguilda,label_strguildb)
 {

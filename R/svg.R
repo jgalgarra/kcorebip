@@ -22,7 +22,7 @@ library(rlang)
 #' @examples
 #' SVG()
 
-SVG<-function(scale_factor,style="ziggurat",nnodes=50) {
+SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
   plottype = style
   fontscale = ifelse (style=="ziggurat", 3+(nnodes<50), max(25,50-(nnodes/5)))
   flinkscale = ifelse (style=="ziggurat", 1, 100)
@@ -65,9 +65,20 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50) {
     else if (exists("bpp"))
       maxy  <- ceiling(4*this$maxy/10)*10
     fzcale <- 1.05
-    viewBox<-paste0(minx, " ", miny, " ", (maxx-minx), " ", (maxy-miny))
-    svg0<-paste0("<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"", viewBox, "\">\n")
-    #svg0<-paste0("<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"", viewBox, "\" width=\"", max(600,maxx-minx), "\" height=\"", max(300,maxy-miny), "\">")
+    #svg0<-paste0("<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"", viewBox, "\">\n")
+    tleftx <- minx
+    tlefty <- miny
+    swidth <- (maxx-minx)
+    sheight <- (maxy-miny)
+    if (flip_coordinates){
+      viewBox<-paste0(tlefty, " ", tleftx-swidth, " ", sheight, " ", swidth)
+      viewBox<-paste0(tleftx, " ", 0.9*(tleftx-tlefty), " ", swidth, " ", swidth)
+      svg0<-paste0("<svg transform='rotate(90)' xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"", viewBox, "\">\n")
+    }
+    else{
+      viewBox<-paste0(tleftx, " ", tlefty, " ", swidth, " ", sheight)
+      svg0<-paste0("<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"", viewBox, "\">\n")
+    }
       
     svg1<-paste0("</svg>")
     return(paste0(svg0, paste0(this$content, collapse=""), svg1, sep=""))
@@ -143,6 +154,8 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50) {
   # crea un texto a partir de un conjunto de datos, con parametros similares
   # a ggplot2::geom_text
   this$text <- function(idPrefix, data, mapping, label, color, size, angle=0) {
+    if (flip_coordinates)
+      angle = angle + 90
     result <- ""
 
     # si solo se ha pasado un color lo utiliza para todos los datos
@@ -168,10 +181,10 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50) {
   }
 
   # funcion auxiliar para la creacion de texto
-  # divide el texto generado en tantos tspan como saltos de linea tenga la eqtiqueta recibida
+  # divide el texto generado en tantos tspan como saltos de linea tenga la etiqueta recibida
   this$text2 <- function(id, x, y, label, color, size, angle) {
     result<-""
-
+    
     # actualiza las coordenadas del viewBox si es necesario
     # anyade el tamanyo correspondiente a toda la longitud del texto
     len  <- nchar(label)
