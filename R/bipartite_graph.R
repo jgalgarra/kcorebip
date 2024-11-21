@@ -1270,19 +1270,7 @@ draw_maxcore_bip <- function(svg)
                                                          orderby = "kdegree",
                                                          style=bpp$style,guild="A")
   p <- ggplot() + scale_x_continuous(name="x") + scale_y_continuous(name="y")
-  print(p)
   f <- paint_labels(p,svg,"-a",bpp$list_dfs_a[[bpp$kcoremax]])
-  # nsp <- name_species_preprocess(bpp$kcoremax,bpp$list_dfs_a[[bpp$kcoremax]],
-  #                                bpp$kcore_species_name_display,
-  #                                bpp$kcore_species_name_break,myenv=bpp)
-  # labelszig <- nsp$labelszig
-  # kcoremaxlabel_angle <- nsp$kcoremaxlabel_angle
-  # p <- ggplot() + scale_x_continuous(name="x") + scale_y_continuous(name="y") +
-  #      paint_rect_core(bpp$list_dfs_a[[bpp$kcoremax]],alpha=bpp$alpha_level)
-  # paint_rect_svg("-a",bpp$list_dfs_a[[bpp$kcoremax]])
-  # f <- kcoremax_label_display(paste0("kcore", bpp$kcoremax, "-a"),p,svg,
-  #                             kcoremaxlabel_angle,bpp$list_dfs_a[[bpp$kcoremax]],
-  #                             labelszig,bpp$lsize_kcoremax)
   p <- f["p"][[1]]
   svg <- f["svg"][[1]]
   num_b_coremax <- bpp$df_cores[bpp$kcoremax,]$num_species_guild_b
@@ -1296,17 +1284,6 @@ draw_maxcore_bip <- function(svg)
                                                           bpp$str_guild_b,  orderby = "kdegree",
                                                           style=bpp$style,guild="B")
   bpp$landmark_right <- max(bpp$list_dfs_b[[bpp$kcoremax]]$x2,bpp$list_dfs_a[[bpp$kcoremax]]$x2)+bpp$xstep
-  
-  
-  
-  # nsp <- name_species_preprocess(bpp$kcoremax,bpp$list_dfs_b[[bpp$kcoremax]],bpp$kcore_species_name_display,
-  #                                bpp$kcore_species_name_break)
-  # labelszig <- nsp$labelszig
-  # p <- p + paint_rect_core(p,bpp$list_dfs_b[[bpp$kcoremax]],alpha=bpp$alpha_level)
-  # paint_rect_svg("-b",bpp$list_dfs_b[[bpp$kcoremax]])
-  # f <- kcoremax_label_display(paste0("kcore", bpp$kcoremax, "-b"),p,svg,kcoremaxlabel_angle,
-  #                             bpp$list_dfs_b[[bpp$kcoremax]],labelszig,
-  #                             bpp$lsize_kcoremax, phjust = 1, is_guild_a = FALSE)
   f <- paint_labels(p,svg,"-b",bpp$list_dfs_b[[bpp$kcoremax]])
   calc_vals <- list("p" = f["p"][[1]], "svg" = f["svg"][[1]], "basey" = bpp$basey, 
                     "topy" = bpp$toopy, "topxa" = bpp$topxa, "topxb" = bpp$topxb,
