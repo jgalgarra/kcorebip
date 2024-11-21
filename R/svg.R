@@ -71,7 +71,6 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
     swidth <- (maxx-minx)
     sheight <- (maxy-miny)
     if (flip_coordinates){
-      viewBox<-paste0(tlefty, " ", tleftx-swidth, " ", sheight, " ", swidth)
       viewBox<-paste0(tleftx, " ", 0.9*(tleftx-tlefty), " ", swidth, " ", swidth)
       svg0<-paste0("<svg transform='rotate(90)' xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"", viewBox, "\">\n")
     }

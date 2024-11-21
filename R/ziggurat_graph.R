@@ -214,9 +214,9 @@ create_label_species <- function(strent,newline = FALSE, myenv=zgg){
 
 # Decides length and rotation of labels
 name_species_preprocess <- function (kcore, list_dfs, kcore_species_name_display,
-                                     kcore_species_name_break) {
+                                     kcore_species_name_break,myenv=zgg) {
   if (is.element(kcore,kcore_species_name_display)){
-    if (!zgg$flip_results)
+    if (!myenv$flip_results)
       kcoremaxlabel_angle <- 90
     else
       kcoremaxlabel_angle <- 0
@@ -224,7 +224,7 @@ name_species_preprocess <- function (kcore, list_dfs, kcore_species_name_display
     pnewline <- is.element(kcore,kcore_species_name_break)
     for (j in 1:length(list_dfs$name_species)){
       labelszig[j] <- create_label_species(list_dfs$name_species[j],newline=pnewline)
-      if (!zgg$exclude_species_number)
+      if (!myenv$exclude_species_number)
         labelszig[j] <- paste(list_dfs$label[j],labelszig[j])
     }
   } else {
@@ -1469,85 +1469,201 @@ handle_specialists <- function(p,svg,specialists_a,specialists_b,lado,gap)
   return(calc_vals)
 }
 
-# Final annotations
-write_annotations <- function(p, svg)
-{ 
+# # Final annotations
+# write_annotations <- function(p, svg)
+# { 
+#   title_text = ""
+#   stext = ""
+#   ctext = ""
+#   lzcf <- 3.5
+#   legsize <- round(lzcf*(zgg$lsize_legend-1))
+#   legends_text <- paste0(
+#     "<span style = 'text-align: left; color:",zgg$color_guild_a[1],"; font-size:",legsize,"pt'>",
+#     paste('&#9632;',zgg$name_guild_a),
+#     "</span> <span style = 'text-align: left;color:",zgg$color_guild_b[1],"; font-size:",legsize,"pt'>",
+#     paste('&nbsp; &#9632;',zgg$name_guild_b),"</span>")
+#   if (zgg$show_legend=="TOP")
+#     stext = legends_text
+#   if (zgg$show_legend=="BOTTOM")
+#     ctext = legends_text
+#   if (zgg$show_title)
+#     title_text <- paste0("Network: ",zgg$network_name)
+#   # Legend size conversion factor
+#   p <- p+ ggtitle(title_text,subtitle=stext)
+#   p <- p +labs(caption = ctext)
+#   p <- p + coord_fixed(ratio=zgg$aspect_ratio) +theme_bw() + theme(panel.grid.minor.x = element_blank(),
+#                                                                panel.grid.minor.y = element_blank(),
+#                                                                panel.grid.major.x = element_blank(),
+#                                                                panel.grid.major.y = element_blank(),
+#                                                                axis.text.x = element_blank(),
+#                                                                axis.text.y = element_blank(),
+#                                                                axis.ticks.x=element_blank(),
+#                                                                axis.ticks.y=element_blank(),
+#                                                                axis.title.x = element_blank(),
+#                                                                axis.title.y = element_blank(),                                                               plot.background = element_rect(fill = zgg$backg_color),
+#                                                                panel.background = element_rect(fill = zgg$backg_color),
+#                                                                plot.title = element_text(size = lzcf*(zgg$lsize_legend+0.5),
+#                                                                                          hjust = 0.5,
+#                                                                                          face="plain"),
+#                                                                
+#                                                                plot.subtitle = ggtext::element_markdown(size=lzcf*zgg$lsize_legend,hjust=0.9),
+#                                                                plot.caption = ggtext::element_markdown(size=lzcf*zgg$lsize_legend,hjust=0.9)
+#                                                                 )
+#   if (zgg$hide_plot_border)
+#     p <- p + theme(panel.border=element_blank())
+#   landmark_top <- 1.2*max(zgg$last_ytail_b[!is.na(zgg$last_ytail_b)],zgg$ymax)*zgg$rescale_plot_area[2]
+#   mlabel <- "."
+#   landmark_right <- (zgg$tot_width+1.6*zgg$hop_x)*zgg$rescale_plot_area[1]
+#   f <- draw_square("annotation",p,svg,landmark_right,0,1,"transparent",0.5,
+#                    "transparent",0,0,0,slabel="", aspect_ratio = zgg$aspect_ratio)
+#   p <- f["p"][[1]]
+#   svg <- f["svg"][[1]]
+#   p <- p +annotate(geom="text", x= landmark_right, y=0, label=mlabel,
+#                    colour = "red", size=1, hjust = 0, vjust = 0, angle = 0)
+#   svg$text("annotation", data=data.frame(x=landmark_right, y=0), mapping=aes(x=x, y=y), color="red", label=mlabel, size=1, angle=0)
+#   landmark_left <- min(zgg$last_xtail_a[[zgg$kcoremax]],zgg$last_xtail_b[[zgg$kcoremax]])-min(zgg$hop_x,0.2*min(zgg$last_xtail_a[[zgg$kcoremax]],zgg$last_xtail_b[[zgg$kcoremax]]))
+#   landmark_left <- (min(landmark_left, zgg$pos_tail_x)- zgg$hop_x/4)*zgg$rescale_plot_area[1]
+#   
+#   p <- p +annotate(geom="text", x=landmark_left, y=0, label=mlabel,
+#                    colour = "red", size=2, hjust = 0, vjust = 0, angle = 0)
+#   svg$text("annotation", data=data.frame(x=landmark_left, y=0), mapping=aes(x=x, y=y), color="red", label=mlabel, size=1, angle=0)
+#   x_span <- landmark_right - landmark_left
+# 
+#   if (!(zgg$flip_results)){
+#     x_legend <- 0.8*landmark_right
+#     y_legend <- 0.8*landmark_top
+#   } else {
+#     x_legend <- 0.8*landmark_top
+#     y_legend <- 0.8*landmark_right
+#   }
+# 
+#   landmark_bottom <- min(zgg$last_ytail_a[!is.na(zgg$last_ytail_b)],1.2*zgg$ymin)*zgg$rescale_plot_area[2]
+#   zgg$landmark_left <<- landmark_left
+#   zgg$landmark_right <<- landmark_right
+#   zgg$landmark_top <<- landmark_top
+#   zgg$landmark_bottom <- landmark_bottom
+#  
+#   calc_vals <- list("p" = p, "svg" = svg)
+#   return(calc_vals)
+# }
+
+
+write_final_annotations <- function(p, svg, plottype, myenv=zgg)
+{
   title_text = ""
   stext = ""
   ctext = ""
-  lzcf <- 2.5
-  legsize <- round(lzcf*(zgg$lsize_legend-1))
+  lzcf <- 3
+  myvjust <- 0
+  legsize <- round(lzcf*(myenv$lsize_legend-1))
   legends_text <- paste0(
-    "<span style = 'text-align: left; color:",zgg$color_guild_a[1],"; font-size:",legsize,"pt'>",
-    paste('&#9632;',zgg$name_guild_a),
-    "</span> <span style = 'text-align: left;color:",zgg$color_guild_b[1],"; font-size:",legsize,"pt'>",
-    paste('&nbsp; &#9632;',zgg$name_guild_b),"</span>")
-  if (zgg$show_legend=="TOP")
+    "<span style = 'text-align: left; color:",myenv$color_guild_a[1],"; font-size:",legsize,"pt'>",paste('&#9632;',myenv$name_guild_a),
+    "</span> <span style = 'text-align: left;color:",myenv$color_guild_b[1],"; font-size:",legsize,"pt'>",paste('&nbsp; &#9632;',myenv$name_guild_b),"</span>")
+  if (myenv$show_legend=="TOP"){
     stext = legends_text
-  if (zgg$show_legend=="BOTTOM")
+    myvjust = -3
+  }
+  if (myenv$show_legend=="BOTTOM"){
     ctext = legends_text
-  if (zgg$show_title)
-    title_text <- paste0("Network: ",zgg$network_name)
+    myvjust = 3
+  }
+  if (myenv$show_title)
+    title_text <- paste0("Network: ",myenv$network_name)
   # Legend size conversion factor
   p <- p+ ggtitle(title_text,subtitle=stext)
   p <- p +labs(caption = ctext)
-  p <- p + coord_fixed(ratio=zgg$aspect_ratio) +theme_bw() + theme(panel.grid.minor.x = element_blank(),
-                                                               panel.grid.minor.y = element_blank(),
-                                                               panel.grid.major.x = element_blank(),
-                                                               panel.grid.major.y = element_blank(),
-                                                               axis.text.x = element_blank(),
-                                                               axis.text.y = element_blank(),
-                                                               axis.ticks.x=element_blank(),
-                                                               axis.ticks.y=element_blank(),
-                                                               axis.title.x = element_blank(),
-                                                               axis.title.y = element_blank(),                                                               plot.background = element_rect(fill = zgg$backg_color),
-                                                               panel.background = element_rect(fill = zgg$backg_color),
-                                                               plot.title = element_text(size = lzcf*(zgg$lsize_legend+1.5),
-                                                                                         hjust = 0.5,
-                                                                                         face="plain"),
-                                                               
-                                                               plot.subtitle = ggtext::element_markdown(size=lzcf*zgg$lsize_legend,hjust=0.9),
-                                                               plot.caption = ggtext::element_markdown(size=lzcf*zgg$lsize_legend,hjust=0.9)
-                                                               
-                                                               
-                                                                )
-  if (zgg$hide_plot_border)
+  p <- p + coord_fixed(ratio=myenv$aspect_ratio) +theme_bw() + theme(panel.grid.minor.x = element_blank(),
+                                                                     panel.grid.minor.y = element_blank(),
+                                                                     panel.grid.major.x = element_blank(),
+                                                                     panel.grid.major.y = element_blank(),
+                                                                     axis.text.x = element_blank(),
+                                                                     axis.text.y = element_blank(),
+                                                                     axis.ticks.x=element_blank(),
+                                                                     axis.ticks.y=element_blank(),
+                                                                     axis.title.x = element_blank(),
+                                                                     axis.title.y = element_blank(),                                                               
+                                                                     plot.background = element_rect(fill = myenv$backg_color),
+                                                                     panel.background = element_rect(fill = myenv$backg_color),
+                                                                     plot.title = element_text(size = lzcf*(myenv$lsize_legend+0.5),
+                                                                                               hjust = 0.5,
+                                                                                               face="plain"),
+                                                                     plot.subtitle = ggtext::element_markdown(size=lzcf*myenv$lsize_legend,hjust=0.9,vjust=myvjust),
+                                                                     plot.caption = ggtext::element_markdown(size=lzcf*myenv$lsize_legend,hjust=0.9,vjust=myvjust))
+  
+  if (myenv$hide_plot_border)
     p <- p + theme(panel.border=element_blank())
-  landmark_top <- 1.2*max(zgg$last_ytail_b[!is.na(zgg$last_ytail_b)],zgg$ymax)*zgg$rescale_plot_area[2]
+  # This dot marks the plot edges
   mlabel <- "."
-  landmark_right <- (zgg$tot_width+1.6*zgg$hop_x)*zgg$rescale_plot_area[1]
-  f <- draw_square("annotation",p,svg,landmark_right,0,1,"transparent",0.5,
-                   "transparent",0,0,0,slabel="", aspect_ratio = zgg$aspect_ratio)
+  if (plottype=='ziggurat'){
+    landmark_right <- (myenv$tot_width+1.6*myenv$hop_x)*myenv$rescale_plot_area[1]
+    landmark_left <- min(myenv$last_xtail_a[[myenv$kcoremax]],myenv$last_xtail_b[[myenv$kcoremax]])-min(myenv$hop_x,0.2*min(myenv$last_xtail_a[[myenv$kcoremax]],myenv$last_xtail_b[[myenv$kcoremax]]))
+    landmark_left <- (min(landmark_left, myenv$pos_tail_x)- myenv$hop_x/4)*myenv$rescale_plot_area[1]
+    landmark_top <- (1.5*myenv$xstep+myenv$landmark_top)*myenv$rescale_plot_area[2]
+    landmark_bottom <- (-1.5*myenv$xstep+myenv$landmark_bottom)*myenv$rescale_plot_area[2]
+  }
+  else{
+    landmark_right <- (myenv$landmark_right+2*myenv$xstep)*myenv$rescale_plot_area[1]
+    landmark_left <- min(myenv$landmark_left,
+                       (myenv$pos_tail_x)*myenv$rescale_plot_area[1])-myenv$xstep*ifelse(myenv$exists_fat_tail,4,3)
+    landmark_top <- myenv$landmark_top+myenv$xstep
+    landmark_bottom <- myenv$landmark_bottom
+    if(!myenv$exists_fat_tail){
+       nnodes <- length(bpp$result_analysis$g_core)
+       landmark_left <- landmark_left - ifelse(plottype=='chilopodograph',0.5*myenv$xstep,
+                                               (1+nnodes/100)*myenv$xstep)
+       landmark_bottom <- landmark_bottom - myenv$xstep
+    }
+  }
+  if ((myenv$flip_results) && (plottype!='ziggurat')){
+    landmark_right <- landmark_right -3*myenv$xstep
+    landmark_left <- landmark_left + 4*myenv$xstep
+    landmark_top <- landmark_top + myenv$xstep
+    landmark_bottom <- landmark_bottom + myenv$xstep
+    landmark_top <- max(abs(landmark_top),landmark_bottom)
+    landmark_bottom <- -landmark_top
+  }
+  if (plottype=='ziggurat') 
+    landmark_bottom <- min(myenv$last_ytail_a[!is.na(myenv$last_ytail_b)],1.2*zgg$ymin)*myenv$rescale_plot_area[2]
+  
+  f <- draw_square("annotation",p,svg,landmark_right,0,1,"transparent",0.5,"transparent",0,0,0,slabel="")
   p <- f["p"][[1]]
   svg <- f["svg"][[1]]
   p <- p +annotate(geom="text", x= landmark_right, y=0, label=mlabel,
                    colour = "red", size=1, hjust = 0, vjust = 0, angle = 0)
-  svg$text("annotation", data=data.frame(x=landmark_right, y=0), mapping=aes(x=x, y=y), color="red", label=mlabel, size=1, angle=0)
-  landmark_left <- min(zgg$last_xtail_a[[zgg$kcoremax]],zgg$last_xtail_b[[zgg$kcoremax]])-min(zgg$hop_x,0.2*min(zgg$last_xtail_a[[zgg$kcoremax]],zgg$last_xtail_b[[zgg$kcoremax]]))
-  landmark_left <- (min(landmark_left, zgg$pos_tail_x)- zgg$hop_x/4)*zgg$rescale_plot_area[1]
+  svg$text("annotation", data=data.frame(x=landmark_right, y=0), 
+           mapping=aes(x=x, y=y), color="red", label=mlabel, size=1, angle=0)
+  p <- p+theme(plot.margin=unit(c(0.5,0.5,0.5,0.5),"cm"))
   
-  p <- p +annotate(geom="text", x=landmark_left, y=0, label=mlabel,
-                   colour = "red", size=2, hjust = 0, vjust = 0, angle = 0)
-  svg$text("annotation", data=data.frame(x=landmark_left, y=0), mapping=aes(x=x, y=y), color="red", label=mlabel, size=1, angle=0)
+  
+  ypunto <- ifelse(plottype=='ziggurat',0,landmark_top)
+  mlabel <- "."
+  p <- p +annotate(geom="text", x=landmark_left, y=landmark_top, label=mlabel,
+                   colour = "red", size=1, hjust = 0, vjust = 0, angle = 0)
+  svg$text("annotation", data=data.frame(x=landmark_left, y=ypunto), 
+           mapping=aes(x=x, y=y), color="red", label=mlabel, size=1, angle=0)
+  p <- p +annotate(geom="text", x=landmark_left, y=landmark_bottom, label=mlabel,
+                   colour = "red", size=1, hjust = 0, vjust = 0, angle = 0)
+  ypunto <- ifelse(plottype=='ziggurat',0,landmark_bottom)
+  svg$text("annotation", data=data.frame(x=landmark_left, 
+          y=ypunto), mapping=aes(x=x, y=y), color="red", label=mlabel, size=1, angle=0)
+  
   x_span <- landmark_right - landmark_left
-
-  if (!(zgg$flip_results)){
+  
+  if (!(myenv$flip_results)){
     x_legend <- 0.8*landmark_right
     y_legend <- 0.8*landmark_top
-  } else {
-    x_legend <- 0.8*landmark_top
-    y_legend <- 0.8*landmark_right
-  }
-
-  landmark_bottom <- min(zgg$last_ytail_a[!is.na(zgg$last_ytail_b)],1.2*zgg$ymin)*zgg$rescale_plot_area[2]
-  zgg$landmark_left <<- landmark_left
-  zgg$landmark_right <<- landmark_right
-  zgg$landmark_top <<- landmark_top
-  zgg$landmark_bottom <- landmark_bottom
- 
-  calc_vals <- list("p" = p, "svg" = svg)
+  } 
+  # else {
+  #   x_legend <- 0.8*landmark_top
+  #   y_legend <- 0.8*landmark_right
+  # }
+  if (plottype=='ziggurat')
+     landmark_bottom <- min(myenv$last_ytail_a[!is.na(myenv$last_ytail_b)],1.2*myenv$ymin)*myenv$rescale_plot_area[2]
+  calc_vals <- list("p" = p, "svg" = svg, "landmark_left" = landmark_left, "landmark_right"= landmark_right,
+                    "landmark_bottom" = landmark_bottom, "landmark_top" = landmark_top)
   return(calc_vals)
 }
+
 
 # Handle specialist chain species
 handle_orphans <- function(vg)
@@ -2020,7 +2136,6 @@ def_configuration <- function(paintlinks, print_to_file, plotsdir, orderkcoremax
   zgg$backg_color <- backg_color
   zgg$show_title <- show_title
   zgg$show_legend <- show_legend
-print(paste("show_title",show_title,"show_legend",show_legend))
   zgg$use_spline <- use_spline
   zgg$spline_points <- spline_points
   zgg$file_name_append <- file_name_append
@@ -2223,9 +2338,14 @@ draw_ziggurat_plot <- function(svg_scale_factor, progress)
   }
 
   # Legend, title and final annotations
-  v <- write_annotations(p, svg)
+  v <- write_final_annotations(p, svg, 'ziggurat', myenv=zgg)
   p <- v["p"][[1]]
   svg <- v["svg"][[1]]
+  
+  zgg$landmark_left <<- v["landmark_left"][[1]]
+  zgg$landmark_right <<- v["landmark_right"][[1]]
+  zgg$landmark_top <<- v["landmark_top"][[1]]
+  zgg$landmark_bottom <- v["landmark_bottom"][[1]]
 
   # Plot straight links
   if (!is.null(progress)) progress$inc(1/11, detail=strings$value("MESSAGE_ZIGGURAT_PROGRESS_DRAWING_LINKS"))

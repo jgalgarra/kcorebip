@@ -260,9 +260,6 @@ draw_tail_bip <- function(idPrefix, p,svg,fat_tail,lado,color,sqlabel,basex,base
         adjust <- "yes"
       }
   }
-  # if ((bpp$flip_results) & (langle == 0) & (position!="West") )
-  #   langle <- langle + 70
-  # Draw square node
 
   f <- draw_square(idPrefix, p,svg, xx,yy,
                    ifelse(bpp$style=="chilopodograph",lado,
@@ -285,7 +282,6 @@ draw_tail_bip <- function(idPrefix, p,svg,fat_tail,lado,color,sqlabel,basex,base
   calc_vals <- list("p" = p, "svg" = svg, "sidex" = sidex, "xx" = posxx1, "yy" = posyy1)
   return(calc_vals)
 }
-
 
 draw_edge_tails_bip <- function(p,svg,point_x,point_y,kcoreother,long_tail,list_dfs,color_guild, inverse = "no",
                             vertical = "yes", orientation = "South", revanddrop = "no",
@@ -391,6 +387,13 @@ draw_parallel_guilds <- function(basex,topx,basey,topy,numboxes,nnodes,fillcolor
   pbasex <- bpp$coremax_triangle_width_factor*( basex - (nnodes %/%8) * abs(topx-basex)/3)
   xstep <- bpp$square_nodes_size_scale*(topx-pbasex)/max(12,nnodes)
   bpp$xstep <- xstep
+  if ((xstep>2000) && (guild=="A")) {
+    bpp$lsize_kcoremax <-  bpp$lsize_kcoremax + 1
+  }
+  if ((xstep<1000) && (guild=="A")) {
+    bpp$lsize_kcoremax <-  max(2,bpp$lsize_kcoremax - 1.5)
+  }
+  
   vertsep <- 3
   ptopy <- vertsep*basey+ifelse(basey>0,1,-1)*xstep
   bpp$landmark_top <- max(bpp$landmark_top,ptopy)
@@ -899,7 +902,7 @@ write_annotations_bip <- function(p, svg)
   title_text = ""
   stext = ""
   ctext = ""
-  lzcf <- 2.5
+  lzcf <- 3.5
   myvjust <- 0
   legsize <- round(lzcf*(bpp$lsize_legend-1))
   legends_text <- paste0(
@@ -907,11 +910,11 @@ write_annotations_bip <- function(p, svg)
     "</span> <span style = 'text-align: left;color:",bpp$color_guild_b[1],"; font-size:",legsize,"pt'>",paste('&nbsp; &#9632;',bpp$name_guild_b),"</span>")
   if (bpp$show_legend=="TOP"){
     stext = legends_text
-    myvjust = -1
+    myvjust = -3
   }
   if (bpp$show_legend=="BOTTOM"){
     ctext = legends_text
-    myvjust = 1
+    myvjust = 3
   }
   if (bpp$show_title)
     title_text <- paste0("Network: ",bpp$network_name)
@@ -930,7 +933,7 @@ write_annotations_bip <- function(p, svg)
                                                                axis.title.y = element_blank(),                                                               
                                                                plot.background = element_rect(fill = bpp$backg_color),
                                                                panel.background = element_rect(fill = bpp$backg_color),
-                                                               plot.title = element_text(size = lzcf*(bpp$lsize_legend+1.5),
+                                                               plot.title = element_text(size = lzcf*(bpp$lsize_legend+0.5),
                                                                                          hjust = 0.5,
                                                                                          face="plain"),
                                                                plot.subtitle = ggtext::element_markdown(size=lzcf*bpp$lsize_legend,hjust=0.9,vjust=myvjust),
@@ -946,16 +949,13 @@ write_annotations_bip <- function(p, svg)
   landmark_right <- (bpp$landmark_right+2*bpp$xstep)*bpp$rescale_plot_area[1]
   landmark_left <- min(bpp$landmark_left,
                        (bpp$pos_tail_x)*bpp$rescale_plot_area[1])-bpp$xstep*ifelse(bpp$exists_fat_tail,4,3)
+  
   if (bpp$flip_results){
     landmark_right <- landmark_right -3*bpp$xstep
     landmark_left <- landmark_left +4*bpp$xstep
     landmark_top <- landmark_top - bpp$xstep
     landmark_bottom <- landmark_bottom + bpp$xstep
   }
-  # else {
-  #   landmark_right <- landmark_right -3*bpp$xstep
-  #   landmark_left <- landmark_left +3*bpp$xstep
-  # }
   f <- draw_square("annotation",p,svg,landmark_right,0,1,"transparent",0.5,"transparent",0,0,0,slabel="")
   p <- f["p"][[1]]
   svg <- f["svg"][[1]]
@@ -1239,8 +1239,10 @@ draw_maxcore_bip <- function(svg)
                                                          bpp$rg, bpp$str_guild_a, 
                                                          orderby = "kdegree",
                                                          style=bpp$style,guild="A")
-  nsp <- name_species_preprocess(bpp$kcoremax,bpp$list_dfs_a[[bpp$kcoremax]],bpp$kcore_species_name_display,
-                                 bpp$kcore_species_name_break)
+  bpp$landmark_top <- max(bpp$list_dfs_a[[bpp$kcoremax]]$y2)
+  nsp <- name_species_preprocess(bpp$kcoremax,bpp$list_dfs_a[[bpp$kcoremax]],
+                                 bpp$kcore_species_name_display,
+                                 bpp$kcore_species_name_break,myenv=bpp)
   kcoremaxlabel_angle <- nsp$kcoremaxlabel_angle
   labelszig <- nsp$labelszig
   p <- ggplot() +
@@ -1250,6 +1252,7 @@ draw_maxcore_bip <- function(svg)
               mapping=aes(xmin=x1, xmax=x2, ymin=y1, ymax=y2), 
               fill = bpp$list_dfs_a[[bpp$kcoremax]]$col_row,  
               color="transparent",alpha=bpp$alpha_level)
+
   
   svg$rect(paste0("kcore", bpp$kcoremax, "-a"), data=bpp$list_dfs_a[[bpp$kcoremax]],
            mapping=aes(xmin=x1, xmax=x2, ymin=y1, ymax=y2), 
@@ -1270,14 +1273,18 @@ draw_maxcore_bip <- function(svg)
                                                           species_B,bpp$rg,
                                                           bpp$str_guild_b,  orderby = "kdegree",
                                                           style=bpp$style,guild="B")
+  bpp$landmark_bottom <- min(bpp$list_dfs_b[[bpp$kcoremax]]$y2)
+  bpp$landmark_right <- max(bpp$list_dfs_b[[bpp$kcoremax]]$x2,bpp$list_dfs_a[[bpp$kcoremax]]$x2)+bpp$xstep
   bpp$last_ytail_b[bpp$kcoremax]<- bpp$toopy
   bpp$last_xtail_b[bpp$kcoremax]<- bpp$topxb
   nsp <- name_species_preprocess(bpp$kcoremax,bpp$list_dfs_b[[bpp$kcoremax]],bpp$kcore_species_name_display,
                                  bpp$kcore_species_name_break)
   kcoremaxlabel_angle <- nsp$kcoremaxlabel_angle
   labelszig <- nsp$labelszig
-  p <- p + geom_rect(data=bpp$list_dfs_b[[bpp$kcoremax]] , mapping=aes(xmin=x1, xmax=x2, ymin=y1, ymax=y2),
-                     fill = bpp$list_dfs_b[[bpp$kcoremax]]$col_row, color="transparent", alpha=bpp$alpha_level)
+  p <- p + geom_rect(data=bpp$list_dfs_b[[bpp$kcoremax]] , 
+                     mapping=aes(xmin=x1, xmax=x2, ymin=y1, ymax=y2),
+                     fill = bpp$list_dfs_b[[bpp$kcoremax]]$col_row, 
+                     color="transparent", alpha=bpp$alpha_level)
 
   svg$rect(paste0("kcore", bpp$kcoremax, "-b"), bpp$list_dfs_b[[bpp$kcoremax]] , mapping=aes(xmin=x1, xmax=x2, ymin=y1, ymax=y2),
            fill=bpp$list_dfs_b[[bpp$kcoremax]]$col_row, alpha=bpp$alpha_level,
@@ -1357,10 +1364,8 @@ draw_maxcore_tails_bip <- function(p, svg)
   return(calc_vals)
 }
 
-display_plot <- function(p, printfile, flip, plwidth=14, ppi = 300, landscape = bpp$label_strguild, fname_append = "")
+display_plot_bip <- function(p, printfile,  plwidth=14, ppi = 300, landscape = bpp$label_strguild, fname_append = "")
 {
-  if (flip)
-    p <- p + coord_flip()
   if (printfile){
     if (fname_append != "")
       ftname_append <- paste0("_",fname_append)
@@ -1552,7 +1557,6 @@ draw_inner_links_bip <- function(p, svg)
 
 draw_bipartite_plot <- function(svg_scale_factor, progress)
 {
-  
   if (!is.null(progress)) 
     progress$inc(1/11, detail=strings$value("MESSAGE_ZIGGURAT_PROGRESS_PROCESSING_NODES"))
   zinit_time <- proc.time()
@@ -1576,7 +1580,7 @@ draw_bipartite_plot <- function(svg_scale_factor, progress)
   bpp$ymax <- bpp$ymax * (1+0.1*bpp$height_box_y_expand)
   bpp$hop_x <- bpp$factor_hop_x*(bpp$tot_width)/max(1,(bpp$kcoremax-2))
   bpp$lado <- min(0.05*bpp$tot_width,bpp$height_y * bpp$aspect_ratio)
-  bpp$basey <- (0.1+0.1*length(bpp$df_cores[bpp$kcoremax,]$num_species_guild_a))*bpp$ymax
+  bpp$basey <- 2.5*bpp$lado#(0.1+0.1*length(bpp$df_cores[bpp$kcoremax,]$num_species_guild_a))*bpp$ymax
   wcormax <- 1.2*bpp$hop_x*bpp$coremax_triangle_width_factor
   bpp$topxa <- 0.65*bpp$hop_x
   bpp$basex <- bpp$topxa - wcormax
@@ -1616,8 +1620,7 @@ draw_bipartite_plot <- function(svg_scale_factor, progress)
     p <- z["p"][[1]]
     svg <- z["svg"][[1]]
   }
-  
-  
+
   if (bpp$style=="chilopodograph"){
     bpp$posic_zig <- f["posic_zig"][[1]] 
     bpp$list_dfs_a <- f["list_dfs_a"][[1]]
@@ -1671,10 +1674,14 @@ draw_bipartite_plot <- function(svg_scale_factor, progress)
     p <- z["p"][[1]] 
     svg <- z["svg"][[1]]
   }
-  
-  v <- write_annotations_bip(p, svg)
+  #v <- write_annotations_bip(p, svg)
+  v <- write_final_annotations(p, svg, bpp$style, myenv=bpp)
   p <- v["p"][[1]]
   svg <- v["svg"][[1]]
+  bpp$landmark_left <<- v["landmark_left"][[1]]
+  bpp$landmark_right <<- v["landmark_right"][[1]]
+  bpp$landmark_top <<- v["landmark_top"][[1]]
+  bpp$landmark_bottom <- v["landmark_bottom"][[1]]
   # Plot straight links
   if (!is.null(progress))
     progress$inc(1/11, detail=strings$value("MESSAGE_ZIGGURAT_PROGRESS_DRAWING_LINKS"))
@@ -1693,17 +1700,19 @@ draw_bipartite_plot <- function(svg_scale_factor, progress)
                color=bpp$color_link,size=bpp$bent_links$weightlink)
     }
   }
+  if (bpp$flip_results)
+    p <- p+coord_flip()+scale_x_reverse()
+  
   if (is.null(progress))
-    display_plot(p,bpp$print_to_file,bpp$flip_results, landscape = bpp$landscape_plot, fname_append = bpp$file_name_append)
-
+     display_plot_bip(p,bpp$print_to_file, landscape = bpp$landscape_plot, fname_append = bpp$file_name_append)
+  
   # Stores results
   bpp$plot  <- p
   bpp$svg   <- svg
   # 
   # html<-svg$html()
   # cat(html, file = "tmp.svg")
-  
-  return(bpp)
+    return(bpp)
 
 }
 if (debugging)
