@@ -1569,7 +1569,6 @@ write_final_annotations <- function(p, svg, plottype, myenv=zgg)
   }
   if (myenv$show_title)
     title_text <- paste0("Network: ",myenv$network_name)
-  # Legend size conversion factor
   p <- p+ ggtitle(title_text,subtitle=stext)
   p <- p +labs(caption = ctext)
   p <- p + coord_fixed(ratio=myenv$aspect_ratio) +theme_bw() + theme(panel.grid.minor.x = element_blank(),
@@ -2341,7 +2340,6 @@ draw_ziggurat_plot <- function(svg_scale_factor, progress)
   v <- write_final_annotations(p, svg, 'ziggurat', myenv=zgg)
   p <- v["p"][[1]]
   svg <- v["svg"][[1]]
-  
   zgg$landmark_left <<- v["landmark_left"][[1]]
   zgg$landmark_right <<- v["landmark_right"][[1]]
   zgg$landmark_top <<- v["landmark_top"][[1]]

@@ -470,6 +470,7 @@ draw_parallel_guilds <- function(basex,topx,basey,topy,numboxes,nnodes,fillcolor
   bpp$landmark_right <- max(bpp$landmark_right,max(d1$x2))
   bpp$tot_width <- max(max(d1$x2)+xstep,bpp$tot_width)
   bpp$tot_height <- (9/16)*bpp$tot_width
+  bpp$landmark_top <- max(d1$y2)
 
   return(d1)
 }
@@ -638,7 +639,7 @@ draw_specialist_chains <- function(grafo, svg, df_chains, ladosq)
     hjust <- 0
     vjust <- 0
     labelcolor <- ifelse(length(bpp$labels_color)>0,bpp$labels_color[2-as.numeric(is_guild_a)], bgcolor)
-    sqlabel = gen_sq_label(df_chains[i,]$orph,is_guild_a = is_guild_a, myenv=bpp)
+    sqlabel <- gen_sq_label(df_chains[i,]$orph,is_guild_a = is_guild_a, myenv=bpp)
     f <- draw_square(paste0(ifelse(is_guild_a, "edge-kcore1-a-", "edge-kcore1-b-"), i),p,
                      svg,df_chains[i,]$x1,df_chains[i,]$y1, ladosq,
                      bgcolor,bpp$alpha_level,
@@ -1176,7 +1177,36 @@ draw_maxcore_bip <- function(svg)
     calc_vals <- list("specA" = specA, "specB" = specB)
     return(calc_vals)
   }
+  
+  paint_rect_core <- function(list_dfs,alpha_level){
+    q <- geom_rect(data=list_dfs, 
+                   mapping=aes(xmin=x1, xmax=x2, ymin=y1, ymax=y2), 
+                   fill = list_dfs$col_row,  
+                   color="transparent",alpha=alpha_level)
+    return(q)
+  }
 
+  paint_rect_svg <- function(guildstr,list_dfs){
+    svg$rect(paste0("kcore", bpp$kcoremax, guildstr), data=list_dfs,
+             mapping=aes(xmin=x1, xmax=x2, ymin=y1, ymax=y2), 
+             fill=list_dfs$col_row, alpha=bpp$alpha_level,
+             color="transparent", size=0.5)
+  }
+  
+  paint_labels <- function(p,svg,guildstr,list_dfs){
+
+    nsp <- name_species_preprocess(bpp$kcoremax,list_dfs,bpp$kcore_species_name_display,
+                                   bpp$kcore_species_name_break)
+    labelszig <- nsp$labelszig
+    kcoremaxlabel_angle <- nsp$kcoremaxlabel_angle
+    p <- p + paint_rect_core(list_dfs,alpha=bpp$alpha_level)
+    paint_rect_svg(guildstr,list_dfs)
+    f <- kcoremax_label_display(paste0("kcore", bpp$kcoremax, "-b"),p,svg,kcoremaxlabel_angle,
+                                list_dfs,labelszig,
+                                bpp$lsize_kcoremax, phjust = 1, is_guild_a = guildstr=="-a")
+    return(f)
+  }
+  
   #Species outside the giant component
   outsiders_A <- gsub(bpp$str_guild_a,"",bpp$outsiders_a)
   outsiders_B <- gsub(bpp$str_guild_b,"",bpp$outsiders_b)
@@ -1239,28 +1269,20 @@ draw_maxcore_bip <- function(svg)
                                                          bpp$rg, bpp$str_guild_a, 
                                                          orderby = "kdegree",
                                                          style=bpp$style,guild="A")
-  bpp$landmark_top <- max(bpp$list_dfs_a[[bpp$kcoremax]]$y2)
-  nsp <- name_species_preprocess(bpp$kcoremax,bpp$list_dfs_a[[bpp$kcoremax]],
-                                 bpp$kcore_species_name_display,
-                                 bpp$kcore_species_name_break,myenv=bpp)
-  kcoremaxlabel_angle <- nsp$kcoremaxlabel_angle
-  labelszig <- nsp$labelszig
-  p <- ggplot() +
-    scale_x_continuous(name="x") +
-    scale_y_continuous(name="y") +
-    geom_rect(data=bpp$list_dfs_a[[bpp$kcoremax]], 
-              mapping=aes(xmin=x1, xmax=x2, ymin=y1, ymax=y2), 
-              fill = bpp$list_dfs_a[[bpp$kcoremax]]$col_row,  
-              color="transparent",alpha=bpp$alpha_level)
-
-  
-  svg$rect(paste0("kcore", bpp$kcoremax, "-a"), data=bpp$list_dfs_a[[bpp$kcoremax]],
-           mapping=aes(xmin=x1, xmax=x2, ymin=y1, ymax=y2), 
-           fill=bpp$list_dfs_a[[bpp$kcoremax]]$col_row, alpha=bpp$alpha_level,
-           color="transparent", size=0.5)
-  f <- kcoremax_label_display(paste0("kcore", bpp$kcoremax, "-a"),p,svg,
-                              kcoremaxlabel_angle,bpp$list_dfs_a[[bpp$kcoremax]],
-                              labelszig,bpp$lsize_kcoremax)
+  p <- ggplot() + scale_x_continuous(name="x") + scale_y_continuous(name="y")
+  print(p)
+  f <- paint_labels(p,svg,"-a",bpp$list_dfs_a[[bpp$kcoremax]])
+  # nsp <- name_species_preprocess(bpp$kcoremax,bpp$list_dfs_a[[bpp$kcoremax]],
+  #                                bpp$kcore_species_name_display,
+  #                                bpp$kcore_species_name_break,myenv=bpp)
+  # labelszig <- nsp$labelszig
+  # kcoremaxlabel_angle <- nsp$kcoremaxlabel_angle
+  # p <- ggplot() + scale_x_continuous(name="x") + scale_y_continuous(name="y") +
+  #      paint_rect_core(bpp$list_dfs_a[[bpp$kcoremax]],alpha=bpp$alpha_level)
+  # paint_rect_svg("-a",bpp$list_dfs_a[[bpp$kcoremax]])
+  # f <- kcoremax_label_display(paste0("kcore", bpp$kcoremax, "-a"),p,svg,
+  #                             kcoremaxlabel_angle,bpp$list_dfs_a[[bpp$kcoremax]],
+  #                             labelszig,bpp$lsize_kcoremax)
   p <- f["p"][[1]]
   svg <- f["svg"][[1]]
   num_b_coremax <- bpp$df_cores[bpp$kcoremax,]$num_species_guild_b
@@ -1273,29 +1295,21 @@ draw_maxcore_bip <- function(svg)
                                                           species_B,bpp$rg,
                                                           bpp$str_guild_b,  orderby = "kdegree",
                                                           style=bpp$style,guild="B")
-  bpp$landmark_bottom <- min(bpp$list_dfs_b[[bpp$kcoremax]]$y2)
   bpp$landmark_right <- max(bpp$list_dfs_b[[bpp$kcoremax]]$x2,bpp$list_dfs_a[[bpp$kcoremax]]$x2)+bpp$xstep
-  bpp$last_ytail_b[bpp$kcoremax]<- bpp$toopy
-  bpp$last_xtail_b[bpp$kcoremax]<- bpp$topxb
-  nsp <- name_species_preprocess(bpp$kcoremax,bpp$list_dfs_b[[bpp$kcoremax]],bpp$kcore_species_name_display,
-                                 bpp$kcore_species_name_break)
-  kcoremaxlabel_angle <- nsp$kcoremaxlabel_angle
-  labelszig <- nsp$labelszig
-  p <- p + geom_rect(data=bpp$list_dfs_b[[bpp$kcoremax]] , 
-                     mapping=aes(xmin=x1, xmax=x2, ymin=y1, ymax=y2),
-                     fill = bpp$list_dfs_b[[bpp$kcoremax]]$col_row, 
-                     color="transparent", alpha=bpp$alpha_level)
-
-  svg$rect(paste0("kcore", bpp$kcoremax, "-b"), bpp$list_dfs_b[[bpp$kcoremax]] , mapping=aes(xmin=x1, xmax=x2, ymin=y1, ymax=y2),
-           fill=bpp$list_dfs_b[[bpp$kcoremax]]$col_row, alpha=bpp$alpha_level,
-           color="transparent", size=0.5)
-  f <- kcoremax_label_display(paste0("kcore", bpp$kcoremax, "-b"),p,svg,kcoremaxlabel_angle,
-                              bpp$list_dfs_b[[bpp$kcoremax]],labelszig,
-                              bpp$lsize_kcoremax, phjust = 1, is_guild_a = FALSE)
-  p <- f["p"][[1]]
-  svg <- f["svg"][[1]]
-
-  calc_vals <- list("p" = p, "svg" = svg, "basey" = bpp$basey, "topy" = bpp$toopy, "topxa" = bpp$topxa, "topxb" = bpp$topxb,
+  
+  
+  
+  # nsp <- name_species_preprocess(bpp$kcoremax,bpp$list_dfs_b[[bpp$kcoremax]],bpp$kcore_species_name_display,
+  #                                bpp$kcore_species_name_break)
+  # labelszig <- nsp$labelszig
+  # p <- p + paint_rect_core(p,bpp$list_dfs_b[[bpp$kcoremax]],alpha=bpp$alpha_level)
+  # paint_rect_svg("-b",bpp$list_dfs_b[[bpp$kcoremax]])
+  # f <- kcoremax_label_display(paste0("kcore", bpp$kcoremax, "-b"),p,svg,kcoremaxlabel_angle,
+  #                             bpp$list_dfs_b[[bpp$kcoremax]],labelszig,
+  #                             bpp$lsize_kcoremax, phjust = 1, is_guild_a = FALSE)
+  f <- paint_labels(p,svg,"-b",bpp$list_dfs_b[[bpp$kcoremax]])
+  calc_vals <- list("p" = f["p"][[1]], "svg" = f["svg"][[1]], "basey" = bpp$basey, 
+                    "topy" = bpp$toopy, "topxa" = bpp$topxa, "topxb" = bpp$topxb,
                     "list_dfs_a" = bpp$list_dfs_a, "list_dfs_b" = bpp$list_dfs_b,
                     "last_xtail_a" = bpp$last_xtail_a, "last_ytail_a" = bpp$last_ytail_a,
                     "last_xtail_b" = bpp$last_xtail_b, "last_ytail_b" = bpp$last_ytail_b)
@@ -1580,7 +1594,7 @@ draw_bipartite_plot <- function(svg_scale_factor, progress)
   bpp$ymax <- bpp$ymax * (1+0.1*bpp$height_box_y_expand)
   bpp$hop_x <- bpp$factor_hop_x*(bpp$tot_width)/max(1,(bpp$kcoremax-2))
   bpp$lado <- min(0.05*bpp$tot_width,bpp$height_y * bpp$aspect_ratio)
-  bpp$basey <- 2.5*bpp$lado#(0.1+0.1*length(bpp$df_cores[bpp$kcoremax,]$num_species_guild_a))*bpp$ymax
+  bpp$basey <- 2.5*bpp$lado
   wcormax <- 1.2*bpp$hop_x*bpp$coremax_triangle_width_factor
   bpp$topxa <- 0.65*bpp$hop_x
   bpp$basex <- bpp$topxa - wcormax
