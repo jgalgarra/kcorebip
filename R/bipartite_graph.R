@@ -17,7 +17,7 @@ if (debugging){
 #' @param print_to_file if set to FALSE the plot is displayed in the R session window
 #' @param plotsdir the directory where the plot is stored
 #' @param orderkcoremaxby sets order of kcoremax nodes, by kradius or kdegree
-#' @param style bipartite representation style: legacy, kcoreorder, chilopodograph
+#' @param style bipartite representation style: legacy, kcoreorder, chilopod
 #' @param guild_gap_increase controls the disptance between guild rows
 #' @param flip_results displays the graph in portrait configuration
 #' @param aspect_ratio ziggurat plot default aspect ratio
@@ -214,7 +214,7 @@ draw_tail_bip <- function(idPrefix, p,svg,fat_tail,lado,color,sqlabel,basex,base
     adjust = "yes"
     lhjust <- ifelse(bpp$flip_results, 0, 0.5)
     lvjust = ifelse(bpp$flip_results, 1, 0.5)
-    if (style=="chilopodograph"){
+    if (style=="chilopod"){
       xx <- basex-gap
       posxx1 <- xx+bpp$xstep
       posyy1 = plyy2
@@ -236,7 +236,7 @@ draw_tail_bip <- function(idPrefix, p,svg,fat_tail,lado,color,sqlabel,basex,base
     xx <- basex
     posxx1 <- xx
     posyy1 = signo*(yy)
-    if (style=="chilopodograph"){
+    if (style=="chilopod"){
       adjust = "yes"
       lvjust = ifelse(bpp$flip_results, 1, 0)
       lhjust = ifelse(bpp$flip_results, 0.5, 0)
@@ -262,7 +262,7 @@ draw_tail_bip <- function(idPrefix, p,svg,fat_tail,lado,color,sqlabel,basex,base
   }
 
   f <- draw_square(idPrefix, p,svg, xx,yy,
-                   ifelse(bpp$style=="chilopodograph",lado,
+                   ifelse(bpp$style=="chilopod",lado,
                    paintsidex*sqrt(bpp$square_nodes_size_scale)),
                    bgcolor,palpha,labelcolor,langle,lhjust,lvjust,
                    slabel=sqlabel,lbsize = 0.8*bpp$lsize_kcoremax,
@@ -337,13 +337,13 @@ draw_edge_tails_bip <- function(p,svg,point_x,point_y,kcoreother,long_tail,list_
                     background = pbackground, spline = tspline, psize = bpp$lsize_kcore1,
                     is_guild_a = is_guild_a, wlink = little_tail$weightlink[1],style=bpp$style,
                     lvp = last_vertical_position)
-      bpp$landmark_top <- max(bpp$landmark_top,ryy)
-      bpp$landmark_bottom <- min(bpp$landmark_bottom,ryy)
-      last_vertical_position <- ifelse(yfactor==1, 0, yfactor)
       p <- v["p"][[1]]
       svg <- v["svg"][[1]]
       rxx <- v["xx"][[1]]
       ryy <- v["yy"][[1]]
+      bpp$landmark_top <- max(bpp$landmark_top,ryy)
+      bpp$landmark_bottom <- min(bpp$landmark_bottom,-ryy)
+      last_vertical_position <- ifelse(yfactor==1, 0, yfactor)
       if (vertical == "yes"){
         salto <- v["sidex"][[1]]/bpp$aspect_ratio
         point_y <- point_y + 1.4*signo*salto
@@ -367,6 +367,7 @@ draw_edge_tails_bip <- function(p,svg,point_x,point_y,kcoreother,long_tail,list_
       last_vertical_position <- 0
     m <- m +1
   }
+
   calc_vals <- list("p" = p, "svg" = svg, "lastx" = rxx, "lasty" = ryy)
   return(calc_vals)
 }
@@ -387,17 +388,20 @@ draw_parallel_guilds <- function(basex,topx,basey,topy,numboxes,nnodes,fillcolor
   pbasex <- bpp$coremax_triangle_width_factor*( basex - (nnodes %/%8) * abs(topx-basex)/3)
   xstep <- bpp$square_nodes_size_scale*(topx-pbasex)/max(12,nnodes)
   bpp$xstep <- xstep
+  vertsep <- 4
   if ((xstep>2000) && (guild=="A")) {
+    vertsep <- 5
     bpp$lsize_kcoremax <-  bpp$lsize_kcoremax + 1
   }
   if ((xstep<1000) && (guild=="A")) {
+    vertsep <- 2
     bpp$lsize_kcoremax <-  max(2,bpp$lsize_kcoremax - 1.5)
   }
   
-  vertsep <- 3
+
   ptopy <- vertsep*basey+ifelse(basey>0,1,-1)*xstep
-  bpp$landmark_top <- max(bpp$landmark_top,ptopy)
   bpp$landmark_bottom <- min(bpp$landmark_bottom,-ptopy)
+  bpp$landmark_top <- max(bpp$landmark_top,ptopy)
   ystep <- 0
   
   for (j in (1:numboxes))
@@ -420,7 +424,7 @@ draw_parallel_guilds <- function(basex,topx,basey,topy,numboxes,nnodes,fillcolor
   
   if (style == "legacy")
     nodelabels <- strlabels
-  else if ((style == "kcoreorder")||(style == "chilopodograph")) {
+  else if ((style == "kcoreorder")||(style == "chilopod")) {
     for (i in 1:nrow(d1)){
       s <- strsplit(d1$label[i],"shell")
       d1$label[i] <- s[[1]][1]
@@ -454,7 +458,7 @@ draw_parallel_guilds <- function(basex,topx,basey,topy,numboxes,nnodes,fillcolor
     d1$kcorelabel <- d1[ordvector,]$kcorelabel
     d1$name_species <- d1[ordvector,]$name_species
     d1$degree <- d1[ordvector,]$degree
-  } else if ((style=="kcoreorder") || (style=="chilopodograph")){
+  } else if ((style=="kcoreorder") || (style=="chilopod")){
     subscol <- which(names(d1)=="kdegree"):ncol(d1)
     shells <- sort(unique(d1$kcore))
     for (k in shells){
@@ -470,7 +474,7 @@ draw_parallel_guilds <- function(basex,topx,basey,topy,numboxes,nnodes,fillcolor
   bpp$landmark_right <- max(bpp$landmark_right,max(d1$x2))
   bpp$tot_width <- max(max(d1$x2)+xstep,bpp$tot_width)
   bpp$tot_height <- (9/16)*bpp$tot_width
-  bpp$landmark_top <- max(d1$y2)
+  bpp$landmark_top <- max(bpp$landmark_top,max(d1$y2)+xstep)
 
   return(d1)
 }
@@ -780,7 +784,7 @@ draw_fat_tail_bip<- function(p,svg,fat_tail,nrows,list_dfs,color_guild,pos_tail_
                              inverse="no", is_guild_a =TRUE, bipartite = FALSE, gstyle = "ziggurat")
 {
 
-  tailgap <- max(2,nrows/4)*bpp$xstep
+  tailgap <- (1+min(4,nrows/8))*bpp$xstep
   ppos_tail_x <- pos_tail_x-tailgap
   pos_tail_y <-list_dfs[[bpp$kcoremax]][1,]$y1
   ppos_tail_y <- pos_tail_y
@@ -790,7 +794,7 @@ draw_fat_tail_bip<- function(p,svg,fat_tail,nrows,list_dfs,color_guild,pos_tail_
     nodekcoremax <- list_dfs[[bpp$kcoremax]][1,]
     plyy2 <-  (nodekcoremax$y1+nodekcoremax$y2)/2
     v<- draw_tail_bip(ifelse(is_guild_a, "edge-kcore1-a-fat", "edge-kcore1-b-fat"), p,svg,
-                  fat_tail,ifelse(bpp$style=="chilopodograph",bpp$xstep,bpp$lado),
+                  fat_tail,ifelse(bpp$style=="chilopod",bpp$xstep,bpp$lado),
                   color_guild,gen_sq_label(fat_tail$orph,is_guild_a = is_guild_a, myenv=bpp),
                   ppos_tail_x,ppos_tail_y,fgap,
                   lxx2 = list_dfs[[bpp$kcoremax]][1,]$x1,
@@ -831,170 +835,72 @@ find_specialists_bip <- function(specialists_a,specialists_b)
 }
 
 # Management of chains of specialists
-handle_specialists_bip <- function(p,svg,specialists_a,specialists_b,lado,gap)
-{
-  ladosq <- 2 * lado * sqrt(bpp$square_nodes_size_scale)
-  specialists_a <- data.frame(c())
-  specialists_b <- data.frame(c())
-  if (exists("df_orph_a", envir = bpp))
-    if (nrow(bpp$df_orph_a)>0)
-    {
-      specialists_a <-  bpp$df_orph_a[bpp$df_orph_a$repeated== "yes",]
-      specialists_a <-  specialists_a[rev(order(specialists_a$orph,specialists_a$kcore)),]
-      if (nrow(specialists_a)>0)
-        specialists_a$drawn <- "no"
-    }
-  if (exists("df_orph_b", envir = bpp))
-    if (nrow(bpp$df_orph_b)>0)
-    {
-      specialists_b <-  bpp$df_orph_b[bpp$df_orph_b$repeated== "yes",]
-      specialists_b <-  specialists_b[rev(order(specialists_b$orph,specialists_b$kcore)),]
-      if (nrow(specialists_b)>0)
-        specialists_b$drawn <- "no"
-    }
-  
-  # Create empty df_chains data frame
-  bpp$df_chains <- data.frame(x1 = numeric(0), x2 = numeric(0), y1 = numeric(0), y2 = numeric(0),
-                              guild = character(0), orph = integer(0), partner = integer(0),
-                              kcorepartner = integer(0), xx2 = numeric(0), yy2 = numeric(0), stringsAsFactors = FALSE )
-  
-  if  (( ( nrow(specialists_a)+nrow(specialists_b) )>0)) {
-    original_specialists_a <- specialists_a
-    original_specialists_b <- specialists_b
-    while (((nrow(specialists_a)+nrow(specialists_b))>0))
-    {
-      if (nrow(specialists_a)>0){
-        k <- store_root_leaf(specialists_a, bpp$df_chains, bpp$str_guild_a, ladosq, gap, original_specialists_a, original_specialists_b)
-        bpp$df_chains <- k["df_chains"][[1]]
-        specialists_a <- k["specialists"][[1]]
-      }
-      if (nrow(specialists_b)>0){
-        k <- store_root_leaf(specialists_b, bpp$df_chains, bpp$str_guild_b, ladosq, gap, original_specialists_a, original_specialists_b)
-        bpp$df_chains <- k["df_chains"][[1]]
-        specialists_b <- k["specialists"][[1]]
-      }
-      if (nrow(specialists_a)>0){
-        k <- store_branch_leaf(specialists_a, specialists_b, bpp$df_chains, bpp$str_guild_a, ladosq, gap, original_specialists_a, original_specialists_b)
-        bpp$df_chains <- k["df_chains"][[1]]
-        specialists_a <- k["specialists"][[1]]
-        specialists_b <- k["specialists_opp"][[1]]
-      }
-      if (nrow(specialists_b)>0){
-        k <- store_branch_leaf(specialists_b, specialists_a, bpp$df_chains, bpp$str_guild_b, ladosq, gap, original_specialists_a, original_specialists_b)
-        bpp$df_chains <- k["df_chains"][[1]]
-        specialists_b <- k["specialists"][[1]]
-        specialists_a <- k["specialists_opp"][[1]]
-      }
-      # Now they may be some specialists of core 1 linked to core 1 that were not
-      # stored in the previous procedure
-      specialists_a <- specialists_a[specialists_a$drawn == "no",]
-      specialists_b <- specialists_b[specialists_b$drawn == "no",]
-    }
-    f <- draw_specialist_chains(p, svg, bpp$df_chains, ladosq)
-    p <- f["p"][[1]]
-    svg <- f["svg"][[1]]
-  }
-  calc_vals <- list("p" = p, "svg" = svg, "df_chains" = bpp$df_chains)
-  return(calc_vals)
-}
-# Final annotations
-write_annotations_bip <- function(p, svg)
-{
-  title_text = ""
-  stext = ""
-  ctext = ""
-  lzcf <- 3.5
-  myvjust <- 0
-  legsize <- round(lzcf*(bpp$lsize_legend-1))
-  legends_text <- paste0(
-    "<span style = 'text-align: left; color:",bpp$color_guild_a[1],"; font-size:",legsize,"pt'>",paste('&#9632;',bpp$name_guild_a),
-    "</span> <span style = 'text-align: left;color:",bpp$color_guild_b[1],"; font-size:",legsize,"pt'>",paste('&nbsp; &#9632;',bpp$name_guild_b),"</span>")
-  if (bpp$show_legend=="TOP"){
-    stext = legends_text
-    myvjust = -3
-  }
-  if (bpp$show_legend=="BOTTOM"){
-    ctext = legends_text
-    myvjust = 3
-  }
-  if (bpp$show_title)
-    title_text <- paste0("Network: ",bpp$network_name)
-  # Legend size conversion factor
-  p <- p+ ggtitle(title_text,subtitle=stext)
-  p <- p +labs(caption = ctext)
-  p <- p + coord_fixed(ratio=bpp$aspect_ratio) +theme_bw() + theme(panel.grid.minor.x = element_blank(),
-                                                               panel.grid.minor.y = element_blank(),
-                                                               panel.grid.major.x = element_blank(),
-                                                               panel.grid.major.y = element_blank(),
-                                                               axis.text.x = element_blank(),
-                                                               axis.text.y = element_blank(),
-                                                               axis.ticks.x=element_blank(),
-                                                               axis.ticks.y=element_blank(),
-                                                               axis.title.x = element_blank(),
-                                                               axis.title.y = element_blank(),                                                               
-                                                               plot.background = element_rect(fill = bpp$backg_color),
-                                                               panel.background = element_rect(fill = bpp$backg_color),
-                                                               plot.title = element_text(size = lzcf*(bpp$lsize_legend+0.5),
-                                                                                         hjust = 0.5,
-                                                                                         face="plain"),
-                                                               plot.subtitle = ggtext::element_markdown(size=lzcf*bpp$lsize_legend,hjust=0.9,vjust=myvjust),
-                                                               plot.caption = ggtext::element_markdown(size=lzcf*bpp$lsize_legend,hjust=0.9,vjust=myvjust))
-
-  if (bpp$hide_plot_border)
-    p <- p + theme(panel.border=element_blank())
-  landmark_top <- (1.5*bpp$xstep+bpp$landmark_top)*bpp$rescale_plot_area[2]
-  landmark_bottom <- (-1.5*bpp$xstep+bpp$landmark_bottom)*bpp$rescale_plot_area[2]
-  
-  # This dot marks the plot edges
-  mlabel <- "."
-  landmark_right <- (bpp$landmark_right+2*bpp$xstep)*bpp$rescale_plot_area[1]
-  landmark_left <- min(bpp$landmark_left,
-                       (bpp$pos_tail_x)*bpp$rescale_plot_area[1])-bpp$xstep*ifelse(bpp$exists_fat_tail,4,3)
-  
-  if (bpp$flip_results){
-    landmark_right <- landmark_right -3*bpp$xstep
-    landmark_left <- landmark_left +4*bpp$xstep
-    landmark_top <- landmark_top - bpp$xstep
-    landmark_bottom <- landmark_bottom + bpp$xstep
-  }
-  f <- draw_square("annotation",p,svg,landmark_right,0,1,"transparent",0.5,"transparent",0,0,0,slabel="")
-  p <- f["p"][[1]]
-  svg <- f["svg"][[1]]
-  p <- p +annotate(geom="text", x= landmark_right, y=0, label=mlabel,
-                   colour = "red", size=1, hjust = 0, vjust = 0, angle = 0)
-  svg$text("annotation", data=data.frame(x=landmark_right, y=0), 
-           mapping=aes(x=x, y=y), color="red", label=mlabel, size=1, angle=0)
-  p <- p+theme(plot.margin=unit(c(0.5,0.5,0.5,0.5),"cm"))
-
- 
-  
-  mlabel <- "."
-  p <- p +annotate(geom="text", x=landmark_left, y=landmark_top, label=mlabel,
-                   colour = "red", size=2, hjust = 0, vjust = 0, angle = 0)
-  svg$text("annotation", data=data.frame(x=landmark_left, y=landmark_top), mapping=aes(x=x, y=y), color="red", label=mlabel, size=1, angle=0)
-  p <- p +annotate(geom="text", x=landmark_left, y=landmark_bottom, label=mlabel,
-                   colour = "red", size=2, hjust = 0, vjust = 0, angle = 0)
-  svg$text("annotation", data=data.frame(x=landmark_left, y=landmark_bottom), mapping=aes(x=x, y=y), color="red", label=mlabel, size=1, angle=0)
-  
-  x_span <- landmark_right - landmark_left
-
-  if (!(bpp$flip_results)){
-    x_legend <- 0.8*landmark_right
-    y_legend <- 0.8*landmark_top
-  } else {
-    x_legend <- 0.8*landmark_top
-    y_legend <- 0.8*landmark_right
-  }
-  landmark_bottom <- min(bpp$last_ytail_a[!is.na(bpp$last_ytail_b)],1.2*bpp$ymin)*bpp$rescale_plot_area[2]
-  
-  bpp$landmark_left <<- landmark_left
-  bpp$landmark_right <<- landmark_right
-  bpp$landmark_top <<- landmark_top
-  bpp$landmark_bottom <- landmark_bottom
- 
-  calc_vals <- list("p" = p, "svg" = svg)
-  return(calc_vals)
-}
+# handle_specialists_bip <- function(p,svg,specialists_a,specialists_b,lado,gap)
+# {
+#   ladosq <- 2 * lado * sqrt(bpp$square_nodes_size_scale)
+#   specialists_a <- data.frame(c())
+#   specialists_b <- data.frame(c())
+#   if (exists("df_orph_a", envir = bpp))
+#     if (nrow(bpp$df_orph_a)>0)
+#     {
+#       specialists_a <-  bpp$df_orph_a[bpp$df_orph_a$repeated== "yes",]
+#       specialists_a <-  specialists_a[rev(order(specialists_a$orph,specialists_a$kcore)),]
+#       if (nrow(specialists_a)>0)
+#         specialists_a$drawn <- "no"
+#     }
+#   if (exists("df_orph_b", envir = bpp))
+#     if (nrow(bpp$df_orph_b)>0)
+#     {
+#       specialists_b <-  bpp$df_orph_b[bpp$df_orph_b$repeated== "yes",]
+#       specialists_b <-  specialists_b[rev(order(specialists_b$orph,specialists_b$kcore)),]
+#       if (nrow(specialists_b)>0)
+#         specialists_b$drawn <- "no"
+#     }
+#   
+#   # Create empty df_chains data frame
+#   bpp$df_chains <- data.frame(x1 = numeric(0), x2 = numeric(0), y1 = numeric(0), y2 = numeric(0),
+#                               guild = character(0), orph = integer(0), partner = integer(0),
+#                               kcorepartner = integer(0), xx2 = numeric(0), yy2 = numeric(0), stringsAsFactors = FALSE )
+#   
+#   if  (( ( nrow(specialists_a)+nrow(specialists_b) )>0)) {
+#     original_specialists_a <- specialists_a
+#     original_specialists_b <- specialists_b
+#     while (((nrow(specialists_a)+nrow(specialists_b))>0))
+#     {
+#       if (nrow(specialists_a)>0){
+#         k <- store_root_leaf(specialists_a, bpp$df_chains, bpp$str_guild_a, ladosq, gap, original_specialists_a, original_specialists_b)
+#         bpp$df_chains <- k["df_chains"][[1]]
+#         specialists_a <- k["specialists"][[1]]
+#       }
+#       if (nrow(specialists_b)>0){
+#         k <- store_root_leaf(specialists_b, bpp$df_chains, bpp$str_guild_b, ladosq, gap, original_specialists_a, original_specialists_b)
+#         bpp$df_chains <- k["df_chains"][[1]]
+#         specialists_b <- k["specialists"][[1]]
+#       }
+#       if (nrow(specialists_a)>0){
+#         k <- store_branch_leaf(specialists_a, specialists_b, bpp$df_chains, bpp$str_guild_a, ladosq, gap, original_specialists_a, original_specialists_b)
+#         bpp$df_chains <- k["df_chains"][[1]]
+#         specialists_a <- k["specialists"][[1]]
+#         specialists_b <- k["specialists_opp"][[1]]
+#       }
+#       if (nrow(specialists_b)>0){
+#         k <- store_branch_leaf(specialists_b, specialists_a, bpp$df_chains, bpp$str_guild_b, ladosq, gap, original_specialists_a, original_specialists_b)
+#         bpp$df_chains <- k["df_chains"][[1]]
+#         specialists_b <- k["specialists"][[1]]
+#         specialists_a <- k["specialists_opp"][[1]]
+#       }
+#       # Now they may be some specialists of core 1 linked to core 1 that were not
+#       # stored in the previous procedure
+#       specialists_a <- specialists_a[specialists_a$drawn == "no",]
+#       specialists_b <- specialists_b[specialists_b$drawn == "no",]
+#     }
+#     f <- draw_specialist_chains(p, svg, bpp$df_chains, ladosq)
+#     p <- f["p"][[1]]
+#     svg <- f["svg"][[1]]
+#   }
+#   calc_vals <- list("p" = p, "svg" = svg, "df_chains" = bpp$df_chains)
+#   return(calc_vals)
+# }
 
 # Handle specialist chain species
 handle_orphans_bip <- function(vg)
@@ -1113,7 +1019,7 @@ handle_fat_tails_bip <- function(p, svg, style = "legacy")
   if (!exists("fat_tail_b"))
     fat_tail_b <- data.frame(c())
   nrows_fat <- nrow(fat_tail_b)+nrow(fat_tail_a)
-  if (style=="chilopodograph")
+  if (style=="chilopod")
     fgap <- 0.7*bpp$hop_x
   else
     fgap <- 0.7*bpp$hop_x + (1+sum(nrows_fat>40))*bpp$lado
@@ -1201,7 +1107,7 @@ draw_maxcore_bip <- function(svg)
     kcoremaxlabel_angle <- nsp$kcoremaxlabel_angle
     p <- p + paint_rect_core(list_dfs,alpha=bpp$alpha_level)
     paint_rect_svg(guildstr,list_dfs)
-    f <- kcoremax_label_display(paste0("kcore", bpp$kcoremax, "-b"),p,svg,kcoremaxlabel_angle,
+    f <- kcoremax_label_display(paste0("kcore", bpp$kcoremax, guildstr),p,svg,kcoremaxlabel_angle,
                                 list_dfs,labelszig,
                                 bpp$lsize_kcoremax, phjust = 1, is_guild_a = guildstr=="-a")
     return(f)
@@ -1216,7 +1122,7 @@ draw_maxcore_bip <- function(svg)
     species_A <- c(species_A,outsiders_A,"EMPTY")
     species_B <- c(species_B,outsiders_B,"EMPTY")
   }
-  else if ((bpp$style == "kcoreorder") ||(bpp$style == "chilopodograph")) {
+  else if ((bpp$style == "kcoreorder") ||(bpp$style == "chilopod")) {
     species_A <- c()
     species_B <- c()
     if (bpp$style == "kcoreorder"){
@@ -1228,7 +1134,7 @@ draw_maxcore_bip <- function(svg)
       species_A <- sadj$specA
       species_B <- sadj$specB
     }
-    if (bpp$style == "chilopodograph"){
+    if (bpp$style == "chilopod"){
       spA1_spec <- c()
       spB1_spec <- c()
       # specialist chains
@@ -1250,7 +1156,7 @@ draw_maxcore_bip <- function(svg)
       species_B <- c(species_B, "EMPTY", sadj$specB) 
     }
     # Specialist chains 
-    if (bpp$style == "chilopodograph"){
+    if (bpp$style == "chilopod"){
       species_A <- c(species_A, "EMPTY", spA1_spec) 
       species_B <- c(species_B, "EMPTY", spB1_spec)
     }  
@@ -1283,7 +1189,8 @@ draw_maxcore_bip <- function(svg)
                                                           species_B,bpp$rg,
                                                           bpp$str_guild_b,  orderby = "kdegree",
                                                           style=bpp$style,guild="B")
-  bpp$landmark_right <- max(bpp$list_dfs_b[[bpp$kcoremax]]$x2,bpp$list_dfs_a[[bpp$kcoremax]]$x2)+bpp$xstep
+    bpp$landmark_right <- max(bpp$list_dfs_b[[bpp$kcoremax]]$x2,
+                            bpp$list_dfs_a[[bpp$kcoremax]]$x2)+bpp$xstep
   f <- paint_labels(p,svg,"-b",bpp$list_dfs_b[[bpp$kcoremax]])
   calc_vals <- list("p" = f["p"][[1]], "svg" = f["svg"][[1]], "basey" = bpp$basey, 
                     "topy" = bpp$toopy, "topxa" = bpp$topxa, "topxb" = bpp$topxb,
@@ -1612,7 +1519,7 @@ draw_bipartite_plot <- function(svg_scale_factor, progress)
     svg <- z["svg"][[1]]
   }
 
-  if (bpp$style=="chilopodograph"){
+  if (bpp$style=="chilopod"){
     bpp$posic_zig <- f["posic_zig"][[1]] 
     bpp$list_dfs_a <- f["list_dfs_a"][[1]]
     bpp$list_dfs_b <- f["list_dfs_b"][[1]] 
@@ -1707,11 +1614,11 @@ draw_bipartite_plot <- function(svg_scale_factor, progress)
 
 }
 if (debugging)
-  # bipartite_graph("../data/","dattilo2014.csv", style="chilopodograph",orderkcoremaxby = "kdegree",
+  # bipartite_graph("../data/","dattilo2014.csv", style="chilopod",orderkcoremaxby = "kdegree",
   #              guild_gap_increase = 1,weighted_links = "none",square_nodes_size_scale=1,backg_color = "white",
   #              hide_plot_border = FALSE, flip_results=FALSE)
   bipartite_graph("../data/","RA_HP_042.csv",square_nodes_size_scale = 2,show_title = TRUE,
-                       style="chilopodograph",orderkcoremaxby = "kdegree",
+                       style="chilopod",orderkcoremaxby = "kdegree",
                        guild_gap_increase = 1,weighted_links = "none",
                        svg_scale_factor = 1,color_link = "#6d6d6e",
                        hide_plot_border = TRUE)

@@ -43,39 +43,63 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
   zl <- 1
   zu <- 1
   this$html<-function() {
-    if (exists("zgg")){
+    if (style=='ziggurat'){
       zr <- zgg$move_all_SVG_right
       zl <- zgg$landmark_right
       zu <- zgg$move_all_SVG_up
     }
-    else if (exists("bpp")){
+    else{
       zr <- bpp$move_all_SVG_right
       zl <- bpp$landmark_right
       zu <- bpp$move_all_SVG_up
     }
     #redondea el viewBox a la decena mas cercana
     minx  <- (1+zr)*floor(this$minx/10)*10
-    if (exists("zgg"))
+    
+    if (style=='ziggurat'){
       maxx  <- min(ceiling(this$maxx/10)*10, ceiling(1.1*zl/100)*10)
-    else if (exists("bpp"))
-      maxx  <- ceiling(4*zl/100)*10
-    miny  <- (1-zu)*floor(this$miny/10)*10
-    if (exists("zgg"))
+      miny  <- (1-zu)*floor(this$miny/10)*10
       maxy  <- ceiling(this$maxy/10)*10
-    else if (exists("bpp"))
-      maxy  <- ceiling(4*this$maxy/10)*10
+    } else {
+      maxx  <- ceiling(4*zl/100)*10
+      miny  <- (bpp$landmark_bottom/10)*10
+      if (flip_coordinates)
+        miny  <- ((bpp$landmark_bottom-4*bpp$xstep)/10)*10
+      maxy  <-(bpp$landmark_top/10)*10
+      if (flip_coordinates)
+        maxy  <- ceiling(4*this$maxy/10)*10
+    }
+    if (style=='ziggurat')
+      maxx  <- min(ceiling(this$maxx/10)*10, ceiling(1.1*zl/100)*10)
+    else
+      maxx  <- ceiling(4*zl/100)*10
+    if (style=='ziggurat')
+      miny  <- (1-zu)*floor(this$miny/10)*10
+    else{
+      miny  <- (bpp$landmark_bottom/10)*10
+      if (flip_coordinates)
+        miny  <- ((bpp$landmark_bottom-4*bpp$xstep)/10)*10
+    }
+    
+    if (style=='ziggurat')
+      maxy  <- ceiling(this$maxy/10)*10
+    else 
+      maxy  <- ceiling(5*this$maxy/10)*10
     fzcale <- 1.05
     #svg0<-paste0("<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"", viewBox, "\">\n")
     tleftx <- minx
     tlefty <- miny
-    swidth <- (maxx-minx)
-    sheight <- (maxy-miny)
+    swidth <- ceiling((maxx-minx)/10)*10
+    sheight <- ceiling((maxy-miny)/10)*10
     if (flip_coordinates){
-      viewBox<-paste0(tleftx, " ", 0.9*(tleftx-tlefty), " ", swidth, " ", swidth)
+      viewBox<-paste0(tleftx, " ", ceiling(1.2*(tleftx-tlefty)/10)*10, " ", 1.2*swidth, " ", 1.2*swidth)
       svg0<-paste0("<svg transform='rotate(90)' xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"", viewBox, "\">\n")
     }
     else{
-      viewBox<-paste0(tleftx, " ", tlefty, " ", swidth, " ", sheight)
+      if (style!='ziggurat')
+        viewBox<-paste0(tleftx, " ", tlefty-2*bpp$xstep, " ", swidth, " ", sheight)
+      else
+        viewBox<-paste0(tleftx, " ", tlefty, " ", swidth, " ", sheight)
       svg0<-paste0("<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"", viewBox, "\">\n")
     }
       

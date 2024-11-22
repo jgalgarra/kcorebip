@@ -1608,7 +1608,7 @@ write_final_annotations <- function(p, svg, plottype, myenv=zgg)
     landmark_bottom <- myenv$landmark_bottom
     if(!myenv$exists_fat_tail){
        nnodes <- length(bpp$result_analysis$g_core)
-       landmark_left <- landmark_left - ifelse(plottype=='chilopodograph',0.5*myenv$xstep,
+       landmark_left <- landmark_left - ifelse(plottype=='chilopod',0.5*myenv$xstep,
                                                (1+nnodes/100)*myenv$xstep)
        landmark_bottom <- landmark_bottom - myenv$xstep
     }
