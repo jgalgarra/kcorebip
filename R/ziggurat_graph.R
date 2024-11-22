@@ -246,7 +246,6 @@ draw_square<- function(idPrefix, grafo,svg,basex,basey,side,fillcolor,alphasq,la
   x2 <- c(basex+side)
   y1 <- c(basey)
   y2 <- c(basey+side/aspect_ratio)
-  print(paste(x1, x2, y1, y2, fillcolor))
   ds <- data.frame(x1, x2, y1, y2, fillcolor)
   signo <- 1
   if (inverse == "yes")
