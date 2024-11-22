@@ -33,7 +33,17 @@ if (debugging){
 #' @param lsize_legend legend label size
 #' @param labels_color default label colors
 #' @param factor_hop_x expand inner ziggurats horizontal distance
+#' @param paint_outsiders paint species not connected to giant component
+#' @param displace_outside_component displace outsider species (horizontal, vertical)
+#' @param outsiders_separation_expand multiply by this factor outsiders' separation
+#' @param outsiders_legend_expand displace outsiders legend
+#' @param specialistskcore2_horizontal_dist_rootleaf_expand expand horizontal distance of specialist tail root node connected to kshell 2
+#' @param specialistskcore2_vertical_dist_rootleaf_expand expand vertical distance of specialist tails connected to kshell 2
+#' @param specialists_boxes_separation_count specialist species boxes separation count
+#' @param root_specialist_expand expand root specialist distances of tails connected to kshell <> 2
 #' @param hide_plot_border hide border around the plot
+#' @param rescale_plot_area full plot area rescaling (horizontal, vertical)
+#' @param kcore1specialists_leafs_vertical_separation expand vertical separation of specialist tails connected to kshell 1 species
 #' @param corebox_border_size width of kshell boxes
 #' @param kcore_species_name_display display species names of  shells listed in this vector
 #' @param kcore_species_name_break allow new lines in species names of  shells listed in this vector
@@ -45,6 +55,8 @@ if (debugging){
 #' @param backg_color plot background color
 #' @param show_title show plot title
 #' @param show_legend show plot legend position
+#' @param use_spline use splines to draw links
+#' @param spline_points number of points for each spline
 #' @param file_name_append a label that the user may append to the plot file name for convenience
 #' @param svg_scale_factor only for interactive apps, do not modify
 #' @param weighted_links function to add link weight: 'none', 'log10' , 'ln', 'sqrt'
@@ -65,12 +77,16 @@ bipartite_graph <- function(datadir,filename,
                            lsize_kcoremax = 3.5, lsize_zig = 3, lsize_kcore1 = 2.5, lsize_legend = 4, lsize_core_box = 2.5,
                            labels_color = c(),
                            factor_hop_x = 1, 
-                           hide_plot_border = TRUE,
-                           corebox_border_size = 0.2,
+                           paint_outsiders = TRUE, displace_outside_component = c(0,0),
+                           outsiders_separation_expand = 1, outsiders_legend_expand = 1,
+                           specialistskcore2_horizontal_dist_rootleaf_expand = 1,
+                           specialistskcore2_vertical_dist_rootleaf_expand = 0, specialists_boxes_separation_count = 1,
+                           root_specialist_expand = c(1,1), hide_plot_border = TRUE, rescale_plot_area = c(1,1),
+                           kcore1specialists_leafs_vertical_separation = 1, corebox_border_size = 0.2,
                            kcore_species_name_display = c(), kcore_species_name_break = c(),
                            shorten_species_name = 0, exclude_species_number = FALSE, label_strguilda = "",
                            label_strguildb = "", landscape_plot = TRUE,
-                           backg_color = "white", show_title = TRUE, show_legend = 'TOP',
+                           backg_color = "white", show_title = TRUE, show_legend = 'TOP', use_spline =TRUE, spline_points = 10,
                            file_name_append = "", svg_scale_factor= 10, weighted_links = "none",
                            square_nodes_size_scale = 1, move_all_SVG_up = 0, move_all_SVG_right = 0,
                            progress=NULL
@@ -107,19 +123,21 @@ bipartite_graph <- function(datadir,filename,
     return(bpp)
   }
   # Copy input parameters to the bpp environment
-  def_configuration_bip(paintlinks, print_to_file, plotsdir, orderkcoremaxby, style, 
-                        guild_gap_increase, flip_results, aspect_ratio,
-                        alpha_level, color_guild_a, color_guild_b,
-                        color_link, alpha_link, size_link,
-                        lsize_kcoremax, lsize_zig, lsize_kcore1,
-                        lsize_legend, lsize_core_box, labels_color,
-                        factor_hop_x,
-                        hide_plot_border,
-                        corebox_border_size, kcore_species_name_display,kcore_species_name_break,
-                        shorten_species_name,exclude_species_number,
-                        label_strguilda, label_strguildb, landscape_plot, backg_color, show_title, show_legend,
-                        file_name_append, svg_scale_factor, weighted_links, square_nodes_size_scale,
-                        move_all_SVG_up, move_all_SVG_right, progress
+  def_configuration_bip(paintlinks, print_to_file, plotsdir, orderkcoremaxby, style,
+                    guild_gap_increase, flip_results, aspect_ratio,
+                    alpha_level, color_guild_a, color_guild_b,
+                    color_link, alpha_link, size_link,
+                    lsize_kcoremax, lsize_zig, lsize_kcore1,
+                    lsize_legend, lsize_core_box, labels_color,
+                    factor_hop_x,
+                    paint_outsiders, displace_outside_component,
+                    outsiders_separation_expand, outsiders_legend_expand, specialistskcore2_horizontal_dist_rootleaf_expand,
+                    specialistskcore2_vertical_dist_rootleaf_expand , specialists_boxes_separation_count,
+                    root_specialist_expand, hide_plot_border, rescale_plot_area,kcore1specialists_leafs_vertical_separation,
+                    corebox_border_size, kcore_species_name_display,kcore_species_name_break,shorten_species_name,exclude_species_number,
+                    label_strguilda, label_strguildb, landscape_plot, backg_color, show_title, show_legend,
+                    use_spline, spline_points, file_name_append, svg_scale_factor, weighted_links,
+                    square_nodes_size_scale, move_all_SVG_up, move_all_SVG_right, progress
                     )
   # Removes nodes without any tie. This is not usual in input files but happens
   # when performing destruction simulations
@@ -924,11 +942,14 @@ def_configuration_bip <- function(paintlinks, print_to_file, plotsdir, orderkcor
                               lsize_kcoremax, lsize_zig, lsize_kcore1,
                               lsize_legend, lsize_core_box, labels_color,
                               factor_hop_x,
-                              hide_plot_border,
+                              paint_outsiders, displace_outside_component,
+                              outsiders_separation_expand, outsiders_legend_expand, specialistskcore2_horizontal_dist_rootleaf_expand,
+                              specialistskcore2_vertical_dist_rootleaf_expand , specialists_boxes_separation_count,
+                              root_specialist_expand,hide_plot_border,rescale_plot_area,kcore1specialists_leafs_vertical_separation,
                               corebox_border_size, kcore_species_name_display,kcore_species_name_break,
                               shorten_species_name,exclude_species_number,
                               label_strguilda, label_strguildb, landscape_plot, backg_color, show_title, show_legend,
-                              file_name_append, svg_scale_factor, weighted_links, square_nodes_size_scale,
+                              use_spline, spline_points, file_name_append, svg_scale_factor, weighted_links, square_nodes_size_scale,
                               move_all_SVG_up, move_all_SVG_right, progress
                               )
 {
@@ -957,7 +978,17 @@ def_configuration_bip <- function(paintlinks, print_to_file, plotsdir, orderkcor
   bpp$factor_hop_x <- factor_hop_x
   bpp$coremax_triangle_height_factor <- 3
   bpp$coremax_triangle_width_factor <- 3
+  bpp$paint_outsiders <- paint_outsiders
+  bpp$displace_outside_component <- displace_outside_component
+  bpp$outsiders_separation_expand <- outsiders_separation_expand
+  bpp$outsiders_legend_expand <- outsiders_legend_expand
+  bpp$specialistskcore2_horizontal_dist_rootleaf_expand <- specialistskcore2_horizontal_dist_rootleaf_expand        # Controls the distance of specialist root leaves to partner in core 2
+  bpp$specialistskcore2_vertical_dist_rootleaf_expand <- specialistskcore2_vertical_dist_rootleaf_expand
+  bpp$specialists_boxes_separation_count <- specialists_boxes_separation_count                  # Separation of leaves of a specialist tail
+  bpp$root_specialist_expand <- root_specialist_expand
   bpp$hide_plot_border <- hide_plot_border
+  bpp$rescale_plot_area <- rescale_plot_area
+  bpp$kcore1specialists_leafs_vertical_separation <- kcore1specialists_leafs_vertical_separation
   bpp$corebox_border_size <- corebox_border_size
   bpp$kcore_species_name_display <- kcore_species_name_display
   bpp$kcore_species_name_break <- kcore_species_name_break
@@ -967,7 +998,8 @@ def_configuration_bip <- function(paintlinks, print_to_file, plotsdir, orderkcor
   bpp$backg_color <- backg_color
   bpp$show_title <- show_title
   bpp$show_legend <- show_legend
-  bpp$use_spline <- FALSE
+  bpp$use_spline <- use_spline
+  bpp$spline_points <- spline_points
   bpp$file_name_append <- file_name_append
   bpp$svg_scale_factor <- svg_scale_factor
   bpp$weighted_links <- weighted_links
@@ -1039,16 +1071,18 @@ draw_inner_links_bip <- function(p, svg)
               else{
                 y_2 <- data_b$y1
                 x_2 <- data_b$x2
+                
               }
               link <- data.frame(x1= data_a$x1,
                                  x2 = x_2,
                                  y1 = data_a$y1,  y2 = y_2)
               lcolor = "blue"
             }
+            
             add_link(xx1=link$x1, xx2 = link$x2,
                      yy1 = link$y1, yy2 = link$y2,
                      slink = bpp$size_link*weightlink, clink =  c(bpp$color_link),
-                     alpha_l = bpp$alpha_link , myenv=bpp)
+                     alpha_l = bpp$alpha_link , spline = bend_line, myenv=bpp)
           }
           if (foundlinksa >= numberlinksa )
             break

@@ -25,7 +25,6 @@ source("SVG.R")
 #' @param print_to_file if set to FALSE the plot is displayed in the R session window
 #' @param plotsdir the directory where the plot is stored
 #' @param orderkcoremaxby sets order of kcoremax nodes, by kradius or kdegree
-#' @param isogonos equal side for all ziggurat nodes
 #' @param flip_results displays the graph in portrait configuration
 #' @param aspect_ratio ziggurat plot default aspect ratio
 #' @param alpha_level transparency for ziggurats' filling
@@ -87,7 +86,8 @@ source("SVG.R")
 
 ziggurat_graph <- function(datadir,filename,
                            paintlinks = TRUE, print_to_file = FALSE, plotsdir ="plot_results/ziggurat/", 
-                           orderkcoremaxby = "kradius", isogonos= FALSE, flip_results = FALSE, aspect_ratio = 1,
+                           orderkcoremaxby = "kradius", #isogonos= FALSE, 
+                           flip_results = FALSE, aspect_ratio = 1,
                            alpha_level = 0.2, color_guild_a = c("#4169E1","#00008B"), color_guild_b = c("#F08080","#FF0000"),
                            color_link = "slategray3", alpha_link = 0.5, size_link = 0.5,
                            displace_y_b = rep(0,20),
@@ -139,7 +139,8 @@ ziggurat_graph <- function(datadir,filename,
     return(zgg)
   }
   # Copy input parameters to the zgg environment
-  def_configuration(paintlinks, print_to_file, plotsdir, orderkcoremaxby, isogonos, flip_results, aspect_ratio,
+  def_configuration(paintlinks, print_to_file, plotsdir, orderkcoremaxby, #isogonos, 
+                    flip_results, aspect_ratio,
                     alpha_level, color_guild_a, color_guild_b,
                     color_link, alpha_link, size_link,
                     displace_y_b, displace_y_a, lsize_kcoremax, lsize_zig, lsize_kcore1,
@@ -245,6 +246,7 @@ draw_square<- function(idPrefix, grafo,svg,basex,basey,side,fillcolor,alphasq,la
   x2 <- c(basex+side)
   y1 <- c(basey)
   y2 <- c(basey+side/aspect_ratio)
+  print(paste(x1, x2, y1, y2, fillcolor))
   ds <- data.frame(x1, x2, y1, y2, fillcolor)
   signo <- 1
   if (inverse == "yes")
@@ -700,13 +702,14 @@ draw_coremax_triangle <- function(basex,topx,basey,topy,numboxes,fillcolor,strla
   name_species <- c()
   pbasex <- zgg$coremax_triangle_width_factor*( basex - (numboxes %/%8) * abs(topx-basex)/3)
   xstep <- (topx-pbasex)*1/numboxes
-  if (!(zgg$isogonos)){
+  #if (!(zgg$isogonos)){
     ptopy <- topy * zgg$coremax_triangle_height_factor
     ystep <- (ptopy-basey)*0.7/numboxes
-  } else {
-    ptopy <- basey+(if (basey>0) 1 else -1)*xstep
-    ystep <- 0
-  }
+  #} 
+  # else {
+  #   ptopy <- basey+(if (basey>0) 1 else -1)*xstep
+  #   ystep <- 0
+  # }
   for (j in (1:numboxes))
   {
     x1 <- c(x1, pbasex+(j-1)*xstep)
@@ -843,8 +846,8 @@ conf_ziggurat <- function(kc,igraphnet, basex,widthx,basey,ystep,numboxes,fillco
       x2 <- c(x2, topx-(j-1)*(xstep/8)  )
     else
       x2 <- c(x2, topx-(j-1)*xstep/4)
-    if (zgg$isogonos)
-      x2 <- x1 + xstep
+    # if (zgg$isogonos)
+    #   x2 <- x1 + xstep
     y1 <- c(y1, basey-(j-1)*(ystep*fmult_hght+yjump)  )
     y2 <- c(y2, y1[j]+ystep*fmult_hght)
     r <- c(r,j)
@@ -1624,7 +1627,8 @@ write_final_annotations <- function(p, svg, plottype, myenv=zgg)
   if (plottype=='ziggurat') 
     landmark_bottom <- min(myenv$last_ytail_a[!is.na(myenv$last_ytail_b)],1.2*zgg$ymin)*myenv$rescale_plot_area[2]
   
-  f <- draw_square("annotation",p,svg,landmark_right,0,1,"transparent",0.5,"transparent",0,0,0,slabel="")
+  f <- draw_square("annotation",p,svg,landmark_right,0,1,"transparent",0.5,
+                   "transparent",0,0,0,slabel="")
   p <- f["p"][[1]]
   svg <- f["svg"][[1]]
   p <- p +annotate(geom="text", x= landmark_right, y=0, label=mlabel,
@@ -2061,7 +2065,8 @@ strip_isolated_nodes <- function(myenv)
 
 
 
-def_configuration <- function(paintlinks, print_to_file, plotsdir, orderkcoremaxby, isogonos, flip_results, aspect_ratio,
+def_configuration <- function(paintlinks, print_to_file, plotsdir, orderkcoremaxby, #isogonos, 
+                              flip_results, aspect_ratio,
                               alpha_level, color_guild_a, color_guild_b,
                               color_link, alpha_link, size_link,
                               displace_y_b, displace_y_a, lsize_kcoremax, lsize_zig, lsize_kcore1,
@@ -2086,7 +2091,7 @@ def_configuration <- function(paintlinks, print_to_file, plotsdir, orderkcoremax
   zgg$print_to_file <- print_to_file
   zgg$plotsdir <- plotsdir
   zgg$orderkcoremaxby <- orderkcoremaxby
-  zgg$isogonos <- isogonos
+  #zgg$isogonos <- isogonos
   zgg$flip_results <- flip_results
   zgg$alpha_level <- alpha_level
   zgg$color_guild_a <- color_guild_a
