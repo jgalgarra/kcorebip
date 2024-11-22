@@ -28,17 +28,11 @@ if (debugging){
 #' @param alpha_link link transparency
 #' @param size_link width of the links
 #' @param lsize_kcoremax nodes in kshell max label size
-#' @param lsize_zig nodes in inner ziggurats label size
 #' @param lsize_kcore1 labels of nodes in kshell 1
 #' @param lsize_legend legend label size
 #' @param labels_color default label colors
-#' @param factor_hop_x expand inner ziggurats horizontal distance
 #' @param hide_plot_border hide border around the plot
 #' @param corebox_border_size width of kshell boxes
-#' @param kcore_species_name_display display species names of  shells listed in this vector
-#' @param kcore_species_name_break allow new lines in species names of  shells listed in this vector
-#' @param shorten_species_name number of characters of species name to display
-#' @param exclude_species_number do not include species number in species
 #' @param label_strguilda string labels of guild a
 #' @param label_strguildb string labels of guild b
 #' @param landscape_plot paper landscape configuration
@@ -62,13 +56,11 @@ bipartite_graph <- function(datadir,filename,
                            flip_results = FALSE, aspect_ratio = 1,
                            alpha_level = 0.2, color_guild_a = c("#4169E1","#00008B"), color_guild_b = c("#F08080","#FF0000"),
                            color_link = "slategray3", alpha_link = 0.5, size_link = 0.5,
-                           lsize_kcoremax = 3.5, lsize_zig = 3, lsize_kcore1 = 2.5, lsize_legend = 4, lsize_core_box = 2.5,
+                           lsize_kcoremax = 3.5, lsize_kcore1 = 2.5, lsize_legend = 4, lsize_core_box = 2.5,
                            labels_color = c(),
-                           factor_hop_x = 1, 
                            hide_plot_border = TRUE,
                            corebox_border_size = 0.2,
-                           kcore_species_name_display = c(), kcore_species_name_break = c(),
-                           shorten_species_name = 0, exclude_species_number = FALSE, label_strguilda = "",
+                           label_strguilda = "",
                            label_strguildb = "", landscape_plot = TRUE,
                            backg_color = "white", show_title = TRUE, show_legend = 'TOP',
                            file_name_append = "", svg_scale_factor= 10, weighted_links = "none",
@@ -111,12 +103,10 @@ bipartite_graph <- function(datadir,filename,
                         guild_gap_increase, flip_results, aspect_ratio,
                         alpha_level, color_guild_a, color_guild_b,
                         color_link, alpha_link, size_link,
-                        lsize_kcoremax, lsize_zig, lsize_kcore1,
+                        lsize_kcoremax, lsize_kcore1,
                         lsize_legend, lsize_core_box, labels_color,
-                        factor_hop_x,
                         hide_plot_border,
-                        corebox_border_size, kcore_species_name_display,kcore_species_name_break,
-                        shorten_species_name,exclude_species_number,
+                        corebox_border_size,
                         label_strguilda, label_strguildb, landscape_plot, backg_color, show_title, show_legend,
                         file_name_append, svg_scale_factor, weighted_links, square_nodes_size_scale,
                         move_all_SVG_up, move_all_SVG_right, progress
@@ -921,12 +911,10 @@ def_configuration_bip <- function(paintlinks, print_to_file, plotsdir, orderkcor
                               guild_gap_increase, flip_results, aspect_ratio,
                               alpha_level, color_guild_a, color_guild_b,
                               color_link, alpha_link, size_link,
-                              lsize_kcoremax, lsize_zig, lsize_kcore1,
+                              lsize_kcoremax, lsize_kcore1,
                               lsize_legend, lsize_core_box, labels_color,
-                              factor_hop_x,
                               hide_plot_border,
-                              corebox_border_size, kcore_species_name_display,kcore_species_name_break,
-                              shorten_species_name,exclude_species_number,
+                              corebox_border_size,
                               label_strguilda, label_strguildb, landscape_plot, backg_color, show_title, show_legend,
                               file_name_append, svg_scale_factor, weighted_links, square_nodes_size_scale,
                               move_all_SVG_up, move_all_SVG_right, progress
@@ -949,20 +937,14 @@ def_configuration_bip <- function(paintlinks, print_to_file, plotsdir, orderkcor
   bpp$aspect_ratio <- aspect_ratio
   bpp$labels_size <- 4
   bpp$lsize_kcoremax <- lsize_kcoremax
-  bpp$lsize_zig <- lsize_zig
   bpp$lsize_kcore1 <- lsize_kcore1
   bpp$lsize_legend <- lsize_legend
   bpp$lsize_core_box <- lsize_core_box
   bpp$labels_color <- labels_color                           # Horizontal & Vertical distances of edge/specialist tails linked to core 1 North & South
-  bpp$factor_hop_x <- factor_hop_x
   bpp$coremax_triangle_height_factor <- 3
   bpp$coremax_triangle_width_factor <- 3
   bpp$hide_plot_border <- hide_plot_border
   bpp$corebox_border_size <- corebox_border_size
-  bpp$kcore_species_name_display <- kcore_species_name_display
-  bpp$kcore_species_name_break <- kcore_species_name_break
-  bpp$shorten_species_name <- shorten_species_name
-  bpp$exclude_species_number <- exclude_species_number
   bpp$landscape_plot <- landscape_plot
   bpp$backg_color <- backg_color
   bpp$show_title <- show_title
@@ -1084,7 +1066,7 @@ draw_bipartite_plot <- function(svg_scale_factor, progress)
   maxincore2 <- max(bpp$species_in_core2_a,bpp$species_in_core2_b)
   bpp$height_y <- bpp$height_y
   bpp$ymax <- bpp$ymax * 1.1
-  bpp$hop_x <- bpp$factor_hop_x*(bpp$tot_width)/max(1,(bpp$kcoremax-2))
+  bpp$hop_x <- (bpp$tot_width)/max(1,(bpp$kcoremax-2))
   bpp$lado <- min(0.05*bpp$tot_width,bpp$height_y * bpp$aspect_ratio)
   bpp$basey <- 2.5*bpp$lado
   wcormax <- 1.2*bpp$hop_x*bpp$coremax_triangle_width_factor

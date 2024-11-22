@@ -69,24 +69,7 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
       if (flip_coordinates)
         maxy  <- ceiling(4*this$maxy/10)*10
     }
-    if (style=='ziggurat')
-      maxx  <- min(ceiling(this$maxx/10)*10, ceiling(1.1*zl/100)*10)
-    else
-      maxx  <- ceiling(4*zl/100)*10
-    if (style=='ziggurat')
-      miny  <- (1-zu)*floor(this$miny/10)*10
-    else{
-      miny  <- (bpp$landmark_bottom/10)*10
-      if (flip_coordinates)
-        miny  <- ((bpp$landmark_bottom-4*bpp$xstep)/10)*10
-    }
-    
-    if (style=='ziggurat')
-      maxy  <- ceiling(this$maxy/10)*10
-    else 
-      maxy  <- ceiling(5*this$maxy/10)*10
     fzcale <- 1.05
-    #svg0<-paste0("<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"", viewBox, "\">\n")
     tleftx <- minx
     tlefty <- miny
     swidth <- ceiling((maxx-minx)/10)*10
