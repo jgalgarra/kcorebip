@@ -85,7 +85,7 @@ source("SVG.R")
 #' @examples ziggurat_graph("data/","M_PL_001.csv",plotsdir="grafresults/",print_to_file = TRUE)
 
 ziggurat_graph <- function(datadir,filename,
-                           paintlinks = TRUE, print_to_file = FALSE, plotsdir ="", 
+                           paintlinks = TRUE, print_to_file = FALSE, plotsdir ="plotresults/", 
                            orderkcoremaxby = "kradius", #isogonos= FALSE, 
                            flip_results = FALSE, aspect_ratio = 1,
                            alpha_level = 0.2, color_guild_a = c("#4169E1","#00008B"), color_guild_b = c("#F08080","#FF0000"),
@@ -1632,9 +1632,9 @@ write_final_annotations <- function(p, svg, plottype, myenv=zgg)
   svg <- f["svg"][[1]]
   p <- p +annotate(geom="text", x= landmark_right, y=0, label=mlabel,
                    colour = "red", size=1, hjust = 0, vjust = 0, angle = 0)
-  svg$text("annotation", data=data.frame(x=landmark_right, y=0), 
+  svg$text("annotation", data=data.frame(x=landmark_right, y=0),
            mapping=aes(x=x, y=y), color="red", label=mlabel, size=1, angle=0)
-  p <- p+theme(plot.margin=unit(c(0.5,0.5,0.5,0.5),"cm"))
+
   
   
   ypunto <- ifelse(plottype=='ziggurat',0,landmark_top)

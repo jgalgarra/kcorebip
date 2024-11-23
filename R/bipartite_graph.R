@@ -51,7 +51,7 @@ if (debugging){
 #' @examples bipartite_graph("data/","M_PL_001.csv",plotsdir="grafresults/",print_to_file = TRUE)
 
 bipartite_graph <- function(datadir,filename,
-                           paintlinks = TRUE, print_to_file = FALSE, plotsdir ="plot_results/ziggurat/", 
+                           paintlinks = TRUE, print_to_file = FALSE, plotsdir ="plot_results/", 
                            orderkcoremaxby = "kradius", style="legacy", guild_gap_increase = 1, 
                            flip_results = FALSE, aspect_ratio = 1,
                            alpha_level = 0.2, color_guild_a = c("#4169E1","#00008B"), color_guild_b = c("#F08080","#FF0000"),
@@ -898,9 +898,9 @@ display_plot_bip <- function(p, printfile,  plwidth=14, ppi = 300, landscape = b
       ftname_append <- fname_append
     dir.create(bpp$plotsdir, showWarnings = FALSE)
     if (landscape)
-      png(paste0(bpp$plotsdir,"/",bpp$network_name,"_ziggurat",ftname_append,".png"), width=(plwidth*ppi), height=(9/16)*plwidth*ppi, res=ppi)
+      png(paste0(bpp$plotsdir,"/",bpp$network_name,"_",bpp$style,ftname_append,".png"), width=(plwidth*ppi), height=(9/16)*plwidth*ppi, res=ppi)
     else
-      png(paste0(bpp$plotsdir,"/",bpp$network_name,"_ziggurat",ftname_append,".png"), width=(plheight*ppi), height=(9/16)*plwidth*ppi, res=ppi)
+      png(paste0(bpp$plotsdir,"/",bpp$network_name,"_",bpp$style,ftname_append,".png"), width=(plheight*ppi), height=(9/16)*plwidth*ppi, res=ppi)
   }
   print(p)
   if (printfile)
@@ -936,6 +936,7 @@ def_configuration_bip <- function(paintlinks, print_to_file, plotsdir, orderkcor
   bpp$size_link <- size_link
   bpp$aspect_ratio <- aspect_ratio
   bpp$labels_size <- 4
+  bpp$rescale_plot_area = c(1,1)
   bpp$lsize_kcoremax <- lsize_kcoremax
   bpp$lsize_kcore1 <- lsize_kcore1
   bpp$lsize_legend <- lsize_legend
