@@ -28,7 +28,7 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
   flinkscale = ifelse (style=="ziggurat", 1, 100)
   # crea el objeto SVG
   this<-list(content=c(""), minx=0, miny=0, maxx=0, maxy=0, scale_factor=scale_factor, font_scale_factor=fontscale)
-
+  
   # guarda el contenido del svg en un fichero
   this$save <- function(fileName, svg) {
     fileConn<-file(fileName)
@@ -36,8 +36,8 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
     writeLines(paste0(header, this$html()), fileConn)
     close(fileConn)
   }
-
-
+  
+  
   # devuelve el HTML correspondiente al objeto
   zr <- 1
   zl <- 1
@@ -80,55 +80,55 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
     }
     else{
       if (style!='ziggurat')
-        viewBox<-paste0(tleftx, " ", tlefty-2*bpp$xstep, " ", swidth, " ", sheight)
+        viewBox<-paste0(tleftx, " ", tlefty-2*bpp$xstep, " ", swidth, " ", swidth/2)
       else
-        viewBox<-paste0(tleftx, " ", tlefty, " ", swidth, " ", sheight)
+        viewBox<-paste0(tleftx, " ", tlefty, " ", swidth, " ", swidth)
       svg0<-paste0("<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"", viewBox, "\">\n")
     }
-      
+    
     svg1<-paste0("</svg>")
     return(paste0(svg0, paste0(this$content, collapse=""), svg1, sep=""))
   }
-
+  
   # crea un rectangulo a partir de un conjunto de datos, con parametros similares
   # a ggplot2::geom_rect
   this$rect <- function(idPrefix, data, mapping, fill, alpha, color, size=0, linetype=1) {
     result <- ""
-
+    
     # si solo se ha pasado un color lo utiliza para todos los datos
     if (length(color)==1) {
       color<-rep(color, nrow(data))
     }
-
+    
     # evalua las posiciones
     # cambia de signo las coordenadas y, ya que en SVG el eje y es al contrario de lo que trata R con ggplot
-
+    
     xmin  <- this$round_coords(eval_tidy(mapping$xmin, data)/this$scale_factor)
     xmax  <- this$round_coords(eval_tidy(mapping$xmax, data)/this$scale_factor)
     ymin  <- -this$round_coords(eval_tidy(mapping$ymin, data)/this$scale_factor)
     ymax  <- -this$round_coords(eval_tidy(mapping$ymax, data)/this$scale_factor)
-
+    
     # itera para cada rectangulo
     for (i in 1:nrow(data)) {
       rect2<-this$rect2(id=paste0(plottype,idPrefix, "-", i, "-rect"), xmin=xmin[i], xmax=xmax[i], ymin=ymin[i], ymax=ymax[i], fill=fill[i], alpha=alpha, color=color[i], size=size, linetype=linetype)
       result<-paste0(result, rect2)
     }
-
+    
     # incorpora el resultado al contenido del SVG
     this$content<<-cbind(this$content,c(result))
   }
-
+  
   # funcion axiliar para crear un rectangulo
   this$rect2 <- function(id, xmin, xmax, ymin, ymax, fill, alpha, color, size, linetype) {
     result <- ""
-
+    
     # traduce el "no-relleno"
     if (fill=="transparent") {
       fill<-"none"
     }
-
+    
     # actualiza las coordenadas del viewBox si es necesario
-
+    
     if (xmin<this$minx) this$minx<<-xmin
     if (xmin>this$maxx) this$maxx<<-xmin
     if (xmax<this$minx) this$minx<<-xmax
@@ -137,8 +137,8 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
     if (ymin>this$maxy) this$maxy<<-ymin
     if (ymax<this$miny) this$miny<<-ymax
     if (ymax>this$maxy) this$maxy<<-ymax
-
-
+    
+    
     # dibuja el rectangulo
     result <- paste0(result, "<rect id=\"", id, "\" ")
     result <- paste0(result, "style=\"", "fill:", fill, ";fill-opacity:", alpha, "\" ")
@@ -153,26 +153,26 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
     result <- paste0(result, "width=\"", abs(xmax-xmin), "\" ")
     result <- paste0(result, "height=\"", abs(ymax-ymin), "\" ")
     result <- paste0(result, "/>\n")
-
+    
     return(result)
   }
-
+  
   # crea un texto a partir de un conjunto de datos, con parametros similares
   # a ggplot2::geom_text
   this$text <- function(idPrefix, data, mapping, label, color, size, angle=0) {
     if (flip_coordinates)
       angle = angle + 90
     result <- ""
-
+    
     # si solo se ha pasado un color lo utiliza para todos los datos
     if (length(color)==1) {
       color<-rep(color, nrow(data))
     }
-
+    
     # evalua las posiciones
     # cambia de signo las coordenadas y, ya que en SVG el eje y es al contrario de lo que trata R con ggplot
-
-
+    
+    
     x <- this$round_coords(eval_tidy(mapping$x, data)/this$scale_factor)
     y <- -this$round_coords(eval_tidy(mapping$y, data)/this$scale_factor)
     # itera para cada texto
@@ -181,11 +181,11 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
                         x=x[i], y=y[i], label=label[i], color[i], size, angle)
       result<-paste0(result, text2)
     }
-
+    
     # incorpora el resultado al contenido del SVG
     this$content<<-cbind(this$content,c(result))
   }
-
+  
   # funcion auxiliar para la creacion de texto
   # divide el texto generado en tantos tspan como saltos de linea tenga la etiqueta recibida
   this$text2 <- function(id, x, y, label, color, size, angle) {
@@ -198,12 +198,12 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
     maxx <- x+len*size
     miny <- y-len*size
     maxy <- y+len*size
-
+    
     if (minx<this$minx) this$minx<<-minx
     if (maxx>this$maxx) this$maxx<<-maxx
     if (miny<this$miny) this$miny<<-miny
     if (maxy>this$maxy) this$maxy<<-maxy
-
+    
     # agrupacion de texto
     result <- paste0(result, "<text id=\"", id, "\"", " ")
     result <- paste0(result, "y=\"", y, "\"", " ")
@@ -238,27 +238,27 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
         }
       }
     }
-
+    
     # fin de la agrupacion de texto
     result <- paste0(result, "</text>\n")
-
+    
     return(result)
   }
-
+  
   # crea un segmento a partir de un conjunto de datos, con parametros similares
   # a ggplot2::geom_segment
   this$segment <- function(idPrefix, data, mapping, alpha, color, size=0, linetype=1) {
     result <- ""
-
+    
     # si solo se ha pasado un color lo utiliza para todos los datos
     if (length(color)==1) {
       color<-rep(color, nrow(data))
     }
-
+    
     # evalua las posiciones
     # cambia de signo las coordenadas y, ya que en SVG el eje y es al contrario de lo que trata R con ggplot
-
-
+    
+    
     x     <- this$round_coords(eval_tidy(mapping$x, data)/this$scale_factor)
     xend  <- this$round_coords(eval_tidy(mapping$xend, data)/this$scale_factor)
     y     <- -this$round_coords(eval_tidy(mapping$y, data)/this$scale_factor)
@@ -272,15 +272,15 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
                               linetype=linetype)
       result<-paste0(result, segment2)
     }
-
+    
     # incorpora el resultado al contenido del SVG
     this$content<<-cbind(this$content,c(result))
   }
-
+  
   # funcion axiliar para la creacion de un segmento
   this$segment2 <- function(id, x, xend, y, yend, alpha, color, size, linetype) {
     result <- ""
-
+    
     # actualiza las coordenadas del viewBox si es necesario
     if (x<this$minx)    this$minx<<-x
     if (x>this$maxx)    this$maxx<<-x
@@ -290,7 +290,7 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
     if (y>this$maxy)    this$maxy<<-y
     if (yend<this$miny) this$miny<<-yend
     if (yend>this$maxy) this$maxy<<-yend
-
+    
     result <- paste0(result, "<g id=\"", id , "\" ")
     result <- paste0(result, "fill=\"none\" ")
     result <- paste0(result, "stroke=\"", color , "\" ")
@@ -298,21 +298,21 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
       result <- paste0(result, "stroke-dasharray=\"", this$stroke_dasharray(linetype), "\" ")
     }
     result <- paste0(result, "stroke-width=\"", size , "\" ")
-
+    
     
     result <- paste0(result, "stroke-opacity=\"", alpha , "\"")
     result <- paste0(result, ">\n")
-
+    
     result <- paste0(result, "<path d=\"")
     result <- paste0(result, "M", x, " ", y, " ")
     result <- paste0(result, "L", xend, " ", yend, "\"")
     result <- paste0(result, "/>\n")
-
+    
     result <- paste0(result, "</g>\n")
-
+    
     return(result)
   }
-
+  
   # crea una ruta a partir de un conjunto de datos, con parametros similares
   # a ggplot2::geom_path
   this$path <- function(idPrefix, data, mapping, alpha, color, size=0, linetype=1) {
@@ -321,12 +321,12 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
     if (length(color)==1) {
       color<-rep(color, nrow(data))
     }
-
+    
     # evalua los grupos
     group <- eval_tidy(mapping$group, data)
     # itera para cada grupo de rutas
     # cambia de signo las coordenadas y, ya que en SVG el eje y es al contrario de lo que trata R con ggplot
-
+    
     for (i in unique(group)) {
       g <- data[data[quo_text(mapping$group)]==i,]
       x <- this$round_coords(g[,c(quo_text(mapping$x))]/this$scale_factor)
@@ -334,16 +334,16 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
       path2<-this$path2(id=paste0(plottype,idPrefix, "-", i, "-path"), x=x, y=y, alpha=alpha, color=color[i], size=size, linetype=linetype)
       result<-paste0(result, path2)
     }
-
+    
     # incorpora el resultado al contenido del SVG
     this$content<<-cbind(this$content,c(result))
-
+    
   }
-
+  
   # funcion auxiliar para la creacion de una ruta
   this$path2 <- function(id, x, y, alpha, color, size, linetype) {
     result <- ""
-
+    
     # actualiza las coordenadas del viewBox si es necesario
     minx<-min(x)
     maxx<-max(x)
@@ -357,7 +357,7 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
     if (miny>this$maxy) this$maxy<<-miny
     if (maxy<this$miny) this$miny<<-maxy
     if (maxy>this$maxy) this$maxy<<-maxy
-
+    
     # crea la ruta
     result <- paste0(result, "<g id=\"", id , "\" ")
     result <- paste0(result, "fill=\"none\" ")
@@ -368,7 +368,7 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
     result <- paste0(result, "stroke-width=\"", size , "\" ")
     result <- paste0(result, "stroke-opacity=\"", alpha , "\"")
     result <- paste0(result, ">\n")
-
+    
     result <- paste0(result, "<path d=\"")
     result <- paste0(result, "M", x[1], " ", y[1], " ")
     for (i in 2:length(x)) {
@@ -376,10 +376,10 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
     }
     result <- paste0(result, "\"/>\n")
     result <- paste0(result, "</g>\n")
-
+    
     return(result)
   }
-
+  
   # funcion auxiliar para especificar el tipo de linea a utilizar, a
   # partir de los mismos valores de linetype usados en ggplot2
   #   0:blank, 1:solid, 2:dashed, 3:dotted, 4:dotdash, 5:longdash, 6:twodash
@@ -388,13 +388,13 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
     result<-paste(linetypes[[as.character(linetype)]], collapse=" ")
     return(result)
   }
-
+  
   # funcion para redondeo de coordenadas y no arrastrar
   # todos los decimales al svg
   this$round_coords<- function (values) {
     return(round(values, digits=2))
   }
-
+  
   class(this)<-c("svg")
   return(this)
 }
@@ -408,7 +408,7 @@ test <- function(items=2) {
     y2 = sample(600, items, replace = TRUE),
     fill = rep(c("red", "green", "blue"), items)[1:items]
   )
-
+  
   s1<-SVG(1)
   s1$rect(data=d, mapping=aes(xmin=x1, xmax=x2, ymin=y1, ymax=y2), fill=d$fill, alpha=0.1, color=d$fill, size=1, linetype=2)
   s1$text(data=d, mapping=aes(x=x1, y=y1), label=paste0("(",d$x1,",",d$y1,")"), color="blue", size=9, angle=0)

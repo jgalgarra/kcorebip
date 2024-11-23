@@ -282,7 +282,7 @@ draw_edge_tails_bip <- function(p,svg,point_x,point_y,kcoreother,long_tail,list_
       little_tail$weightlink <- get_link_weights(tailweight, myenv=bpp)
 
       v<- draw_tail_bip(paste0(ifelse(is_guild_a, "edge-kcore1-a-", "edge-kcore1-b-"), i),
-                    p,svg,little_tail,0.95*bpp$xstep,color_guild[2],
+                    p,svg,little_tail,0.9*bpp$xstep,color_guild[2],
                     gen_vert_label(little_tail$orph,joinchars = " "),
                     rxx,ryy,bpp$gap,lxx2 = xx2,
                     lyy2 = yy2, sqinverse = inverse, position = orientation,
