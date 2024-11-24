@@ -921,11 +921,11 @@ def_configuration_bip <- function(paintlinks, print_to_file, plotsdir, orderkcor
                               )
 {
   # ENVIRONMENT CONFIGURATION PARAMETERS
+  bpp$style <- style
   bpp$paintlinks <- paintlinks
   bpp$print_to_file <- print_to_file
   bpp$plotsdir <- plotsdir
   bpp$orderkcoremaxby <- orderkcoremaxby
-  bpp$style <- style
   bpp$guild_gap_increase <- guild_gap_increase
   bpp$flip_results <- flip_results
   bpp$alpha_level <- alpha_level

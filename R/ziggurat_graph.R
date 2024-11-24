@@ -22,6 +22,7 @@ source("SVG.R")
 #'
 #' @param datadir the name of the file of the interaction matrix
 #' @param filename the file with the interaction matrix
+#' @param style equals 'ziggurat', do not modify
 #' @param print_to_file if set to FALSE the plot is displayed in the R session window
 #' @param plotsdir the directory where the plot is stored
 #' @param orderkcoremaxby sets order of kcoremax nodes, by kradius or kdegree
@@ -84,7 +85,7 @@ source("SVG.R")
 #' @export
 #' @examples ziggurat_graph("data/","M_PL_001.csv",plotsdir="grafresults/",print_to_file = TRUE)
 
-ziggurat_graph <- function(datadir,filename,
+ziggurat_graph <- function(datadir,filename, style='ziggurat',
                            paintlinks = TRUE, print_to_file = FALSE, plotsdir ="plotresults/", 
                            orderkcoremaxby = "kradius", #isogonos= FALSE, 
                            flip_results = FALSE, aspect_ratio = 1,
@@ -139,7 +140,7 @@ ziggurat_graph <- function(datadir,filename,
     return(zgg)
   }
   # Copy input parameters to the zgg environment
-  def_configuration(paintlinks, print_to_file, plotsdir, orderkcoremaxby, #isogonos, 
+  def_configuration(paintlinks, print_to_file, style, plotsdir, orderkcoremaxby, #isogonos, 
                     flip_results, aspect_ratio,
                     alpha_level, color_guild_a, color_guild_b,
                     color_link, alpha_link, size_link,
@@ -1604,8 +1605,10 @@ write_final_annotations <- function(p, svg, plottype, myenv=zgg)
   }
   else{
     landmark_right <- (myenv$landmark_right+2*myenv$xstep)*myenv$rescale_plot_area[1]
-    landmark_left <- min(myenv$landmark_left,
-                       (myenv$pos_tail_x)*myenv$rescale_plot_area[1])-myenv$xstep*ifelse(myenv$exists_fat_tail,4,3)
+    # landmark_left <- min(myenv$landmark_left,
+    #                    (myenv$pos_tail_x)*myenv$rescale_plot_area[1])-myenv$xstep*ifelse(myenv$exists_fat_tail,4,3)
+    landmark_left <- min(myenv$landmark_left,myenv$pos_tail_x-myenv$xstep*ifelse(myenv$exists_fat_tail,1,2))
+    
     landmark_top <- myenv$landmark_top+myenv$xstep
     landmark_bottom <- myenv$landmark_bottom
     if(!myenv$exists_fat_tail){
@@ -2064,7 +2067,7 @@ strip_isolated_nodes <- function(myenv)
 
 
 
-def_configuration <- function(paintlinks, print_to_file, plotsdir, orderkcoremaxby, #isogonos, 
+def_configuration <- function(paintlinks, print_to_file, style, plotsdir, orderkcoremaxby, #isogonos, 
                               flip_results, aspect_ratio,
                               alpha_level, color_guild_a, color_guild_b,
                               color_link, alpha_link, size_link,
@@ -2086,6 +2089,7 @@ def_configuration <- function(paintlinks, print_to_file, plotsdir, orderkcoremax
                               )
 {
   # ENVIRONMENT CONFIGURATION PARAMETERS
+  zgg$style <- style
   zgg$paintlinks <- paintlinks
   zgg$print_to_file <- print_to_file
   zgg$plotsdir <- plotsdir
