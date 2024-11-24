@@ -415,7 +415,7 @@ draw_parallel_guilds <- function(basex,topx,basey,topy,numboxes,nnodes,fillcolor
     for (k in shells){
       d2 <- d1[d1$kcore == k,]
       if (nrow(d2)>1){
-        d2 <-d2[rev(order(1000*d2$kdegree-d2$kradius)),]
+        d2 <-d2[order(1000*d2$kradius-d2$kdegree),]
         d1[d1$kcore==k,][,subscol] <- d2[,subscol]
       }
       
@@ -607,11 +607,14 @@ handle_fat_tails_bip <- function(p, svg, style = "legacy")
                     bpp$last_xtail_b[[bpp$kcoremax]],
                     bpp$list_dfs_a[[bpp$kcoremax]][1,]$x1,
                     bpp$list_dfs_b[[bpp$kcoremax]][1,]$y2)
-  if (bpp$orderkcoremaxby == "kdegree")
-    max_b_k <- bpp$list_dfs_b[[bpp$kcoremax]][which(bpp$list_dfs_b[[bpp$kcoremax]]$kdegree == max(bpp$list_dfs_b[[bpp$kcoremax]]$kdegree)),]$label
-  if (bpp$orderkcoremaxby == "kradius")
-    max_b_k <- bpp$list_dfs_b[[bpp$kcoremax]][which(bpp$list_dfs_b[[bpp$kcoremax]]$kradius == min(bpp$list_dfs_b[[bpp$kcoremax]]$kradius)),]$label
-
+  if (bpp$orderkcoremaxby == "kdegree"){
+    index <- (1000*bpp$list_dfs_b[[bpp$kcoremax]]$kdegree+bpp$list_dfs_b[[bpp$kcoremax]]$kradius)
+    max_b_k <- bpp$list_dfs_b[[bpp$kcoremax]]$label[which(index==max(index))]
+  }
+  if (bpp$orderkcoremaxby == "kradius"){
+    index <- (1000*bpp$list_dfs_b[[bpp$kcoremax]]$kradius-bpp$list_dfs_b[[bpp$kcoremax]]$kdegree)
+    max_b_k <- bpp$list_dfs_b[[bpp$kcoremax]]$label[which(index==min(index))]
+  }
   if (exists("df_orph_a", envir = bpp)){
     fat_tail_a <- bpp$df_orph_a[(bpp$df_orph_a$partner == max(max_b_k[1])) 
                                 & (bpp$df_orph_a$repeated == "no"),]
@@ -627,11 +630,15 @@ handle_fat_tails_bip <- function(p, svg, style = "legacy")
   }
   if (!exists("fat_tail_a"))
     fat_tail_a <- data.frame(c())
-  if (bpp$orderkcoremaxby == "kdegree")
-    max_a_k <- bpp$list_dfs_a[[bpp$kcoremax]][which(bpp$list_dfs_a[[bpp$kcoremax]]$kdegree == max(bpp$list_dfs_a[[bpp$kcoremax]]$kdegree)),]$label
-  if (bpp$orderkcoremaxby == "kradius")
-    max_a_k <- bpp$list_dfs_a[[bpp$kcoremax]][which(bpp$list_dfs_a[[bpp$kcoremax]]$kradius == min(bpp$list_dfs_a[[bpp$kcoremax]]$kradius)),]$label
-  
+  if (bpp$orderkcoremaxby == "kdegree"){
+    index <- (1000*bpp$list_dfs_a[[bpp$kcoremax]]$kdegree+bpp$list_dfs_a[[bpp$kcoremax]]$kradius)
+    max_a_k <- bpp$list_dfs_a[[bpp$kcoremax]]$label[which(index==max(index))]
+  }
+  if (bpp$orderkcoremaxby == "kradius"){
+    index <- (1000*bpp$list_dfs_a[[bpp$kcoremax]]$kradius-bpp$list_dfs_a[[bpp$kcoremax]]$kdegree)
+    max_a_k <- bpp$list_dfs_a[[bpp$kcoremax]]$label[which(index==min(index))]
+  }
+    
   if (exists("df_orph_b", envir = bpp)){
     fat_tail_b <- bpp$df_orph_b[(bpp$df_orph_b$partner == max(max_a_k)) & (bpp$df_orph_b$repeated == "no"),]
     if (nrow(fat_tail_b)>1)
@@ -802,7 +809,7 @@ draw_maxcore_bip <- function(svg)
                                                          length(species_A),nnodes,bpp$color_guild_a,
                                                          species_A,
                                                          bpp$rg, bpp$str_guild_a, 
-                                                         orderby = "kdegree",
+                                                         orderby = "kradius",
                                                          style=bpp$style,guild="A")
   p <- ggplot() + scale_x_continuous(name="x") + scale_y_continuous(name="y")
   f <- paint_labels(p,svg,"-a",bpp$list_dfs_a[[bpp$kcoremax]])
@@ -816,7 +823,7 @@ draw_maxcore_bip <- function(svg)
                                                           length(species_B),nnodes,
                                                           bpp$color_guild_b,
                                                           species_B,bpp$rg,
-                                                          bpp$str_guild_b,  orderby = "kdegree",
+                                                          bpp$str_guild_b,  orderby = "kradius",
                                                           style=bpp$style,guild="B")
     bpp$landmark_right <- max(bpp$list_dfs_b[[bpp$kcoremax]]$x2,
                             bpp$list_dfs_a[[bpp$kcoremax]]$x2)+bpp$xstep
