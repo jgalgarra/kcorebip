@@ -415,7 +415,7 @@ draw_parallel_guilds <- function(basex,topx,basey,topy,numboxes,nnodes,fillcolor
     for (k in shells){
       d2 <- d1[d1$kcore == k,]
       if (nrow(d2)>1){
-        d2 <-d2[order(1000*d2$kradius-d2$kdegree),]
+        d2 <-d2[kcorebip:::setnodeorder(d2,orderby="kradius"),]
         d1[d1$kcore==k,][,subscol] <- d2[,subscol]
       }
       
@@ -608,11 +608,11 @@ handle_fat_tails_bip <- function(p, svg, style = "legacy")
                     bpp$list_dfs_a[[bpp$kcoremax]][1,]$x1,
                     bpp$list_dfs_b[[bpp$kcoremax]][1,]$y2)
   if (bpp$orderkcoremaxby == "kdegree"){
-    index <- (1000*bpp$list_dfs_b[[bpp$kcoremax]]$kdegree+bpp$list_dfs_b[[bpp$kcoremax]]$kradius)
+    index<- kcorebip:::setnodeorder(bpp$list_dfs_b[[bpp$kcoremax]],orderby="kdegree")
     max_b_k <- bpp$list_dfs_b[[bpp$kcoremax]]$label[which(index==max(index))]
   }
   if (bpp$orderkcoremaxby == "kradius"){
-    index <- (1000*bpp$list_dfs_b[[bpp$kcoremax]]$kradius-bpp$list_dfs_b[[bpp$kcoremax]]$kdegree)
+    index<- kcorebip:::setnodeorder(bpp$list_dfs_b[[bpp$kcoremax]],orderby="kradius")
     max_b_k <- bpp$list_dfs_b[[bpp$kcoremax]]$label[which(index==min(index))]
   }
   if (exists("df_orph_a", envir = bpp)){
@@ -631,11 +631,11 @@ handle_fat_tails_bip <- function(p, svg, style = "legacy")
   if (!exists("fat_tail_a"))
     fat_tail_a <- data.frame(c())
   if (bpp$orderkcoremaxby == "kdegree"){
-    index <- (1000*bpp$list_dfs_a[[bpp$kcoremax]]$kdegree+bpp$list_dfs_a[[bpp$kcoremax]]$kradius)
+    index <- kcorebip:::setnodeorder(bpp$list_dfs_a[[bpp$kcoremax]],orderby="kdegree")
     max_a_k <- bpp$list_dfs_a[[bpp$kcoremax]]$label[which(index==max(index))]
   }
   if (bpp$orderkcoremaxby == "kradius"){
-    index <- (1000*bpp$list_dfs_a[[bpp$kcoremax]]$kradius-bpp$list_dfs_a[[bpp$kcoremax]]$kdegree)
+    index <- kcorebip:::setnodeorder(bpp$list_dfs_a[[bpp$kcoremax]],orderby="kradius")
     max_a_k <- bpp$list_dfs_a[[bpp$kcoremax]]$label[which(index==min(index))]
   }
     

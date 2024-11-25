@@ -687,6 +687,13 @@ handle_outsiders <- function(p,svg,outsiders,df_chains) {
   return(calc_vals)
 }
 
+setnodeorder <- function(d1,orderby="kradius"){
+  if (orderby=='kradius')
+    return(order(1000*d1$kradius-d1$kdegree+0.001*as.numeric(d1$label)))
+  if (orderby=='kdegree')
+    return(order(1000*d1$kdegree+d1$kradius+0.001*as.numeric(d1$label)))
+}
+
 # Draw one triangle of the innermost shell
 draw_coremax_triangle <- function(basex,topx,basey,topy,numboxes,fillcolor,strlabels,
                                   igraphnet,strguild,orderby = "kradius")
@@ -702,14 +709,8 @@ draw_coremax_triangle <- function(basex,topx,basey,topy,numboxes,fillcolor,strla
   name_species <- c()
   pbasex <- zgg$coremax_triangle_width_factor*( basex - (numboxes %/%8) * abs(topx-basex)/3)
   xstep <- (topx-pbasex)*1/numboxes
-  #if (!(zgg$isogonos)){
-    ptopy <- topy * zgg$coremax_triangle_height_factor
-    ystep <- (ptopy-basey)*0.7/numboxes
-  #} 
-  # else {
-  #   ptopy <- basey+(if (basey>0) 1 else -1)*xstep
-  #   ystep <- 0
-  # }
+  ptopy <- topy * zgg$coremax_triangle_height_factor
+  ystep <- (ptopy-basey)*0.7/numboxes
   for (j in (1:numboxes))
   {
     x1 <- c(x1, pbasex+(j-1)*xstep)
@@ -733,14 +734,16 @@ draw_coremax_triangle <- function(basex,topx,basey,topy,numboxes,fillcolor,strla
     d1[i,]$name_species <- igraphnet[paste0(strguild,d1[i,]$label)]$name_species
   }
   if (orderby == "kradius"){
-    ordvector <- order(1000*d1$kradius-d1$kdegree)
+    ordvector <- setnodeorder(d1,orderby='kradius')
+    
     d1$label <- d1[ordvector,]$label
+    print(d1$label)
     d1$kradius <- d1[ordvector,]$kradius
     d1$kdegree <- d1[ordvector,]$kdegree
     d1$name_species <- d1[ordvector,]$name_species
   }
   else if (orderby == "kdegree"){
-    ordvector <- rev(order(1000*d1$kdegree+d1$kradius))
+    ordvector <- rev(setnodeorder(d1,orderby='kdegree'))
     d1$label <- d1[ordvector,]$label
     d1$kradius <- d1[ordvector,]$kradius
     d1$kdegree <- d1[ordvector,]$kdegree
