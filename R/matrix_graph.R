@@ -100,17 +100,21 @@ matrix_graph <-function(datadir,filename,
     return(mplots)
   }
   
-  create_labels <- function(M,nums,i,show_species=FALSE,flip_matrix=TRUE,guild="A"){
+  create_labels <- function(M,nums,i,vnames,show_species=FALSE,flip_matrix=TRUE,guild="A"){
+    if (guild=="A")
+      n <- which(vnames==colnames(M)[i])
+    else
+      n <- which(vnames==rownames(M)[i])
     if (!flip_matrix){
       if (guild=="A")
-        label <- (paste0("   ",nums[i]," ",ifelse(show_species,colnames(M)[i],""),"   "))
+        label <- (paste0("   ",n," ",ifelse(show_species,colnames(M)[i],""),"   "))
       else
-        label <- (paste0(" ",nums[i]," ",ifelse(show_species,paste0(rownames(M)[i],""),""),"    "))
+        label <- (paste0(" ",n," ",ifelse(show_species,paste0(rownames(M)[i],""),""),"    "))
     } else {
       if (guild=="A")
-        label <- (paste0(" ",nums[i]," ",ifelse(show_species,colnames(M)[i],""),"    "))
+        label <- (paste0(" ",n," ",ifelse(show_species,colnames(M)[i],""),"    "))
       else
-        label <- (paste0(" ",nums[i]," ",ifelse(show_species,paste0(rownames(M)[i],"  "),"    ")))
+        label <- (paste0(" ",n," ",ifelse(show_species,paste0(rownames(M)[i],"  "),"    ")))
     }
     return(label)
   }
@@ -152,6 +156,7 @@ matrix_graph <-function(datadir,filename,
     species_a[species_a$kradius==Inf,]$kradius=100
   species_a$kshell <- lnodes$kcorenum[1:mat$result_analysis$num_guild_a]
   species_a$num <- seq(1:mat$result_analysis$num_guild_a)
+  #species_a$num <- species_a[order(species_a$name),]$num
   species_b <- data.frame("num"=seq(1:mat$result_analysis$num_guild_b),"name"=rownames(mat$result_analysis$matrix))
   species_b$kdegree <- lnodes$kdegree[seq(mat$result_analysis$num_guild_a+1,mat$result_analysis$num_guild_a+mat$result_analysis$num_guild_b)]
   species_b$kradius <- lnodes$kradius[seq(mat$result_analysis$num_guild_a+1,mat$result_analysis$num_guild_a+mat$result_analysis$num_guild_b)]
@@ -178,22 +183,28 @@ matrix_graph <-function(datadir,filename,
     ordvectorA <- setdegreeorder(species_a)
     ordvectorB <- rev(setdegreeorder(species_b))
   }
-  M<-M[ordvectorB,ordvectorA]
+  species_a <- species_a[ordvectorA,]
+  species_b <- species_b[ordvectorB,]
   if (!links_weight)
     M[M>1]=1
-  num_b = species_b[ordvectorB,]$num
-  num_a = species_a[ordvectorA,]$num
+  M<-M[ordvectorB,ordvectorA]
+  num_b = species_b$num
+  num_a = species_a$num
   longData<-melt(M)
+  mplots<- ggplot(longData, aes(x = Var2, y = Var1,fill=as.factor(value)))+geom_tile(alpha=1) + scale_fill_manual(values=c("white","red"))
+  
   longData$numA <- 0
   longData$numB <- 0
-  names(longData) = c("speciesB","speciesA", "value","numA","numB")
-  longData$speciesA <- trimws(longData$speciesA)
-  longData$speciesB <- trimws(longData$speciesB)
+  names(longData) = c("speciesB","speciesA", "value","numB","numA")
+  mplots2<- ggplot(longData, aes(x = speciesA, y = speciesB,fill=as.factor(value)))+geom_tile(alpha=1) + scale_fill_manual(values=c("white","blue"))
+  vnamesA <- sort(species_a$name)
+  vnamesB<- sort(species_b$name)
   for (i in 1:length(colnames(M)))
-    longData[longData$speciesA==trimws(colnames(M)[i]),]$numA = create_labels(M,num_a,i,show_species=show_species_names,flip_matrix=flip_matrix,guild="A")
+    longData[longData$speciesA==colnames(M)[i],]$numA = create_labels(M,num_a,i,vnamesA,show_species=show_species_names,flip_matrix=flip_matrix,guild="A")
   for (i in 1:length(rownames(M)))
-    longData[longData$speciesB==trimws(rownames(M)[i]),]$numB = create_labels(M,num_b,i,show_species=show_species_names,flip_matrix=flip_matrix,guild="B")
+    longData[longData$speciesB==rownames(M)[i],]$numB = create_labels(M,num_b,i,vnamesB,show_species=show_species_names,flip_matrix=flip_matrix,guild="B")
   lsize <- 16 - round(log10(sqrt(nrow(longData))))
+  
   p <- plot_m(longData,flip_matrix=flip_matrix,nname=mat$network_name,
               strA=mat$name_guild_a,strB=mat$name_guild_b,links_weight = (links_weight && !binary_network),
               colorA=color_guild_a,colorB=color_guild_b,lsize=lsize,ncolor=color_links,show_title = show_title,
@@ -213,12 +224,12 @@ matrix_graph <-function(datadir,filename,
   return(mat)
 }
 
-debugging = FALSE
+debugging = TRUE
 if (debugging)
   p <- matrix_graph("../data/","RA_HP_042.csv",
                   print_to_file = TRUE, plotsdir ="plot_results/", 
-                  orderby = "kdegree",ppi=300,
-                  flip_matrix = FALSE, links_weight = FALSE,
+                  orderby = "kradius",ppi=300,
+                  flip_matrix = TRUE, links_weight = TRUE,
                   show_species_names = TRUE,
                   show_title = TRUE,
                   show_legend = TRUE)
