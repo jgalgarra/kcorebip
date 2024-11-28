@@ -1475,85 +1475,6 @@ handle_specialists <- function(p,svg,specialists_a,specialists_b,lado,gap)
   return(calc_vals)
 }
 
-# # Final annotations
-# write_annotations <- function(p, svg)
-# { 
-#   title_text = ""
-#   stext = ""
-#   ctext = ""
-#   lzcf <- 3.5
-#   legsize <- round(lzcf*(zgg$lsize_legend-1))
-#   legends_text <- paste0(
-#     "<span style = 'text-align: left; color:",zgg$color_guild_a[1],"; font-size:",legsize,"pt'>",
-#     paste('&#9632;',zgg$name_guild_a),
-#     "</span> <span style = 'text-align: left;color:",zgg$color_guild_b[1],"; font-size:",legsize,"pt'>",
-#     paste('&nbsp; &#9632;',zgg$name_guild_b),"</span>")
-#   if (zgg$show_legend=="TOP")
-#     stext = legends_text
-#   if (zgg$show_legend=="BOTTOM")
-#     ctext = legends_text
-#   if (zgg$show_title)
-#     title_text <- paste0("Network: ",zgg$network_name)
-#   # Legend size conversion factor
-#   p <- p+ ggtitle(title_text,subtitle=stext)
-#   p <- p +labs(caption = ctext)
-#   p <- p + coord_fixed(ratio=zgg$aspect_ratio) +theme_bw() + theme(panel.grid.minor.x = element_blank(),
-#                                                                panel.grid.minor.y = element_blank(),
-#                                                                panel.grid.major.x = element_blank(),
-#                                                                panel.grid.major.y = element_blank(),
-#                                                                axis.text.x = element_blank(),
-#                                                                axis.text.y = element_blank(),
-#                                                                axis.ticks.x=element_blank(),
-#                                                                axis.ticks.y=element_blank(),
-#                                                                axis.title.x = element_blank(),
-#                                                                axis.title.y = element_blank(),                                                               plot.background = element_rect(fill = zgg$backg_color),
-#                                                                panel.background = element_rect(fill = zgg$backg_color),
-#                                                                plot.title = element_text(size = lzcf*(zgg$lsize_legend+0.5),
-#                                                                                          hjust = 0.5,
-#                                                                                          face="plain"),
-#                                                                
-#                                                                plot.subtitle = ggtext::element_markdown(size=lzcf*zgg$lsize_legend,hjust=0.9),
-#                                                                plot.caption = ggtext::element_markdown(size=lzcf*zgg$lsize_legend,hjust=0.9)
-#                                                                 )
-#   if (zgg$hide_plot_border)
-#     p <- p + theme(panel.border=element_blank())
-#   landmark_top <- 1.2*max(zgg$last_ytail_b[!is.na(zgg$last_ytail_b)],zgg$ymax)*zgg$rescale_plot_area[2]
-#   mlabel <- "."
-#   landmark_right <- (zgg$tot_width+1.6*zgg$hop_x)*zgg$rescale_plot_area[1]
-#   f <- draw_square("annotation",p,svg,landmark_right,0,1,"transparent",0.5,
-#                    "transparent",0,0,0,slabel="", aspect_ratio = zgg$aspect_ratio)
-#   p <- f["p"][[1]]
-#   svg <- f["svg"][[1]]
-#   p <- p +annotate(geom="text", x= landmark_right, y=0, label=mlabel,
-#                    colour = "red", size=1, hjust = 0, vjust = 0, angle = 0)
-#   svg$text("annotation", data=data.frame(x=landmark_right, y=0), mapping=aes(x=x, y=y), color="red", label=mlabel, size=1, angle=0)
-#   landmark_left <- min(zgg$last_xtail_a[[zgg$kcoremax]],zgg$last_xtail_b[[zgg$kcoremax]])-min(zgg$hop_x,0.2*min(zgg$last_xtail_a[[zgg$kcoremax]],zgg$last_xtail_b[[zgg$kcoremax]]))
-#   landmark_left <- (min(landmark_left, zgg$pos_tail_x)- zgg$hop_x/4)*zgg$rescale_plot_area[1]
-#   
-#   p <- p +annotate(geom="text", x=landmark_left, y=0, label=mlabel,
-#                    colour = "red", size=2, hjust = 0, vjust = 0, angle = 0)
-#   svg$text("annotation", data=data.frame(x=landmark_left, y=0), mapping=aes(x=x, y=y), color="red", label=mlabel, size=1, angle=0)
-#   x_span <- landmark_right - landmark_left
-# 
-#   if (!(zgg$flip_results)){
-#     x_legend <- 0.8*landmark_right
-#     y_legend <- 0.8*landmark_top
-#   } else {
-#     x_legend <- 0.8*landmark_top
-#     y_legend <- 0.8*landmark_right
-#   }
-# 
-#   landmark_bottom <- min(zgg$last_ytail_a[!is.na(zgg$last_ytail_b)],1.2*zgg$ymin)*zgg$rescale_plot_area[2]
-#   zgg$landmark_left <<- landmark_left
-#   zgg$landmark_right <<- landmark_right
-#   zgg$landmark_top <<- landmark_top
-#   zgg$landmark_bottom <- landmark_bottom
-#  
-#   calc_vals <- list("p" = p, "svg" = svg)
-#   return(calc_vals)
-# }
-
-
 write_final_annotations <- function(p, svg, plottype, myenv=zgg)
 {
   title_text = ""
@@ -1615,10 +1536,10 @@ write_final_annotations <- function(p, svg, plottype, myenv=zgg)
     landmark_top <- myenv$landmark_top+myenv$xstep
     landmark_bottom <- myenv$landmark_bottom
     if(!myenv$exists_fat_tail){
-       nnodes <- length(bpp$result_analysis$g_core)
-       landmark_left <- landmark_left - ifelse(plottype=='chilopod',0.5*myenv$xstep,
-                                               (1+nnodes/100)*myenv$xstep)
-       landmark_bottom <- landmark_bottom - myenv$xstep
+      nnodes <- length(bpp$result_analysis$g_core)
+      landmark_left <- landmark_left - ifelse(plottype=='chilopod',0.5*myenv$xstep,
+                                              (1+nnodes/100)*myenv$xstep)
+      landmark_bottom <- landmark_bottom - myenv$xstep
     }
   }
   if ((myenv$flip_results) && (plottype!='ziggurat')){
@@ -1640,7 +1561,7 @@ write_final_annotations <- function(p, svg, plottype, myenv=zgg)
                    colour = "red", size=1, hjust = 0, vjust = 0, angle = 0)
   svg$text("annotation", data=data.frame(x=landmark_right, y=0),
            mapping=aes(x=x, y=y), color="red", label=mlabel, size=1, angle=0)
-
+  
   
   
   ypunto <- ifelse(plottype=='ziggurat',0,landmark_top)
@@ -1653,7 +1574,7 @@ write_final_annotations <- function(p, svg, plottype, myenv=zgg)
                    colour = "red", size=1, hjust = 0, vjust = 0, angle = 0)
   ypunto <- ifelse(plottype=='ziggurat',0,landmark_bottom)
   svg$text("annotation", data=data.frame(x=landmark_left, 
-          y=ypunto), mapping=aes(x=x, y=y), color="red", label=mlabel, size=1, angle=0)
+                                         y=ypunto), mapping=aes(x=x, y=y), color="red", label=mlabel, size=1, angle=0)
   
   x_span <- landmark_right - landmark_left
   
@@ -1666,11 +1587,12 @@ write_final_annotations <- function(p, svg, plottype, myenv=zgg)
   #   y_legend <- 0.8*landmark_right
   # }
   if (plottype=='ziggurat')
-     landmark_bottom <- min(myenv$last_ytail_a[!is.na(myenv$last_ytail_b)],1.2*myenv$ymin)*myenv$rescale_plot_area[2]
+    landmark_bottom <- min(myenv$last_ytail_a[!is.na(myenv$last_ytail_b)],1.2*myenv$ymin)*myenv$rescale_plot_area[2]
   calc_vals <- list("p" = p, "svg" = svg, "landmark_left" = landmark_left, "landmark_right"= landmark_right,
                     "landmark_bottom" = landmark_bottom, "landmark_top" = landmark_top)
   return(calc_vals)
 }
+
 
 
 # Handle specialist chain species

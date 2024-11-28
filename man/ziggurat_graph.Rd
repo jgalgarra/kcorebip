@@ -7,11 +7,11 @@
 ziggurat_graph(
   datadir,
   filename,
+  style = "ziggurat",
   paintlinks = TRUE,
   print_to_file = FALSE,
-  plotsdir = "plot_results/ziggurat/",
+  plotsdir = "plotresults/",
   orderkcoremaxby = "kradius",
-  isogonos = FALSE,
   flip_results = FALSE,
   aspect_ratio = 1,
   alpha_level = 0.2,
@@ -58,6 +58,7 @@ ziggurat_graph(
   landscape_plot = TRUE,
   backg_color = "white",
   show_title = TRUE,
+  show_legend = "BOTTOM",
   use_spline = TRUE,
   spline_points = 10,
   file_name_append = "",
@@ -74,13 +75,13 @@ ziggurat_graph(
 
 \item{filename}{the file with the interaction matrix}
 
+\item{style}{equals 'ziggurat', do not modify}
+
 \item{print_to_file}{if set to FALSE the plot is displayed in the R session window}
 
 \item{plotsdir}{the directory where the plot is stored}
 
 \item{orderkcoremaxby}{sets order of kcoremax nodes, by kradius or kdegree}
-
-\item{isogonos}{equal side for all ziggurat nodes}
 
 \item{flip_results}{displays the graph in portrait configuration}
 
@@ -171,6 +172,8 @@ ziggurat_graph(
 \item{backg_color}{plot background color}
 
 \item{show_title}{show plot title}
+
+\item{show_legend}{show plot legend position}
 
 \item{use_spline}{use splines to draw links}
 

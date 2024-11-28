@@ -1,7 +1,7 @@
 debugging = FALSE
 if (debugging){
-   source("network-kanalysis.R")
-   source("SVG.R")
+  source("network-kanalysis.R")
+  source("SVG.R")
 }
 
 #' Plotting a bipartite graph
@@ -51,27 +51,27 @@ if (debugging){
 #' @examples bipartite_graph("data/","M_PL_001.csv",plotsdir="grafresults/",print_to_file = TRUE)
 
 bipartite_graph <- function(datadir,filename,
-                           paintlinks = TRUE, print_to_file = FALSE, plotsdir ="plot_results/", 
-                           orderkcoremaxby = "kradius", style="legacy", guild_gap_increase = 1, 
-                           flip_results = FALSE, aspect_ratio = 1,
-                           alpha_level = 0.2, color_guild_a = c("#4169E1","#00008B"), color_guild_b = c("#F08080","#FF0000"),
-                           color_link = "slategray3", alpha_link = 0.5, size_link = 0.5,
-                           lsize_kcoremax = 3.5, lsize_kcore1 = 2.5, lsize_legend = 4, lsize_core_box = 2.5,
-                           labels_color = c(),
-                           hide_plot_border = TRUE,
-                           corebox_border_size = 0.2,
-                           label_strguilda = "",
-                           label_strguildb = "", landscape_plot = TRUE,
-                           backg_color = "white", show_title = TRUE, show_legend = 'TOP',
-                           file_name_append = "", svg_scale_factor= 10, weighted_links = "none",
-                           square_nodes_size_scale = 1, move_all_SVG_up = 0, move_all_SVG_right = 0,
-                           progress=NULL
+                            paintlinks = TRUE, print_to_file = FALSE, plotsdir ="plot_results/", 
+                            orderkcoremaxby = "kradius", style="legacy", guild_gap_increase = 1, 
+                            flip_results = FALSE, aspect_ratio = 1,
+                            alpha_level = 0.2, color_guild_a = c("#4169E1","#00008B"), color_guild_b = c("#F08080","#FF0000"),
+                            color_link = "slategray3", alpha_link = 0.5, size_link = 0.5,
+                            lsize_kcoremax = 3.5, lsize_kcore1 = 2.5, lsize_legend = 4, lsize_core_box = 2.5,
+                            labels_color = c(),
+                            hide_plot_border = TRUE,
+                            corebox_border_size = 0.2,
+                            label_strguilda = "",
+                            label_strguildb = "", landscape_plot = TRUE,
+                            backg_color = "white", show_title = TRUE, show_legend = 'TOP',
+                            file_name_append = "", svg_scale_factor= 10, weighted_links = "none",
+                            square_nodes_size_scale = 1, move_all_SVG_up = 0, move_all_SVG_right = 0,
+                            progress=NULL
 )
 {
   # This assignment stores the call parameters in ziggurat_argg as a list. This list is useful
   # to save plotting parameters for a future simulation
-
-
+  
+  
   bipartite_argg <- c(as.list(environment()))
   # Create global environment
   bpp <<- new.env()
@@ -110,7 +110,7 @@ bipartite_graph <- function(datadir,filename,
                         label_strguilda, label_strguildb, landscape_plot, backg_color, show_title, show_legend,
                         file_name_append, svg_scale_factor, weighted_links, square_nodes_size_scale,
                         move_all_SVG_up, move_all_SVG_right, progress
-                    )
+  )
   # Removes nodes without any tie. This is not usual in input files but happens
   # when performing destruction simulations
   strip_isolated_nodes(bpp)
@@ -128,7 +128,7 @@ gen_vert_label <- function(nodes, joinchars = "\n")
     return(nodes)
   ssal <- ""
   for (i in 1:(nnodes-1))
-      ssal <- paste0(ssal,nodes[i],ifelse(i %% 2 == 0, "\n",joinchars))
+    ssal <- paste0(ssal,nodes[i],ifelse(i %% 2 == 0, "\n",joinchars))
   ssal <- paste0(ssal,nodes[nnodes])
   ssal <- gsub("  "," ",ssal)
   return(ssal)
@@ -137,13 +137,13 @@ gen_vert_label <- function(nodes, joinchars = "\n")
 
 # Draw tail, species or set of species of 1-shell connected to higher k-index species
 draw_tail_bip <- function(idPrefix, p,svg,fat_tail,lado,color,sqlabel,basex,basey,gap,
-                      lxx2=0,lyy2=0,sqinverse = "no",
-                      position = "West", background = "no",
-                      first_leaf = "yes", spline = "no",
-                      psize = bpp$lsize_kcore1, is_guild_a = TRUE, wlink=1, 
-                      style = "ziggurat", lvp = 0)
+                          lxx2=0,lyy2=0,sqinverse = "no",
+                          position = "West", background = "no",
+                          first_leaf = "yes", spline = "no",
+                          psize = bpp$lsize_kcore1, is_guild_a = TRUE, wlink=1, 
+                          style = "ziggurat", lvp = 0)
 {
- 
+  
   adjust <- "yes"
   lvjust <- 0
   lhjust <- 0
@@ -170,6 +170,8 @@ draw_tail_bip <- function(idPrefix, p,svg,fat_tail,lado,color,sqlabel,basex,base
       xx <- basex-gap
       posxx1 <- xx+bpp$xstep
       posyy1 = plyy2
+      lvjust = ifelse(bpp$flip_results, 1, 0)
+      lhjust = ifelse(bpp$flip_results, 0.5, 0)
     } else {
       xx <- basex-gap
       posxx1 <- xx+sidex
@@ -178,10 +180,10 @@ draw_tail_bip <- function(idPrefix, p,svg,fat_tail,lado,color,sqlabel,basex,base
   }
   # Group of species linked to the highest kdegree species in max shell
   else if (position == "East"){
-      gap <- bpp$hop_x/2
-      xx <- basex+gap
-      posxx1 <- xx
-      posyy1 = signo*(yy+sidex/(2*bpp$aspect_ratio))
+    gap <- bpp$hop_x/2
+    xx <- basex+gap
+    posxx1 <- xx
+    posyy1 = signo*(yy+sidex/(2*bpp$aspect_ratio))
   }
   # Tails connected to other nodes of the max shell
   else if ((position == "North") |(position == "South")) {
@@ -194,28 +196,28 @@ draw_tail_bip <- function(idPrefix, p,svg,fat_tail,lado,color,sqlabel,basex,base
       lhjust = ifelse(bpp$flip_results, 0.5, 0)
     }
   }
-
+  
   if (background == "no")
   {
     ecolor <- "transparent"
     if (bpp$alpha_level != 1)
       palpha <- max(bpp$alpha_level-0.09,0)
-      else if (position == "North")
-      {
-        langle <- rot_angle
-      }
-      else if (position == "South")
-      {
-        langle <- -rot_angle
-      }
-      else if (position == "West"){
-        adjust <- "yes"
-      }
+    else if (position == "North")
+    {
+      langle <- rot_angle
+    }
+    else if (position == "South")
+    {
+      langle <- -rot_angle
+    }
+    else if (position == "West"){
+      adjust <- "yes"
+    }
   }
-
+  
   f <- draw_square(idPrefix, p,svg, xx,yy,
                    ifelse(bpp$style=="chilopod",lado,
-                   paintsidex*sqrt(bpp$square_nodes_size_scale)),
+                          paintsidex*sqrt(bpp$square_nodes_size_scale)),
                    bgcolor,palpha,labelcolor,langle,lhjust,lvjust,
                    slabel=sqlabel,lbsize = 0.8*bpp$lsize_kcoremax,
                    SVGtextfactor=fsvgtext, inverse = sqinverse,
@@ -227,20 +229,20 @@ draw_tail_bip <- function(idPrefix, p,svg,fat_tail,lado,color,sqlabel,basex,base
     if ((position == "North") |(position == "South"))
       posxx1 = posxx1+sidex/2
     add_link(xx1=posxx1, xx2 = plxx2,
-                   yy1 = posyy1, yy2 = plyy2,
-                   slink = bpp$size_link*wlink, clink = c(bpp$color_link),
-                   alpha_l = bpp$alpha_link, myenv=bpp)
+             yy1 = posyy1, yy2 = plyy2,
+             slink = bpp$size_link*wlink, clink = c(bpp$color_link),
+             alpha_l = bpp$alpha_link, myenv=bpp)
   }
   calc_vals <- list("p" = p, "svg" = svg, "sidex" = sidex, "xx" = posxx1, "yy" = posyy1)
   return(calc_vals)
 }
 
 draw_edge_tails_bip <- function(p,svg,point_x,point_y,kcoreother,long_tail,list_dfs,color_guild, inverse = "no",
-                            vertical = "yes", orientation = "South", revanddrop = "no",
-                            pbackground = "yes", joinchars = "\n", tspline = "no", 
-                            is_guild_a = TRUE, wlink = 1)
+                                vertical = "yes", orientation = "South", revanddrop = "no",
+                                pbackground = "yes", joinchars = "\n", tspline = "no", 
+                                is_guild_a = TRUE, wlink = 1)
 {
-
+  
   rxx <- point_x
   ryy <- point_y
   bpp$joinstr <- joinchars
@@ -275,20 +277,20 @@ draw_edge_tails_bip <- function(p,svg,point_x,point_y,kcoreother,long_tail,list_
       for (h in 1:nrow(little_tail))
         if (is_guild_a)
           tailweight <- tailweight + bpp$result_analysis$matrix[as.numeric(little_tail$partner[h]),
-                                                                        as.numeric(little_tail$orph[h])]
-        else
-          tailweight <- tailweight + bpp$result_analysis$matrix[as.numeric(little_tail$orph[h]),
-                                                                as.numeric(little_tail$partner[h])]
+                                                                as.numeric(little_tail$orph[h])]
+      else
+        tailweight <- tailweight + bpp$result_analysis$matrix[as.numeric(little_tail$orph[h]),
+                                                              as.numeric(little_tail$partner[h])]
       little_tail$weightlink <- get_link_weights(tailweight, myenv=bpp)
-
+      
       v<- draw_tail_bip(paste0(ifelse(is_guild_a, "edge-kcore1-a-", "edge-kcore1-b-"), i),
-                    p,svg,little_tail,0.9*bpp$xstep,color_guild[2],
-                    gen_vert_label(little_tail$orph,joinchars = " "),
-                    rxx,ryy,bpp$gap,lxx2 = xx2,
-                    lyy2 = yy2, sqinverse = inverse, position = orientation,
-                    background = pbackground, spline = tspline, psize = bpp$lsize_kcore1,
-                    is_guild_a = is_guild_a, wlink = little_tail$weightlink[1],style=bpp$style,
-                    lvp = last_vertical_position)
+                        p,svg,little_tail,0.9*bpp$xstep,color_guild[2],
+                        gen_vert_label(little_tail$orph,joinchars = " "),
+                        rxx,ryy,bpp$gap,lxx2 = xx2,
+                        lyy2 = yy2, sqinverse = inverse, position = orientation,
+                        background = pbackground, spline = tspline, psize = bpp$lsize_kcore1,
+                        is_guild_a = is_guild_a, wlink = little_tail$weightlink[1],style=bpp$style,
+                        lvp = last_vertical_position)
       p <- v["p"][[1]]
       svg <- v["svg"][[1]]
       rxx <- v["xx"][[1]]
@@ -301,7 +303,7 @@ draw_edge_tails_bip <- function(p,svg,point_x,point_y,kcoreother,long_tail,list_
         point_y <- point_y + 1.4*signo*salto
         rxx <- point_x
       }
-
+      
       # tails connected to kcoremax except first species
       else{
         if (orientation == "West")
@@ -318,7 +320,7 @@ draw_edge_tails_bip <- function(p,svg,point_x,point_y,kcoreother,long_tail,list_
       last_vertical_position <- 0
     m <- m +1
   }
-
+  
   calc_vals <- list("p" = p, "svg" = svg, "lastx" = rxx, "lasty" = ryy)
   return(calc_vals)
 }
@@ -338,7 +340,13 @@ draw_parallel_guilds <- function(basex,topx,basey,topy,numboxes,nnodes,fillcolor
   name_species <- c()
   pbasex <- bpp$coremax_triangle_width_factor*( basex - (nnodes %/%8) * abs(topx-basex)/3)
   xstep <- bpp$square_nodes_size_scale*(topx-pbasex)/max(12,nnodes)
-  bpp$xstep <- xstep
+  if (!exists("bpp$xstep"))
+    bpp$xstep <- xstep
+  if (nnodes < 30)
+    round(xstep <- xstep * 0.6)
+  bpp$xstep <- min(bpp$xstep,xstep)
+  
+print(paste("bpp$xstep",bpp$xstep))
   vertsep <- 4
   if ((xstep>2000) && (guild=="A")) {
     vertsep <- 5
@@ -349,7 +357,7 @@ draw_parallel_guilds <- function(basex,topx,basey,topy,numboxes,nnodes,fillcolor
     bpp$lsize_kcoremax <-  max(2,bpp$lsize_kcoremax - 1.5)
   }
   
-
+  
   ptopy <- vertsep*basey+ifelse(basey>0,1,-1)*xstep
   bpp$landmark_bottom <- min(bpp$landmark_bottom,-ptopy)
   bpp$landmark_top <- max(bpp$landmark_top,ptopy)
@@ -390,7 +398,7 @@ draw_parallel_guilds <- function(basex,topx,basey,topy,numboxes,nnodes,fillcolor
     d1[i,]$kcorelabel <- igraphnet[paste0(strguild,d1[i,]$label)]$kcorenum
     d1[i,]$name_species <- igraphnet[paste0(strguild,d1[i,]$label)]$name_species
   }
-
+  
   if (style == "legacy"){
     mlinks <- bpp$result_analysis$matrix > 0
     if (guild=="A")
@@ -426,7 +434,7 @@ draw_parallel_guilds <- function(basex,topx,basey,topy,numboxes,nnodes,fillcolor
   bpp$tot_width <- max(max(d1$x2)+xstep,bpp$tot_width)
   bpp$tot_height <- (9/16)*bpp$tot_width
   bpp$landmark_top <- max(bpp$landmark_top,max(d1$y2)+xstep)
-
+  
   return(d1)
 }
 
@@ -446,7 +454,7 @@ draw_innercores_tails_bip <- function(p,svg,kc,list_dfs,df_orph,color_guild, inv
 {
   lastx <- 0
   lasty <- 0
-
+  
   lpoint_x <- 0
   if (length(list_dfs[[kc]])>0)
     if (kc>2)
@@ -465,8 +473,8 @@ draw_innercores_tails_bip <- function(p,svg,kc,list_dfs,df_orph,color_guild, inv
   long_tail <- df_orph[(df_orph$kcore == kc) & (df_orph$repeated == "no"),]
   if (length(long_tail)>0){
     v<-  draw_edge_tails_bip(p,svg,lpoint_x,lpoint_y,kc,long_tail,list_dfs,color_guild,
-                         inverse = inverse, joinchars = bpp$joinstr,pbackground = "no",
-                         tspline = "lshaped", is_guild_a = is_guild_a)
+                             inverse = inverse, joinchars = bpp$joinstr,pbackground = "no",
+                             tspline = "lshaped", is_guild_a = is_guild_a)
     p <- v["p"][[1]]
     svg <- v["svg"][[1]]
     if (length(v["lastx"][[1]])>0)
@@ -483,25 +491,25 @@ draw_fat_tail_bip<- function(p,svg,fat_tail,nrows,list_dfs,color_guild,pos_tail_
                              fgap,
                              inverse="no", is_guild_a =TRUE, bipartite = FALSE, gstyle = "ziggurat")
 {
-
+  
   tailgap <- (1+min(4,nrows/8))*bpp$xstep
   ppos_tail_x <- pos_tail_x-tailgap
   pos_tail_y <-list_dfs[[bpp$kcoremax]][1,]$y1
   ppos_tail_y <- pos_tail_y
-
+  
   if (nrow(fat_tail)>0)
   {
     nodekcoremax <- list_dfs[[bpp$kcoremax]][1,]
     plyy2 <-  (nodekcoremax$y1+nodekcoremax$y2)/2
     v<- draw_tail_bip(ifelse(is_guild_a, "edge-kcore1-a-fat", "edge-kcore1-b-fat"), p,svg,
-                  fat_tail,ifelse(bpp$style=="chilopod",bpp$xstep,bpp$lado),
-                  color_guild,gen_sq_label(fat_tail$orph,is_guild_a = is_guild_a, myenv=bpp),
-                  ppos_tail_x,ppos_tail_y,fgap,
-                  lxx2 = list_dfs[[bpp$kcoremax]][1,]$x1,
-                  lyy2 = plyy2,
-                  sqinverse = inverse, background = "no", psize = bpp$lsize_kcore1,
-                  is_guild_a = is_guild_a, wlink = fat_tail$weightlink[1],
-                  style=bpp$style)
+                      fat_tail,ifelse(bpp$style=="chilopod",bpp$xstep,bpp$lado),
+                      color_guild,gen_sq_label(fat_tail$orph,is_guild_a = is_guild_a, myenv=bpp),
+                      ppos_tail_x,ppos_tail_y,fgap,
+                      lxx2 = list_dfs[[bpp$kcoremax]][1,]$x1,
+                      lyy2 = plyy2,
+                      sqinverse = inverse, background = "no", psize = bpp$lsize_kcore1,
+                      is_guild_a = is_guild_a, wlink = fat_tail$weightlink[1],
+                      style=bpp$style)
     p <- v["p"][[1]]
     svg <- v["svg"][[1]]
   }
@@ -557,44 +565,44 @@ handle_orphans_bip <- function(vg)
 # Draw specialist chains connected to inner ziggurats
 draw_bipartite_leafs <- function(p, svg)
 {
-    if (exists("df_orph_a", envir = bpp)){
-      w <- draw_innercores_tails_bip(p,svg,2,bpp$list_dfs_b,bpp$df_orph_a,bpp$color_guild_a, inverse="yes")
-      p <- w["p"][[1]]
-      svg <- w["svg"][[1]]
-      bpp$last_xtail_b[2] <- w["lastx"][[1]]
-      bpp$last_ytail_b[2] <-w["lasty"][[1]]
-    }
-
-    if (exists("df_orph_b", envir = bpp)){
-      w <- draw_innercores_tails_bip(p,svg,2,bpp$list_dfs_a,bpp$df_orph_b,bpp$color_guild_b, inverse="no", is_guild_a = FALSE)
-      p <- w["p"][[1]]
-      svg <- w["svg"][[1]]
-      bpp$last_xtail_a[2] <- w["lastx"][[1]]
-      bpp$last_ytail_a[2] <- w["lasty"][[1]]
-    }
+  if (exists("df_orph_a", envir = bpp)){
+    w <- draw_innercores_tails_bip(p,svg,2,bpp$list_dfs_b,bpp$df_orph_a,bpp$color_guild_a, inverse="yes")
+    p <- w["p"][[1]]
+    svg <- w["svg"][[1]]
+    bpp$last_xtail_b[2] <- w["lastx"][[1]]
+    bpp$last_ytail_b[2] <-w["lasty"][[1]]
+  }
+  
+  if (exists("df_orph_b", envir = bpp)){
+    w <- draw_innercores_tails_bip(p,svg,2,bpp$list_dfs_a,bpp$df_orph_b,bpp$color_guild_b, inverse="no", is_guild_a = FALSE)
+    p <- w["p"][[1]]
+    svg <- w["svg"][[1]]
+    bpp$last_xtail_a[2] <- w["lastx"][[1]]
+    bpp$last_ytail_a[2] <- w["lasty"][[1]]
+  }
   #}
-
+  
   calc_vals <- list("p" = p, "svg" = svg)
   return(calc_vals)
 }
 
 draw_bipartite_leafs <- function(p, svg)
 {
-    if (exists("df_orph_a", envir = bpp)){
-      w <- draw_innercores_tails_bip(p,svg,2,bpp$list_dfs_b,bpp$df_orph_a,bpp$color_guild_a, inverse="yes")
-      p <- w["p"][[1]]
-      svg <- w["svg"][[1]]
-      bpp$last_xtail_b[2] <- w["lastx"][[1]]
-      bpp$last_ytail_b[2] <-w["lasty"][[1]]
-    }
-    
-    if (exists("df_orph_b", envir = bpp)){
-      w <- draw_innercores_tails_bip(p,svg,2,bpp$list_dfs_a,bpp$df_orph_b,bpp$color_guild_b, inverse="no", is_guild_a = FALSE)
-      p <- w["p"][[1]]
-      svg <- w["svg"][[1]]
-      bpp$last_xtail_a[2] <- w["lastx"][[1]]
-      bpp$last_ytail_a[2] <- w["lasty"][[1]]
-    }
+  if (exists("df_orph_a", envir = bpp)){
+    w <- draw_innercores_tails_bip(p,svg,2,bpp$list_dfs_b,bpp$df_orph_a,bpp$color_guild_a, inverse="yes")
+    p <- w["p"][[1]]
+    svg <- w["svg"][[1]]
+    bpp$last_xtail_b[2] <- w["lastx"][[1]]
+    bpp$last_ytail_b[2] <-w["lasty"][[1]]
+  }
+  
+  if (exists("df_orph_b", envir = bpp)){
+    w <- draw_innercores_tails_bip(p,svg,2,bpp$list_dfs_a,bpp$df_orph_b,bpp$color_guild_b, inverse="no", is_guild_a = FALSE)
+    p <- w["p"][[1]]
+    svg <- w["svg"][[1]]
+    bpp$last_xtail_a[2] <- w["lastx"][[1]]
+    bpp$last_ytail_a[2] <- w["lasty"][[1]]
+  }
   
   calc_vals <- list("p" = p, "svg" = svg)
   return(calc_vals)
@@ -622,9 +630,9 @@ handle_fat_tails_bip <- function(p, svg, style = "legacy")
       bpp$df_orph_a <- bpp$df_orph_a[!(bpp$df_orph_a$orph %in% fat_tail_a$orph),]
     tailweight <- 0
     if (nrow(fat_tail_a)>0) {
-    for (h in 1:nrow(fat_tail_a))
-      tailweight <- tailweight + bpp$result_analysis$matrix[as.numeric(fat_tail_a$partner[h]),
-                                                                  as.numeric(fat_tail_a$orph[h])]
+      for (h in 1:nrow(fat_tail_a))
+        tailweight <- tailweight + bpp$result_analysis$matrix[as.numeric(fat_tail_a$partner[h]),
+                                                              as.numeric(fat_tail_a$orph[h])]
       fat_tail_a$weightlink <- get_link_weights(tailweight, myenv=bpp)
     }
   }
@@ -638,7 +646,7 @@ handle_fat_tails_bip <- function(p, svg, style = "legacy")
     index <- kcorebip:::setnodeorder(bpp$list_dfs_a[[bpp$kcoremax]],orderby="kradius")
     max_a_k <- bpp$list_dfs_a[[bpp$kcoremax]]$label[which(index==min(index))]
   }
-    
+  
   if (exists("df_orph_b", envir = bpp)){
     fat_tail_b <- bpp$df_orph_b[(bpp$df_orph_b$partner == max(max_a_k)) & (bpp$df_orph_b$repeated == "no"),]
     if (nrow(fat_tail_b)>1)
@@ -648,7 +656,7 @@ handle_fat_tails_bip <- function(p, svg, style = "legacy")
     if (nrow(fat_tail_b)>0) {
       for (h in 1:nrow(fat_tail_b))
         tailweight <- tailweight+bpp$result_analysis$matrix[as.numeric(fat_tail_b$orph[h]),
-                                                    as.numeric(fat_tail_b$partner[h])]
+                                                            as.numeric(fat_tail_b$partner[h])]
       fat_tail_b$weightlink <- get_link_weights(tailweight, myenv=bpp)
     }
   }
@@ -663,21 +671,21 @@ handle_fat_tails_bip <- function(p, svg, style = "legacy")
                         bpp$list_dfs_a[[bpp$kcoremax]][1,]$x1-bpp$xstep)
   if (exists("fat_tail_a")) {
     f <- draw_fat_tail_bip(p,svg,fat_tail_a,nrows_fat,bpp$list_dfs_b,bpp$color_guild_a[2],
-                       bpp$pos_tail_x,pos_tail_y,fgap,inverse="yes")
+                           bpp$pos_tail_x,pos_tail_y,fgap,inverse="yes")
     p <- f["p"][[1]]
     svg <- f["svg"][[1]]
   }
-
+  
   if (exists("fat_tail_b")) {
     f <- draw_fat_tail_bip(p,svg,fat_tail_b,nrows_fat,bpp$list_dfs_a,bpp$color_guild_b[2],bpp$pos_tail_x,
-                       pos_tail_y,fgap,
-                       inverse="no", is_guild_a = FALSE)
+                           pos_tail_y,fgap,
+                           inverse="no", is_guild_a = FALSE)
     
     p <- f["p"][[1]]
     svg <- f["svg"][[1]]
   }
   exists_fat_tail <- (nrows_fat > 0)
-  bpp$landmark_left <- min(bpp$landmark_left,bpp$pos_tail_x-2*bpp$step)
+  bpp$landmark_left <- min(bpp$landmark_left,bpp$pos_tail_x-2.5*bpp$step)
   calc_vals <- list("p" = p, "svg" = svg, "pos_tail_x" = bpp$pos_tail_x, "exists_fat_tail" = exists_fat_tail)
   return(calc_vals)
 }
@@ -686,22 +694,22 @@ draw_maxcore_bip <- function(svg)
 {
   kcoremax_label_display <- function (idPrefix, gp,svg,kcoremaxlabel_angle,pdata,plabel,plabelsize,phjust=0, is_guild_a = TRUE) 
   {
-
+    
     labelcolor <- ifelse(length(bpp$labels_color)>0,bpp$labels_color[2-as.numeric(is_guild_a)], pdata$col_row)
     if (kcoremaxlabel_angle == 0) 
     {
-        gp <- gp +  geom_text(data=pdata, aes(x=x1+(x2-x1)/2, y=y1+(y2-y1)/2), label=plabel,
-                              color = labelcolor, size=plabelsize, angle = kcoremaxlabel_angle)
-        svg$text(idPrefix=idPrefix, data=pdata, mapping=aes(x=x1+(x2-x1)/2, y=y1+(y2-y1)/2), 
-                 label=plabel, color=labelcolor, size=fsvgtext*plabelsize, angle=kcoremaxlabel_angle)
+      gp <- gp +  geom_text(data=pdata, aes(x=x1+(x2-x1)/2, y=y1+(y2-y1)/2), label=plabel,
+                            color = labelcolor, size=plabelsize, angle = kcoremaxlabel_angle)
+      svg$text(idPrefix=idPrefix, data=pdata, mapping=aes(x=x1+(x2-x1)/2, y=y1+(y2-y1)/2), 
+               label=plabel, color=labelcolor, size=fsvgtext*plabelsize, angle=kcoremaxlabel_angle)
     } 
     else {
-        gp <- gp + geom_text(data=pdata, aes(x=x1, y=y1+(y2-y1)/20), label=plabel,
-                             color = labelcolor, size=plabelsize, angle = kcoremaxlabel_angle,
-                             vjust = 1, hjust = phjust)
-        svg$text(idPrefix=idPrefix, data=pdata, mapping=aes(x=x1, y=y1+(y2-y1)/20), label=plabel, color=labelcolor, 
-                 size=fsvgtext*plabelsize, angle=kcoremaxlabel_angle)
-            }
+      gp <- gp + geom_text(data=pdata, aes(x=x1, y=y1+(y2-y1)/20), label=plabel,
+                           color = labelcolor, size=plabelsize, angle = kcoremaxlabel_angle,
+                           vjust = 1, hjust = phjust)
+      svg$text(idPrefix=idPrefix, data=pdata, mapping=aes(x=x1, y=y1+(y2-y1)/20), label=plabel, color=labelcolor, 
+               size=fsvgtext*plabelsize, angle=kcoremaxlabel_angle)
+    }
     calc_vals <- list("p" = gp, "svg" = svg)
     return(calc_vals)
   }
@@ -727,7 +735,7 @@ draw_maxcore_bip <- function(svg)
                    color="transparent",alpha=alpha_level)
     return(q)
   }
-
+  
   paint_rect_svg <- function(guildstr,list_dfs){
     svg$rect(paste0("kcore", bpp$kcoremax, guildstr), data=list_dfs,
              mapping=aes(xmin=x1, xmax=x2, ymin=y1, ymax=y2), 
@@ -736,7 +744,7 @@ draw_maxcore_bip <- function(svg)
   }
   
   paint_labels <- function(p,svg,guildstr,list_dfs){
-
+    
     nsp <- name_species_preprocess(bpp$kcoremax,list_dfs,bpp$kcore_species_name_display,
                                    bpp$kcore_species_name_break)
     labelszig <- nsp$labelszig
@@ -806,11 +814,11 @@ draw_maxcore_bip <- function(svg)
   }
   nnodes <- max(length(species_A), length(species_B))
   bpp$list_dfs_a[[bpp$kcoremax]]<- draw_parallel_guilds(bpp$basex,bpp$topxa,bpp$basey*bpp$guild_gap_increase,bpp$toopy,
-                                                         length(species_A),nnodes,bpp$color_guild_a,
-                                                         species_A,
-                                                         bpp$rg, bpp$str_guild_a, 
-                                                         orderby = "kradius",
-                                                         style=bpp$style,guild="A")
+                                                        length(species_A),nnodes,bpp$color_guild_a,
+                                                        species_A,
+                                                        bpp$rg, bpp$str_guild_a, 
+                                                        orderby = "kradius",
+                                                        style=bpp$style,guild="A")
   p <- ggplot() + scale_x_continuous(name="x") + scale_y_continuous(name="y")
   f <- paint_labels(p,svg,"-a",bpp$list_dfs_a[[bpp$kcoremax]])
   p <- f["p"][[1]]
@@ -820,12 +828,12 @@ draw_maxcore_bip <- function(svg)
   bpp$topxb <- bpp$topxa
   bpp$toopy <- - bpp$toopy
   bpp$list_dfs_b[[bpp$kcoremax]] <- draw_parallel_guilds(bpp$basex,bpp$topxb,bpp$basey*bpp$guild_gap_increase,bpp$toopy,
-                                                          length(species_B),nnodes,
-                                                          bpp$color_guild_b,
-                                                          species_B,bpp$rg,
-                                                          bpp$str_guild_b,  orderby = "kradius",
-                                                          style=bpp$style,guild="B")
-    bpp$landmark_right <- max(bpp$list_dfs_b[[bpp$kcoremax]]$x2,
+                                                         length(species_B),nnodes,
+                                                         bpp$color_guild_b,
+                                                         species_B,bpp$rg,
+                                                         bpp$str_guild_b,  orderby = "kradius",
+                                                         style=bpp$style,guild="B")
+  bpp$landmark_right <- max(bpp$list_dfs_b[[bpp$kcoremax]]$x2,
                             bpp$list_dfs_a[[bpp$kcoremax]]$x2)+bpp$xstep
   f <- paint_labels(p,svg,"-b",bpp$list_dfs_b[[bpp$kcoremax]])
   calc_vals <- list("p" = f["p"][[1]], "svg" = f["svg"][[1]], "basey" = bpp$basey, 
@@ -849,9 +857,9 @@ draw_maxcore_tails_bip <- function(p, svg)
     if (length(long_tail_a)>5)
       long_kcoremax_tail <- TRUE
     v<-  draw_edge_tails_bip(p,svg,point_x,point_y*bpp$aspect_ratio,bpp$kcoremax,
-                         long_tail_a,bpp$list_dfs_b,bpp$color_guild_a, inverse = "yes",
-                         vertical = "no", orientation = "South", revanddrop = "yes",
-                         pbackground = "no", tspline = "arc", joinchars=bpp$joinstr)
+                             long_tail_a,bpp$list_dfs_b,bpp$color_guild_a, inverse = "yes",
+                             vertical = "no", orientation = "South", revanddrop = "yes",
+                             pbackground = "no", tspline = "arc", joinchars=bpp$joinstr)
     p <- v["p"][[1]]
     svg <- v["svg"][[1]]
     bpp$last_xtail_b[bpp$kcoremax] <- v["lastx"][[1]]
@@ -872,16 +880,16 @@ draw_maxcore_tails_bip <- function(p, svg)
     if (nrow(long_tail_b)>0){
       for (h in 1:nrow(long_tail_b))
         tailweight <- tailweight + bpp$result_analysis$matrix[as.numeric(long_tail_b$orph[h]),
-                                                                    as.numeric(long_tail_b$partner[h])]
+                                                              as.numeric(long_tail_b$partner[h])]
       long_tail_b$weightlink <- get_link_weights(tailweight, myenv=bpp)
     }
-
+    
     v <-  draw_edge_tails_bip(p,svg,point_x,point_y*bpp$aspect_ratio,
                               bpp$kcoremax,long_tail_b,bpp$list_dfs_a,bpp$color_guild_b,
-                         inverse = "no",
-                         vertical = "no", orientation = "North", revanddrop = "yes",
-                         pbackground = "no", tspline = "arc", joinchars=bpp$joinstr, is_guild_a = FALSE,
-                         wlink = long_tail_b$weightlink[1])
+                              inverse = "no",
+                              vertical = "no", orientation = "North", revanddrop = "yes",
+                              pbackground = "no", tspline = "arc", joinchars=bpp$joinstr, is_guild_a = FALSE,
+                              wlink = long_tail_b$weightlink[1])
     p <- v["p"][[1]]
     svg <- v["svg"][[1]]
     bpp$last_xtail_a[bpp$kcoremax] <- v["lastx"][[1]]
@@ -915,17 +923,17 @@ display_plot_bip <- function(p, printfile,  plwidth=14, ppi = 300, landscape = b
 }
 
 def_configuration_bip <- function(paintlinks, print_to_file, plotsdir, orderkcoremaxby, style, 
-                              guild_gap_increase, flip_results, aspect_ratio,
-                              alpha_level, color_guild_a, color_guild_b,
-                              color_link, alpha_link, size_link,
-                              lsize_kcoremax, lsize_kcore1,
-                              lsize_legend, lsize_core_box, labels_color,
-                              hide_plot_border,
-                              corebox_border_size,
-                              label_strguilda, label_strguildb, landscape_plot, backg_color, show_title, show_legend,
-                              file_name_append, svg_scale_factor, weighted_links, square_nodes_size_scale,
-                              move_all_SVG_up, move_all_SVG_right, progress
-                              )
+                                  guild_gap_increase, flip_results, aspect_ratio,
+                                  alpha_level, color_guild_a, color_guild_b,
+                                  color_link, alpha_link, size_link,
+                                  lsize_kcoremax, lsize_kcore1,
+                                  lsize_legend, lsize_core_box, labels_color,
+                                  hide_plot_border,
+                                  corebox_border_size,
+                                  label_strguilda, label_strguildb, landscape_plot, backg_color, show_title, show_legend,
+                                  file_name_append, svg_scale_factor, weighted_links, square_nodes_size_scale,
+                                  move_all_SVG_up, move_all_SVG_right, progress
+)
 {
   # ENVIRONMENT CONFIGURATION PARAMETERS
   bpp$style <- style
@@ -1068,7 +1076,7 @@ draw_bipartite_plot <- function(svg_scale_factor, progress)
   base_width <- 2000
   bpp$ymax <- 1.75*base_width/bpp$aspect_ratio
   bpp$tot_width <- bpp$ymax
-
+  
   bpp$species_in_core2_a <- sum(bpp$df_cores[2,]$num_species_guild_a)
   bpp$species_in_core2_b <- sum(bpp$df_cores[2,]$num_species_guild_b)
   maxincore2 <- max(bpp$species_in_core2_a,bpp$species_in_core2_b)
@@ -1091,7 +1099,7 @@ draw_bipartite_plot <- function(svg_scale_factor, progress)
   # Draw max core 
   svg <-SVG(svg_scale_factor, style = bpp$style, 
             nnodes=bpp$result_analysis$num_guild_a+
-            bpp$result_analysis$num_guild_b,
+              bpp$result_analysis$num_guild_b,
             flip_coordinates=bpp$flip_results)
   
   f <- handle_orphans_bip(bpp$result_analysis$graph)
@@ -1116,7 +1124,7 @@ draw_bipartite_plot <- function(svg_scale_factor, progress)
     p <- z["p"][[1]]
     svg <- z["svg"][[1]]
   }
-
+  
   if (bpp$style=="chilopod"){
     bpp$posic_zig <- f["posic_zig"][[1]] 
     bpp$list_dfs_a <- f["list_dfs_a"][[1]]
@@ -1200,7 +1208,7 @@ draw_bipartite_plot <- function(svg_scale_factor, progress)
     p <- p+coord_flip()+scale_x_reverse()
   
   if (is.null(progress))
-     display_plot_bip(p,bpp$print_to_file, landscape = bpp$landscape_plot, fname_append = bpp$file_name_append)
+    display_plot_bip(p,bpp$print_to_file, landscape = bpp$landscape_plot, fname_append = bpp$file_name_append)
   
   # Stores results
   bpp$plot  <- p
@@ -1208,12 +1216,12 @@ draw_bipartite_plot <- function(svg_scale_factor, progress)
   # 
   # html<-svg$html()
   # cat(html, file = "tmp.svg")
-    return(bpp)
-
+  return(bpp)
+  
 }
 if (debugging)
   bipartite_graph("../data/","RA_HP_042.csv",square_nodes_size_scale = 2,show_title = TRUE,
-                       style="chilopod",orderkcoremaxby = "kdegree",
-                       guild_gap_increase = 1,weighted_links = "none",
-                       svg_scale_factor = 1,color_link = "#6d6d6e",
-                       hide_plot_border = TRUE)
+                  style="chilopod",orderkcoremaxby = "kdegree",
+                  guild_gap_increase = 1,weighted_links = "none",
+                  svg_scale_factor = 1,color_link = "#6d6d6e",
+                  hide_plot_border = TRUE)
