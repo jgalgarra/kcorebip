@@ -25,6 +25,7 @@ library(reshape2)
 #' @param fscale_height scale plot height,
 #' @param fscale_width scale plot width,
 #' @param ppi dots per inch
+#' @param progress for interactive visualization
 #' @export
 matrix_graph <-function(datadir,filename,
                          orderby = "kradius",
@@ -41,7 +42,8 @@ matrix_graph <-function(datadir,filename,
                          plot_size = 12,
                          fscale_height = 1,
                          fscale_width = 1,
-                         ppi = 300
+                         ppi = 300,
+                         progress = NULL
                          )
 {
   plot_m <- function(longData,flip_matrix=FALSE,nname="",ncolor="green",links_weight=FALSE,
@@ -166,6 +168,7 @@ matrix_graph <-function(datadir,filename,
   species_b$num <- seq(1:mat$result_analysis$num_guild_b)
   M<-mat$result_analysis$matrix
   binary_network = (sum(M>1)==sum(M))
+  mat$network_type <- ifelse(mat$binary_network,strings$value("LABEL_ZIGGURAT_INFO_BINARY"),strings$value("LABEL_ZIGGURAT_INFO_WEIGHTED"))
   DegM <- M
   DegM[DegM>1] <- 1
   species_a$degree <- colSums(DegM)
@@ -209,27 +212,37 @@ matrix_graph <-function(datadir,filename,
               strA=mat$name_guild_a,strB=mat$name_guild_b,links_weight = (links_weight && !binary_network),
               colorA=color_guild_a,colorB=color_guild_b,lsize=lsize,ncolor=color_links,show_title = show_title,
               show_legend=show_legend)
+  fscaleheight = fscale_height
+  fscalewidth = fscale_width
+  plsize = plot_size
+  dppi = ppi
+  # User decides to plot the file
   if (print_to_file){
     dir.create(mat$mat_argg$plotsdir, showWarnings = FALSE)
-    fscaleheight = fscale_height
-    fscalewidth = fscale_width
-    plsize = plot_size
-    dppi = ppi
     nfile <- paste0(plotsdir,mat$network_name,"_MATRIX_orderby_",orderby,".png")
     png(nfile,width=plsize*fscalewidth*dppi,height=plsize*fscaleheight*dppi,res=dppi)
     print(p)
     dev.off()    
   }
+  if (!is.null(progress)){
+    ppi = 300
+    dir.create("tmp", showWarnings = FALSE)
+    nfile <- paste0("tmp/",mat$network_name,"_MATRIX.png")
+    png(nfile,width=plsize*fscalewidth*dppi,height=plsize*fscaleheight*dppi,res=dppi)
+    print(p)
+    dev.off()
+    mat$matrix_file <- nfile
+  }
   mat$plot <- p
   return(mat)
 }
 
-debugging = TRUE
+debugging = FALSE
 if (debugging)
   p <- matrix_graph("../data/","RA_HP_042.csv",
                   print_to_file = TRUE, plotsdir ="plot_results/", 
                   orderby = "kradius",ppi=300,
-                  flip_matrix = TRUE, links_weight = TRUE,
+                  flip_matrix = FALSE, links_weight = FALSE,
                   show_species_names = TRUE,
                   show_title = TRUE,
                   show_legend = TRUE)
