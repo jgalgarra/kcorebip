@@ -104,14 +104,14 @@ matrix_graph <-function(datadir,filename,
   
   create_labels <- function(M,nums,i,vnames,show_species=FALSE,flip_matrix=TRUE,guild="A"){
     if (guild=="A")
-      n <- which(vnames==colnames(M)[i])
+      mn <- vnames[which(vnames$name==colnames(M)[i]),]$num
     else
-      n <- which(vnames==rownames(M)[i])
+      mn <- vnames[which(vnames$name==rownames(M)[i]),]$num
     if (!flip_matrix){
       if (guild=="A")
-        label <- (paste0("   ",n," ",ifelse(show_species,colnames(M)[i],""),"   "))
+        label <- (paste0("   ",mn," ",ifelse(show_species,colnames(M)[i],""),"   "))
       else
-        label <- (paste0(" ",n," ",ifelse(show_species,paste0(rownames(M)[i],""),""),"    "))
+        label <- (paste0(" ",mn," ",ifelse(show_species,paste0(rownames(M)[i],""),""),"    "))
     } else {
       if (guild=="A")
         label <- (paste0(" ",n," ",ifelse(show_species,colnames(M)[i],""),"    "))
@@ -195,17 +195,14 @@ matrix_graph <-function(datadir,filename,
   num_a = species_a$num
   longData<-melt(M)
   mplots<- ggplot(longData, aes(x = Var2, y = Var1,fill=as.factor(value)))+geom_tile(alpha=1) + scale_fill_manual(values=c("white","red"))
-  
   longData$numA <- 0
   longData$numB <- 0
   names(longData) = c("speciesB","speciesA", "value","numB","numA")
   mplots2<- ggplot(longData, aes(x = speciesA, y = speciesB,fill=as.factor(value)))+geom_tile(alpha=1) + scale_fill_manual(values=c("white","blue"))
-  vnamesA <- sort(species_a$name)
-  vnamesB<- sort(species_b$name)
   for (i in 1:length(colnames(M)))
-    longData[longData$speciesA==colnames(M)[i],]$numA = create_labels(M,num_a,i,vnamesA,show_species=show_species_names,flip_matrix=flip_matrix,guild="A")
+    longData[longData$speciesA==colnames(M)[i],]$numA = create_labels(M,num_a,i,species_a,show_species=show_species_names,flip_matrix=flip_matrix,guild="A")
   for (i in 1:length(rownames(M)))
-    longData[longData$speciesB==rownames(M)[i],]$numB = create_labels(M,num_b,i,vnamesB,show_species=show_species_names,flip_matrix=flip_matrix,guild="B")
+    longData[longData$speciesB==rownames(M)[i],]$numB = create_labels(M,num_b,i,species_b,show_species=show_species_names,flip_matrix=flip_matrix,guild="B")
   lsize <- 16 - round(log10(sqrt(nrow(longData))))
   
   p <- plot_m(longData,flip_matrix=flip_matrix,nname=mat$network_name,
@@ -239,7 +236,7 @@ matrix_graph <-function(datadir,filename,
 
 debugging = FALSE
 if (debugging)
-  p <- matrix_graph("../data/","RA_HP_042.csv",
+  p <- matrix_graph("../data/","dattilo2014.csv",
                   print_to_file = TRUE, plotsdir ="plot_results/", 
                   orderby = "kradius",ppi=300,
                   flip_matrix = FALSE, links_weight = FALSE,

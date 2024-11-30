@@ -345,8 +345,6 @@ draw_parallel_guilds <- function(basex,topx,basey,topy,numboxes,nnodes,fillcolor
   if (nnodes < 30)
     round(xstep <- xstep * 0.6)
   bpp$xstep <- min(bpp$xstep,xstep)
-  
-print(paste("bpp$xstep",bpp$xstep))
   vertsep <- 4
   if ((xstep>2000) && (guild=="A")) {
     vertsep <- 5
