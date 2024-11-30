@@ -39,7 +39,7 @@ matrix_graph <-function(datadir,filename,
                          show_species_names = TRUE,
                          show_title = TRUE, show_legend = TRUE,
                          print_to_file = FALSE, plotsdir ="plot_results/", 
-                         plot_size = 12,
+                         plot_size = 10,
                          fscale_height = 1,
                          fscale_width = 1,
                          ppi = 300,
@@ -97,7 +97,7 @@ matrix_graph <-function(datadir,filename,
                                            axis.title.x=element_text(size=18,face="bold",color="grey40",
                                                                      hjust=0.5),
                                            plot.subtitle = ggtext::element_markdown(hjust=0,vjust=0),
-                                           plot.margin = unit(c(1,1,1,1), "cm"),
+                                           plot.margin = unit(c(0,0,0,0), "cm"),
                                            plot.caption = ggtext::element_markdown(size=lsize+2,hjust=1,vjust=0))
     return(mplots)
   }
@@ -114,9 +114,9 @@ matrix_graph <-function(datadir,filename,
         label <- (paste0(" ",mn," ",ifelse(show_species,paste0(rownames(M)[i],""),""),"    "))
     } else {
       if (guild=="A")
-        label <- (paste0(" ",n," ",ifelse(show_species,colnames(M)[i],""),"    "))
+        label <- (paste0(" ",mn," ",ifelse(show_species,colnames(M)[i],""),"    "))
       else
-        label <- (paste0(" ",n," ",ifelse(show_species,paste0(rownames(M)[i],"  "),"    ")))
+        label <- (paste0(" ",mn," ",ifelse(show_species,paste0(rownames(M)[i],"  "),"    ")))
     }
     return(label)
   }
@@ -167,7 +167,7 @@ matrix_graph <-function(datadir,filename,
   species_b$kshell <- lnodes$kcorenum[seq(mat$result_analysis$num_guild_a+1,mat$result_analysis$num_guild_a+mat$result_analysis$num_guild_b)]
   species_b$num <- seq(1:mat$result_analysis$num_guild_b)
   M<-mat$result_analysis$matrix
-  binary_network = (sum(M>1)==sum(M))
+  binary_network = (sum(M>1)==0)
   mat$network_type <- ifelse(mat$binary_network,strings$value("LABEL_ZIGGURAT_INFO_BINARY"),strings$value("LABEL_ZIGGURAT_INFO_WEIGHTED"))
   DegM <- M
   DegM[DegM>1] <- 1
@@ -204,6 +204,9 @@ matrix_graph <-function(datadir,filename,
   for (i in 1:length(rownames(M)))
     longData[longData$speciesB==rownames(M)[i],]$numB = create_labels(M,num_b,i,species_b,show_species=show_species_names,flip_matrix=flip_matrix,guild="B")
   lsize <- 16 - round(log10(sqrt(nrow(longData))))
+  if (max(nrow(species_a),nrow(species_b)>25)) && (min(nrow(species_a),nrow(species_b)>15)){
+    lsize <- lsize-4
+  }
   
   p <- plot_m(longData,flip_matrix=flip_matrix,nname=mat$network_name,
               strA=mat$name_guild_a,strB=mat$name_guild_b,links_weight = (links_weight && !binary_network),
@@ -213,11 +216,17 @@ matrix_graph <-function(datadir,filename,
   fscalewidth = fscale_width
   plsize = plot_size
   dppi = ppi
+  aspect = (nrow(species_a)+6)/(nrow(species_b)+6) # 8 boxes are more or less the species name length
+  imw = plsize*fscalewidth*dppi
+  imh = plsize*fscaleheight*dppi/aspect
   # User decides to plot the file
   if (print_to_file){
     dir.create(mat$mat_argg$plotsdir, showWarnings = FALSE)
     nfile <- paste0(plotsdir,mat$network_name,"_MATRIX_orderby_",orderby,".png")
-    png(nfile,width=plsize*fscalewidth*dppi,height=plsize*fscaleheight*dppi,res=dppi)
+    if (!flip_matrix)
+      png(nfile,width=imw,height=imh,res=dppi)
+    else
+      png(nfile,width=imh,height=imw,res=dppi)
     print(p)
     dev.off()    
   }
@@ -225,11 +234,17 @@ matrix_graph <-function(datadir,filename,
     ppi = 300
     dir.create("tmp", showWarnings = FALSE)
     nfile <- paste0("tmp/",mat$network_name,"_MATRIX.png")
-    png(nfile,width=plsize*fscalewidth*dppi,height=plsize*fscaleheight*dppi,res=dppi)
+    if (!flip_matrix)
+      png(nfile,width=imw,height=imh,res=dppi)
+    else
+      png(nfile,width=imh,height=imw,res=dppi)
     print(p)
     dev.off()
     mat$matrix_file <- nfile
   }
+  mat$aspect <- aspect
+  
+  print(paste("aspect",aspect))
   mat$plot <- p
   return(mat)
 }
