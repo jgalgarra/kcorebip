@@ -2,6 +2,6 @@
 .Rhistory
 .RData
 .Ruserdata
+.git
 mansrc
-plot_results/ziggurat/*.*
-plot_results/polar/*.*
+R/plot_results/*

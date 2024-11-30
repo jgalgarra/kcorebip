@@ -75,8 +75,12 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
     swidth <- ceiling((maxx-minx)/10)*10
     sheight <- ceiling((maxy-miny)/10)*10
     if (flip_coordinates){
-      adjustleft <- ifelse(style=='chilopod',0.2*bpp$xstep,0)
-      viewBox<-paste0(tleftx, " ", ceiling(adjustleft+1.2*(tleftx-tlefty)/10)*10, " ", 1.2*swidth, " ", 1.2*swidth)
+      if (style=='ziggurat'){
+        adjustleft <- ifelse(style=='chilopod',0.2*bpp$xstep,0)
+        viewBox<-paste0(tleftx, " ", ceiling(adjustleft+1.2*(tleftx-tlefty)/10)*10, " ", 1.2*swidth, " ", 1.2*swidth)
+      } else {
+        viewBox<-paste0(tleftx, " ", (tleftx-tlefty), " ", 1.2*swidth, " ", 1.2*swidth)
+      }
       svg0<-paste0("<svg transform='rotate(90)' xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"", viewBox, "\">\n")
     }
     else{
@@ -90,7 +94,7 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
         viewBox<-paste0(tleftx, " ", tlefty-2*bpp$xstep, " ", swidth, " ", h)
       }
       else{
-      viewBox<-paste0(tleftx, " ", tlefty, " ", swidth, " ", swidth)
+        viewBox<-paste0(tleftx, " ", tlefty, " ", swidth, " ", swidth)
       }
       svg0<-paste0("<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"", viewBox, "\">\n")
     }
