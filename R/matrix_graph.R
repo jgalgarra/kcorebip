@@ -11,6 +11,7 @@ library(reshape2)
 #' @param orderkcoremaxby sets order of nodes, by kradius, kdegree or degree
 #' @param label_strguilda string labels of guild a
 #' @param label_strguildb string labels of guild b
+#' @param label_size base label size
 #' @param color_guild_a default filling for nodes of guild_a
 #' @param color_guild_b default filling for nodes of guild_b
 #' @param color_links color of matrix interactions
@@ -30,7 +31,8 @@ library(reshape2)
 matrix_graph <-function(datadir,filename,
                          orderby = "kradius",
                          label_strguilda = "Plant",
-                         label_strguildb = "Pollinator", 
+                         label_strguildb = "Pollinator",
+                         label_size = 18,
                          color_guild_a = "#4169E1", 
                          color_guild_b = "#FF1808",
                          color_links = 'grey7',
@@ -168,6 +170,7 @@ matrix_graph <-function(datadir,filename,
   species_b$num <- seq(1:mat$result_analysis$num_guild_b)
   M<-mat$result_analysis$matrix
   binary_network = (sum(M>1)==0)
+  mat$binary_network <- binary_network
   mat$network_type <- ifelse(mat$binary_network,strings$value("LABEL_ZIGGURAT_INFO_BINARY"),strings$value("LABEL_ZIGGURAT_INFO_WEIGHTED"))
   DegM <- M
   DegM[DegM>1] <- 1
@@ -203,9 +206,9 @@ matrix_graph <-function(datadir,filename,
     longData[longData$speciesA==colnames(M)[i],]$numA = create_labels(M,num_a,i,species_a,show_species=show_species_names,flip_matrix=flip_matrix,guild="A")
   for (i in 1:length(rownames(M)))
     longData[longData$speciesB==rownames(M)[i],]$numB = create_labels(M,num_b,i,species_b,show_species=show_species_names,flip_matrix=flip_matrix,guild="B")
-  lsize <- 16 - round(log10(sqrt(nrow(longData))))
-  if (max(nrow(species_a),nrow(species_b)>25)) && (min(nrow(species_a),nrow(species_b)>15)){
-    lsize <- lsize-4
+  lsize <- label_size - round(log10(sqrt(nrow(longData))))
+  if ( max(nrow(species_a),nrow(species_b)>25) && (min(nrow(species_a),nrow(species_b))>15)){
+    lsize <- lsize-5
   }
   
   p <- plot_m(longData,flip_matrix=flip_matrix,nname=mat$network_name,
@@ -243,8 +246,6 @@ matrix_graph <-function(datadir,filename,
     mat$matrix_file <- nfile
   }
   mat$aspect <- aspect
-  
-  print(paste("aspect",aspect))
   mat$plot <- p
   return(mat)
 }
