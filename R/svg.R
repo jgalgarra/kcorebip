@@ -87,10 +87,10 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
       if (style!='ziggurat'){
         if (style=='chilopod'){
           tleftx <- tleftx-bpp$xstep
-          h <-  swidth*2/3
+          h <-  2*sheight#swidth/2
         }
         else
-          h <-  swidth/2
+          h <-  swidth/3
         viewBox<-paste0(tleftx, " ", tlefty-2*bpp$xstep, " ", swidth, " ", h)
       }
       else{
