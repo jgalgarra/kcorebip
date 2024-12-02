@@ -23,8 +23,6 @@ library(reshape2)
 #' @param print_to_file print plot to file, 
 #' @param plotsdir default print directory
 #' @param plot_size in inches for printed plot,
-#' @param fscale_height scale plot height,
-#' @param fscale_width scale plot width,
 #' @param ppi dots per inch
 #' @param progress for interactive visualization
 #' @export
@@ -42,8 +40,6 @@ matrix_graph <-function(datadir,filename,
                          show_title = TRUE, show_legend = TRUE,
                          print_to_file = FALSE, plotsdir ="plot_results/", 
                          plot_size = 10,
-                         fscale_height = 1,
-                         fscale_width = 1,
                          ppi = 300,
                          progress = NULL
                          )
@@ -99,7 +95,7 @@ matrix_graph <-function(datadir,filename,
                                            axis.title.x=element_text(size=18,face="bold",color="grey40",
                                                                      hjust=0.5),
                                            plot.subtitle = ggtext::element_markdown(hjust=0,vjust=0),
-                                           plot.margin = unit(c(0,0,0,0), "cm"),
+                                           plot.margin = unit(c(0.1,0.1,0.1,0.1), "cm"),
                                            plot.caption = ggtext::element_markdown(size=lsize+2,hjust=1,vjust=0))
     return(mplots)
   }
@@ -215,13 +211,11 @@ matrix_graph <-function(datadir,filename,
               strA=mat$name_guild_a,strB=mat$name_guild_b,links_weight = (links_weight && !binary_network),
               colorA=color_guild_a,colorB=color_guild_b,lsize=lsize,ncolor=color_links,show_title = show_title,
               show_legend=show_legend)
-  fscaleheight = fscale_height
-  fscalewidth = fscale_width
   plsize = plot_size
   dppi = ppi
-  aspect = (nrow(species_a)+6)/(nrow(species_b)+6) # 8 boxes are more or less the species name length
-  imw = plsize*fscalewidth*dppi
-  imh = plsize*fscaleheight*dppi/aspect
+  aspect = (nrow(species_a)+10)/(nrow(species_b)+10) 
+  imw = plsize*dppi
+  imh = plsize*dppi/aspect
   # User decides to plot the file
   if (print_to_file){
     dir.create(mat$mat_argg$plotsdir, showWarnings = FALSE)
@@ -236,7 +230,7 @@ matrix_graph <-function(datadir,filename,
   if (!is.null(progress)){
     ppi = 300
     dir.create("tmp", showWarnings = FALSE)
-    nfile <- paste0("tmp/",mat$network_name,"_MATRIX.png")
+    nfile <- paste0("tmp/",mat$network_name,"MATRIX_orderby_",orderby,".png")
     if (!flip_matrix)
       png(nfile,width=imw,height=imh,res=dppi)
     else
@@ -247,6 +241,9 @@ matrix_graph <-function(datadir,filename,
   }
   mat$aspect <- aspect
   mat$plot <- p
+  mat$flip_results <- flip_matrix
+  mat$plot_width = plsize
+  mat$plot_height = plsize/aspect
   return(mat)
 }
 
