@@ -107,10 +107,6 @@ paint_kdegree_kradius <- function(graph, num_guild_a, num_guild_b,
       indtop <- indtop + 1
     }
     else{
-      # if ((numspecies > 75) & (dfaux$kcorenum[j] < 3))
-      #   shift <- (shift + 0.007)
-      # else
-      #   shift <- 0
       shift  <- 0
       dfaux$posx[j] <- ((1+shift)*(indvulg[dfaux$classe[j]]*primemove))%%denom
       if (sum( (dfaux$posx == dfaux$posx[j])& (dfaux$posy == dfaux$posy[j]))>1){
@@ -264,8 +260,8 @@ paint_kdegree_kradius <- function(graph, num_guild_a, num_guild_b,
 #' This function plots the polar graph of a bipartite network and the histograms of kshell
 #' kradius and kdegree
 #'
-#' @param red the name of the file of the interaction matrix
-#' @param directorystr the directory where the \code{red} file is stored
+#' @param datadir the directory where the \code{filename} file is stored
+#' @param filename the name of the file of the interaction matrix
 #' @param plotsdir the directory where the plot is stored
 #' @param print_to_file if set to FALSE the plot is displayed in the R session window
 #' @param pshowtext auxiliar for interactive apps, do not modify
@@ -279,29 +275,28 @@ paint_kdegree_kradius <- function(graph, num_guild_a, num_guild_b,
 #' @param lsize_legend_title legend label size
 #' @param file_name_append a label that the user may append to the plot file name for convenience
 #' @param print_title show title and network parameters
-#' @param progress auxiliar for interactive apps, do not modify
 #' @param printable_labels range of labeled species
 #' @param alpha_nodes fill transparency level
 #' @param fill_nodes if set to FALSE nodes are transparent
 #' @param max_kradius if bigger than 0 sets an upper limit different of the default. Useful for comparisons
+#' @param progress auxiliar for interactive apps, do not modify
 #' @export
-#' @examples polar_graph("M_PL_007.csv","data/",plotsdir="grafresults/",print_to_file = TRUE)
+#' @examples polar_graph("data/","M_PL_007.csv",plotsdir="grafresults/",print_to_file = TRUE)
 
-polar_graph <- function( red, directorystr = "data/", plotsdir = "plot_results/polar/", print_to_file = FALSE, pshowtext = FALSE,
+polar_graph <- function( datadir, filename, plotsdir = "plot_results/polar/", print_to_file = FALSE, pshowtext = FALSE,
                          show_histograms = TRUE, glabels = c("Plant", "Pollinator"),
                          gshortened = c("pl","pol"),
                          lsize_title = 22, lsize_axis = 16,
                          lsize_legend = 16,lsize_axis_title = 16, lsize_legend_title = 16,
                          file_name_append = "", print_title = TRUE,
-                         progress=NULL, printable_labels = 0, fill_nodes = TRUE, alpha_nodes = 0.5,
-                         max_kradius = 0)
+                         printable_labels = 0, fill_nodes = TRUE, alpha_nodes = 0.5,
+                         max_kradius = 0, progress=NULL)
 {
 
   # This assignment stores the call parameters in polar_argg as a list. This list is useful
   # to save plotting parameters for a future simulation
 
   polar_argg <- c(as.list(environment()))
-  
   strip_isolated_nodes <- function()
   {
     lgrados <- igraph::degree(result_analysis$graph)
@@ -318,17 +313,17 @@ polar_graph <- function( red, directorystr = "data/", plotsdir = "plot_results/p
       }
   }
 
-  red_name <- strsplit(red,".csv")[[1]][1]
+  red_name <- strsplit(filename,".csv")[[1]][1]
   sguild_a <<- gshortened[1]
   sguild_b <<- gshortened[2]
   slabels <<- glabels
-  if (grepl("_SD_",red) & (gshortened[1]=="pol") &  (gshortened[1]=="pl")){
+  if (grepl("_SD_",filename) & (gshortened[1]=="pol") &  (gshortened[1]=="pl")){
     sguild_b = "disp"
     slabels <<- c("Plant", "Disperser")
   }
 
   if (!is.null(progress)) progress$inc(1/4, detail=strings$value("MESSAGE_POLAR_PROGRESS_ANALYZING_NETWORK"))
-  result_analysis <- analyze_network(red, directory = directorystr, guild_a = sguild_a, guild_b = sguild_b, only_NODF = TRUE)
+  result_analysis <- analyze_network(filename, directory = datadir, guild_a = sguild_a, guild_b = sguild_b, only_NODF = TRUE)
   strip_isolated_nodes()
   numlinks <- result_analysis$links
   an$result_analysis <<- result_analysis
@@ -384,7 +379,8 @@ polar_graph <- function( red, directorystr = "data/", plotsdir = "plot_results/p
   }
   r$polar_argg <- polar_argg
   r$result_analysis <- result_analysis
+  r$network_name <- red_name
   return(r)
 }
 
-#polar_graph("pl017-minus6plants.csv","datanetworks2015/",print_to_file=TRUE, lsize_title = 24, lsize_axis = 18, lsize_legend = 18, lsize_axis_title = 18, lsize_legend_title = 20)remove,
+#polar_graph("../data/","M_SD_001.csv",print_to_file=TRUE, lsize_title = 24, lsize_axis = 18, lsize_legend = 18, lsize_axis_title = 18, lsize_legend_title = 20)
