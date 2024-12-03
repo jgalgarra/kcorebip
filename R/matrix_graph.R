@@ -27,6 +27,7 @@ library(reshape2)
 #' @param progress for interactive visualization
 #' @export
 matrix_graph <-function(datadir,filename,
+                         style="matrix",
                          orderby = "kradius",
                          label_strguilda = "Plant",
                          label_strguildb = "Pollinator",
