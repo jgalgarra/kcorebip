@@ -295,7 +295,7 @@ polar_graph <- function( datadir, filename, plotsdir = "plot_results/polar/", pr
 
   # This assignment stores the call parameters in polar_argg as a list. This list is useful
   # to save plotting parameters for a future simulation
-
+  pll <<- new.env()
   polar_argg <- c(as.list(environment()))
   strip_isolated_nodes <- function()
   {
@@ -327,6 +327,8 @@ polar_graph <- function( datadir, filename, plotsdir = "plot_results/polar/", pr
   strip_isolated_nodes()
   numlinks <- result_analysis$links
   an$result_analysis <<- result_analysis
+  an$polar_argg <- polar_argg
+  an$network_name <- red_name
   if (an$result_analysis$max_core == 1){
     msg = "Max core is 1. Polar plot only works if max core is bigger than 1"
     if (!is.null(progress))
