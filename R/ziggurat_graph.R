@@ -1528,12 +1528,10 @@ write_final_annotations <- function(p, svg, plottype, myenv=zgg)
     landmark_bottom <- (-1.5*myenv$xstep+myenv$landmark_bottom)*myenv$rescale_plot_area[2]
   }
   else{
-    landmark_right <- (myenv$landmark_right+2*myenv$xstep)*myenv$rescale_plot_area[1]
-    # landmark_left <- min(myenv$landmark_left,
-    #                    (myenv$pos_tail_x)*myenv$rescale_plot_area[1])-myenv$xstep*ifelse(myenv$exists_fat_tail,4,3)
-    landmark_left <- min(myenv$landmark_left,myenv$pos_tail_x-myenv$xstep*ifelse(myenv$exists_fat_tail,1,2))
+    landmark_right <- (myenv$landmark_right)*myenv$rescale_plot_area[1]
     
-    landmark_top <- myenv$landmark_top+myenv$xstep
+    landmark_left <- min(myenv$landmark_left,myenv$pos_tail_x)#-myenv$xstep)*ifelse(myenv$exists_fat_tail,1,2))
+    landmark_top <- myenv$landmark_top#+myenv$xstep
     landmark_bottom <- myenv$landmark_bottom
     if(!myenv$exists_fat_tail){
       nnodes <- length(bpp$result_analysis$g_core)

@@ -79,7 +79,10 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
         adjustleft <- ifelse(style=='chilopod',0.2*bpp$xstep,0)
         viewBox<-paste0(tleftx, " ", ceiling(adjustleft+1.2*(tleftx-tlefty)/10)*10, " ", 1.2*swidth, " ", 1.2*swidth)
       } else {
-        viewBox<-paste0(tleftx, " ", (tleftx-tlefty), " ", 1.2*swidth, " ", 1.2*swidth)
+        if (style=="chilopod")
+          viewBox<-paste0(tleftx, " ", (tleftx-tlefty)+2*bpp$xstep, " ", 1.2*swidth, " ", 1.2*swidth)
+        else
+          viewBox<-paste0(tleftx, " ", (tleftx-tlefty), " ", 1.2*swidth, " ", 1.2*swidth)
       }
       svg0<-paste0("<svg transform='rotate(90)' xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"", viewBox, "\">\n")
     }
@@ -87,7 +90,7 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
       if (style!='ziggurat'){
         if (style=='chilopod'){
           tleftx <- tleftx-bpp$xstep
-          h <-  2*sheight#swidth/2
+          h <-  swidth*2/3
         }
         else
           h <-  swidth/3

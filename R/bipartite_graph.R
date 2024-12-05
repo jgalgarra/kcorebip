@@ -28,7 +28,6 @@ if (debugging){
 #' @param alpha_link link transparency
 #' @param size_link width of the links
 #' @param lsize_kcoremax nodes in kshell max label size
-#' @param lsize_kcore1 labels of nodes in kshell 1
 #' @param lsize_legend legend label size
 #' @param labels_color default label colors
 #' @param hide_plot_border hide border around the plot
@@ -86,6 +85,8 @@ bipartite_graph <- function(datadir,filename,
   bpp$name_guild_a <- f["name_guild_a"][[1]]
   bpp$name_guild_b <- f["name_guild_b"][[1]]
   bpp$network_name <- f["network_name"][[1]]
+  bpp$top_tail <- FALSE
+  bpp$bottom_tail <- FALSE
   bpp$mtxlinks <- data.frame(igraph::as_edgelist(bpp$result_analysis$graph))
   names(bpp$mtxlinks) <- c("guild_a","guild_b")
   
@@ -315,6 +316,10 @@ draw_edge_tails_bip <- function(p,svg,point_x,point_y,kcoreother,long_tail,list_
         ryy <- point_y
         rxx <- point_x
       }
+      if (is_guild_a)
+        bpp$bottom_tail <- TRUE
+      else
+        bpp$top_tail <- TRUE
     }
     else
       last_vertical_position <- 0
@@ -343,7 +348,7 @@ draw_parallel_guilds <- function(basex,topx,basey,topy,numboxes,nnodes,fillcolor
   if (!exists("bpp$xstep"))
     bpp$xstep <- xstep
   if (nnodes < 30)
-    round(xstep <- xstep * 0.6)
+    round(xstep <- xstep * 0.5)
   bpp$xstep <- min(bpp$xstep,xstep)
   vertsep <- 4
   if ((xstep>2000) && (guild=="A")) {
@@ -428,7 +433,8 @@ draw_parallel_guilds <- function(basex,topx,basey,topy,numboxes,nnodes,fillcolor
     }
   }
   # Fixed aspect ratio of bipartite plot
-  bpp$landmark_right <- max(bpp$landmark_right,max(d1$x2))
+  #bpp$landmark_right <- max(bpp$landmark_right,max(d1$x2))
+  
   bpp$tot_width <- max(max(d1$x2)+xstep,bpp$tot_width)
   bpp$tot_height <- (9/16)*bpp$tot_width
   bpp$landmark_top <- max(bpp$landmark_top,max(d1$y2)+xstep)
@@ -624,7 +630,7 @@ handle_fat_tails_bip <- function(p, svg, style = "legacy")
   if (exists("df_orph_a", envir = bpp)){
     fat_tail_a <- bpp$df_orph_a[(bpp$df_orph_a$partner == max(max_b_k[1])) 
                                 & (bpp$df_orph_a$repeated == "no"),]
-    if (nrow(fat_tail_a)>1)
+    if (nrow(fat_tail_a)>0)
       bpp$df_orph_a <- bpp$df_orph_a[!(bpp$df_orph_a$orph %in% fat_tail_a$orph),]
     tailweight <- 0
     if (nrow(fat_tail_a)>0) {
@@ -647,7 +653,7 @@ handle_fat_tails_bip <- function(p, svg, style = "legacy")
   
   if (exists("df_orph_b", envir = bpp)){
     fat_tail_b <- bpp$df_orph_b[(bpp$df_orph_b$partner == max(max_a_k)) & (bpp$df_orph_b$repeated == "no"),]
-    if (nrow(fat_tail_b)>1)
+    if (nrow(fat_tail_b)>0)
       bpp$df_orph_b <- bpp$df_orph_b[!(bpp$df_orph_b$orph %in% fat_tail_b$orph),]
     
     tailweight <- 0
@@ -683,7 +689,7 @@ handle_fat_tails_bip <- function(p, svg, style = "legacy")
     svg <- f["svg"][[1]]
   }
   exists_fat_tail <- (nrows_fat > 0)
-  bpp$landmark_left <- min(bpp$landmark_left,bpp$pos_tail_x-2.5*bpp$step)
+  bpp$landmark_left <- min(bpp$landmark_left,bpp$pos_tail_x-bpp$step)
   calc_vals <- list("p" = p, "svg" = svg, "pos_tail_x" = bpp$pos_tail_x, "exists_fat_tail" = exists_fat_tail)
   return(calc_vals)
 }
@@ -832,7 +838,7 @@ draw_maxcore_bip <- function(svg)
                                                          bpp$str_guild_b,  orderby = "kradius",
                                                          style=bpp$style,guild="B")
   bpp$landmark_right <- max(bpp$list_dfs_b[[bpp$kcoremax]]$x2,
-                            bpp$list_dfs_a[[bpp$kcoremax]]$x2)+bpp$xstep
+                            bpp$list_dfs_a[[bpp$kcoremax]]$x2)+bpp$xstep/2
   f <- paint_labels(p,svg,"-b",bpp$list_dfs_b[[bpp$kcoremax]])
   calc_vals <- list("p" = f["p"][[1]], "svg" = f["svg"][[1]], "basey" = bpp$basey, 
                     "topy" = bpp$toopy, "topxa" = bpp$topxa, "topxb" = bpp$topxb,
@@ -845,8 +851,7 @@ draw_maxcore_bip <- function(svg)
 draw_maxcore_tails_bip <- function(p, svg)
 {
   long_kcoremax_tail <- FALSE
-  #leftjump <- (1.2-0.02*nrow(bpp$list_dfs_a[[bpp$kcoremax]])) * bpp$hop_x
-  point_x <- bpp$list_dfs_a[[bpp$kcoremax]][nrow(bpp$list_dfs_a[[bpp$kcoremax]]),]$x2 #- leftjump
+  point_x <- bpp$list_dfs_a[[bpp$kcoremax]][nrow(bpp$list_dfs_a[[bpp$kcoremax]]),]$x2
   point_y <- bpp$xstep
   if (exists("df_orph_a", envir = bpp))
     long_tail_a <- bpp$df_orph_a[(bpp$df_orph_a$repeated == "no"),]
@@ -913,7 +918,7 @@ display_plot_bip <- function(p, printfile,  plwidth=14, ppi = 300, landscape = b
     if (landscape)
       png(paste0(bpp$plotsdir,"/",bpp$network_name,"_",bpp$style,ftname_append,".png"), width=(plwidth*ppi), height=(9/16)*plwidth*ppi, res=ppi)
     else
-      png(paste0(bpp$plotsdir,"/",bpp$network_name,"_",bpp$style,ftname_append,".png"), width=(plheight*ppi), height=(9/16)*plwidth*ppi, res=ppi)
+      png(paste0(bpp$plotsdir,"/",bpp$network_name,"_",bpp$style,ftname_append,".png"), width=(9/16)*plwidth*ppi, height=(plwidth*ppi), res=ppi)
   }
   print(p)
   if (printfile)
@@ -951,7 +956,7 @@ def_configuration_bip <- function(paintlinks, print_to_file, plotsdir, orderkcor
   bpp$labels_size <- 4
   bpp$rescale_plot_area = c(1,1)
   bpp$lsize_kcoremax <- lsize_kcoremax
-  bpp$lsize_kcore1 <- lsize_kcore1
+  bpp$lsize_kcore1 <- 0.8*lsize_kcoremax
   bpp$lsize_legend <- lsize_legend
   bpp$lsize_core_box <- lsize_core_box
   bpp$labels_color <- labels_color                           # Horizontal & Vertical distances of edge/specialist tails linked to core 1 North & South
@@ -1074,16 +1079,15 @@ draw_bipartite_plot <- function(svg_scale_factor, progress)
   base_width <- 2000
   bpp$ymax <- 1.75*base_width/bpp$aspect_ratio
   bpp$tot_width <- bpp$ymax
-  
   bpp$species_in_core2_a <- sum(bpp$df_cores[2,]$num_species_guild_a)
   bpp$species_in_core2_b <- sum(bpp$df_cores[2,]$num_species_guild_b)
   maxincore2 <- max(bpp$species_in_core2_a,bpp$species_in_core2_b)
-  bpp$height_y <- bpp$height_y
   bpp$ymax <- bpp$ymax * 1.1
   bpp$hop_x <- (bpp$tot_width)/max(1,(bpp$kcoremax-2))
   bpp$lado <- min(0.05*bpp$tot_width,bpp$height_y * bpp$aspect_ratio)
   bpp$basey <- 2.5*bpp$lado
   wcormax <- 1.2*bpp$hop_x*bpp$coremax_triangle_width_factor
+  print(paste("wcormax",wcormax))
   bpp$topxa <- 0.65*bpp$hop_x
   bpp$basex <- bpp$topxa - wcormax
   bpp$posic_zig <- 0
@@ -1134,14 +1138,7 @@ draw_bipartite_plot <- function(svg_scale_factor, progress)
     bpp$topy <- f["topy"][[1]] 
     bpp$topxa <-f["topxa"][[1]] 
     bpp$topxb <- f["topxb"][[1]] 
-    # bpp$posic_zig <- f["posic_zig"][[1]] 
-    # bpp$list_dfs_a <- f["list_dfs_a"][[1]]
-    # bpp$list_dfs_b <- f["list_dfs_b"][[1]] 
-    # bpp$last_xtail_a <-f["last_xtail_a"][[1]] 
-    # bpp$last_ytail_a <- f["last_ytail_a"][[1]]
-    # bpp$last_xtail_b <- f["last_xtail_b"][[1]] 
-    # bpp$last_ytail_b <- f["last_ytail_b"][[1]] 
-    
+
     if (!is.null(bpp$df_cores[1,])){
       if (bpp$df_cores[1,]$num_species_guild_a > 0)
         bpp$list_dfs_a[[1]] <- conf_kcore1_info(bpp$str_guild_a,myenv=bpp)
@@ -1207,7 +1204,7 @@ draw_bipartite_plot <- function(svg_scale_factor, progress)
   
   if (is.null(progress))
     display_plot_bip(p,bpp$print_to_file, landscape = bpp$landscape_plot, fname_append = bpp$file_name_append)
-  
+
   # Stores results
   bpp$plot  <- p
   bpp$svg   <- svg
@@ -1218,7 +1215,7 @@ draw_bipartite_plot <- function(svg_scale_factor, progress)
   
 }
 if (debugging)
-  bipartite_graph("../data/","RA_HP_042.csv",square_nodes_size_scale = 2,show_title = TRUE,
+  bipartite_graph("../data/","M_SD_015.csv",square_nodes_size_scale = 2,show_title = TRUE,
                   style="chilopod",orderkcoremaxby = "kdegree",
                   guild_gap_increase = 1,weighted_links = "none",
                   svg_scale_factor = 1,color_link = "#6d6d6e",
