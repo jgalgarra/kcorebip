@@ -55,7 +55,7 @@ bipartite_graph <- function(datadir,filename,
                             flip_results = FALSE, aspect_ratio = 1,
                             alpha_level = 0.2, color_guild_a = c("#4169E1","#00008B"), color_guild_b = c("#F08080","#FF0000"),
                             color_link = "slategray3", alpha_link = 0.5, size_link = 0.5,
-                            lsize_kcoremax = 3.5, lsize_kcore1 = 2.5, lsize_legend = 4, lsize_core_box = 2.5,
+                            lsize_kcoremax = 3, lsize_kcore1 = 2.5, lsize_legend = 4, lsize_core_box = 2.5,
                             labels_color = c(),
                             hide_plot_border = TRUE,
                             corebox_border_size = 0.2,
@@ -351,15 +351,15 @@ draw_parallel_guilds <- function(basex,topx,basey,topy,numboxes,nnodes,fillcolor
     round(xstep <- xstep * 0.5)
   bpp$xstep <- min(bpp$xstep,xstep)
   vertsep <- 4
+  print(paste("lsize_kcoremax",bpp$lsize_kcoremax))
   if ((xstep>2000) && (guild=="A")) {
-    vertsep <- 5
     bpp$lsize_kcoremax <-  bpp$lsize_kcoremax + 1
   }
   if ((xstep<1000) && (guild=="A")) {
     vertsep <- 2
-    bpp$lsize_kcoremax <-  max(2,bpp$lsize_kcoremax - 1.5)
+    bpp$lsize_kcoremax <-  max(2,bpp$lsize_kcoremax)
   }
-  
+  print(paste("lsize_kcoremax",bpp$lsize_kcoremax))
   
   ptopy <- vertsep*basey+ifelse(basey>0,1,-1)*xstep
   bpp$landmark_bottom <- min(bpp$landmark_bottom,-ptopy)
@@ -1087,7 +1087,6 @@ draw_bipartite_plot <- function(svg_scale_factor, progress)
   bpp$lado <- min(0.05*bpp$tot_width,bpp$height_y * bpp$aspect_ratio)
   bpp$basey <- 2.5*bpp$lado
   wcormax <- 1.2*bpp$hop_x*bpp$coremax_triangle_width_factor
-  print(paste("wcormax",wcormax))
   bpp$topxa <- 0.65*bpp$hop_x
   bpp$basex <- bpp$topxa - wcormax
   bpp$posic_zig <- 0
@@ -1138,7 +1137,7 @@ draw_bipartite_plot <- function(svg_scale_factor, progress)
     bpp$topy <- f["topy"][[1]] 
     bpp$topxa <-f["topxa"][[1]] 
     bpp$topxb <- f["topxb"][[1]] 
-
+    
     if (!is.null(bpp$df_cores[1,])){
       if (bpp$df_cores[1,]$num_species_guild_a > 0)
         bpp$list_dfs_a[[1]] <- conf_kcore1_info(bpp$str_guild_a,myenv=bpp)
@@ -1204,7 +1203,7 @@ draw_bipartite_plot <- function(svg_scale_factor, progress)
   
   if (is.null(progress))
     display_plot_bip(p,bpp$print_to_file, landscape = bpp$landscape_plot, fname_append = bpp$file_name_append)
-
+  
   # Stores results
   bpp$plot  <- p
   bpp$svg   <- svg

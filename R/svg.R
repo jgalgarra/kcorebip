@@ -22,7 +22,7 @@ library(rlang)
 #' @examples
 #' SVG()
 
-SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
+SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE,zoom_svgplot=1) {
   plottype = style
   fontscale = ifelse (style=="ziggurat", 3+(nnodes<50), max(25,50-(nnodes/5)))
   flinkscale = ifelse (style=="ziggurat", 1, 100)
@@ -84,7 +84,7 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
         else
           viewBox<-paste0(tleftx, " ", (tleftx-tlefty), " ", 1.2*swidth, " ", 1.2*swidth)
       }
-      svg0<-paste0("<svg transform='rotate(90)' xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"", viewBox, "\">\n")
+      svg0<-paste0("<svg transform='rotate(90)' transform=\"scale(",zoom_svgplot,")\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"", viewBox, "\">\n")
     }
     else{
       if (style!='ziggurat'){
@@ -100,6 +100,7 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
         viewBox<-paste0(tleftx, " ", tlefty, " ", swidth, " ", swidth)
       }
       svg0<-paste0("<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"", viewBox, "\">\n")
+      #svg0<-paste0("<svg xmlns=\"http://www.w3.org/2000/svg\" transform='scale(",zoom_svgplot,")' viewBox=\"", viewBox, "\">\n")
     }
     
     svg1<-paste0("</svg>")
