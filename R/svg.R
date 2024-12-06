@@ -82,7 +82,7 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE,zoo
         if (style=="chilopod")
           viewBox<-paste0(tleftx, " ", (tleftx-tlefty)+2*bpp$xstep, " ", 1.2*swidth, " ", 1.2*swidth)
         else
-          viewBox<-paste0(tleftx, " ", (tleftx-tlefty), " ", 1.2*swidth, " ", 1.2*swidth)
+          viewBox<-paste0(tleftx, " ", (tleftx-tlefty)+bpp$xstep, " ", 1.2*swidth, " ", 1.2*swidth)
       }
       svg0<-paste0("<svg transform='rotate(90)' transform=\"scale(",zoom_svgplot,")\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"", viewBox, "\">\n")
     }
@@ -91,16 +91,19 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE,zoo
         if (style=='chilopod'){
           tleftx <- tleftx-bpp$xstep
           h <-  swidth*2/3
+          vadjust <- -2*bpp$xstep
         }
-        else
-          h <-  swidth/3
-        viewBox<-paste0(tleftx, " ", tlefty-2*bpp$xstep, " ", swidth, " ", h)
+        else{
+          h <-  swidth/4
+          vadjust <- 0
+        }
+        viewBox<-paste0(tleftx, " ", (tlefty+vadjust)*zoom_svgplot, " ", swidth, " ", h*zoom_svgplot)
       }
       else{
         viewBox<-paste0(tleftx, " ", tlefty, " ", swidth, " ", swidth)
       }
-      svg0<-paste0("<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"", viewBox, "\">\n")
-      #svg0<-paste0("<svg xmlns=\"http://www.w3.org/2000/svg\" transform='scale(",zoom_svgplot,")' viewBox=\"", viewBox, "\">\n")
+      #svg0<-paste0("<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"", viewBox, "\">\n")
+      svg0<-paste0("<svg xmlns=\"http://www.w3.org/2000/svg\" transform='scale(",zoom_svgplot,")' viewBox=\"", viewBox, "\">\n")
     }
     
     svg1<-paste0("</svg>")
