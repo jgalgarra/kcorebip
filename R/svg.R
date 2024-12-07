@@ -22,7 +22,7 @@ library(rlang)
 #' @examples
 #' SVG()
 
-SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE,zoom_svgplot=1) {
+SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
   plottype = style
   fontscale = ifelse (style=="ziggurat", 3+(nnodes<50), max(25,50-(nnodes/5)))
   flinkscale = ifelse (style=="ziggurat", 1, 100)
@@ -49,9 +49,9 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE,zoo
       zu <- zgg$move_all_SVG_up
     }
     else{
-      zr <- bpp$move_all_SVG_right
+      zr <- 0
       zl <- bpp$landmark_right
-      zu <- bpp$move_all_SVG_up
+      zu <- 0
     }
     #redondea el viewBox a la decena mas cercana
     minx  <- (1+zr)*floor(this$minx/10)*10
@@ -84,7 +84,8 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE,zoo
         else
           viewBox<-paste0(tleftx, " ", (tleftx-tlefty)+bpp$xstep, " ", 1.2*swidth, " ", 1.2*swidth)
       }
-      svg0<-paste0("<svg transform='rotate(90)' transform=\"scale(",zoom_svgplot,")\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"", viewBox, "\">\n")
+      #svg0<-paste0("<svg transform='rotate(90)' transform=\"scale(",zoom_svgplot,")\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"", viewBox, "\">\n")
+      svg0<-paste0("<svg transform='rotate(90)' xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"", viewBox, "\">\n")
     }
     else{
       if (style!='ziggurat'){
@@ -97,13 +98,13 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE,zoo
           h <-  swidth/4
           vadjust <- 0
         }
-        viewBox<-paste0(tleftx, " ", (tlefty+vadjust)*zoom_svgplot, " ", swidth, " ", h*zoom_svgplot)
+        viewBox<-paste0(tleftx, " ", (tlefty+vadjust), " ", swidth, " ", h)
       }
       else{
         viewBox<-paste0(tleftx, " ", tlefty, " ", swidth, " ", swidth)
       }
-      #svg0<-paste0("<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"", viewBox, "\">\n")
-      svg0<-paste0("<svg xmlns=\"http://www.w3.org/2000/svg\" transform='scale(",zoom_svgplot,")' viewBox=\"", viewBox, "\">\n")
+      svg0<-paste0("<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"", viewBox, "\">\n")
+      #svg0<-paste0("<svg xmlns=\"http://www.w3.org/2000/svg\" transform='scale(",zoom_svgplot,")' viewBox=\"", viewBox, "\">\n")
     }
     
     svg1<-paste0("</svg>")

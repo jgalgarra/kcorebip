@@ -21,7 +21,7 @@ bipartite_graph(
   color_link = "slategray3",
   alpha_link = 0.5,
   size_link = 0.5,
-  lsize_kcoremax = 3.5,
+  lsize_kcoremax = 3,
   lsize_kcore1 = 2.5,
   lsize_legend = 4,
   lsize_core_box = 2.5,
@@ -38,8 +38,7 @@ bipartite_graph(
   svg_scale_factor = 10,
   weighted_links = "none",
   square_nodes_size_scale = 1,
-  move_all_SVG_up = 0,
-  move_all_SVG_right = 0,
+  zoom_svgplot = 1,
   progress = NULL
 )
 }
@@ -76,8 +75,6 @@ bipartite_graph(
 
 \item{lsize_kcoremax}{nodes in kshell max label size}
 
-\item{lsize_kcore1}{labels of nodes in kshell 1}
-
 \item{lsize_legend}{legend label size}
 
 \item{labels_color}{default label colors}
@@ -106,9 +103,7 @@ bipartite_graph(
 
 \item{square_nodes_size_scale}{scale nodes area of kcore1 and outsiders}
 
-\item{move_all_SVG_up}{move up all the SVG plot by this fraction, useful to crop upper white space}
-
-\item{move_all_SVG_right}{move rightwards all the SVG plot by this fraction, useful to crop right white space}
+\item{zoom_svgplot}{scale SVG plot, just for interactive applications}
 
 \item{progress}{only for interactive apps, do not modifiy}
 }

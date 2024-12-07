@@ -5,8 +5,8 @@
 \title{Plotting a polar graph}
 \usage{
 polar_graph(
-  red,
-  directorystr = "data/",
+  datadir,
+  filename,
   plotsdir = "plot_results/polar/",
   print_to_file = FALSE,
   pshowtext = FALSE,
@@ -20,17 +20,17 @@ polar_graph(
   lsize_legend_title = 16,
   file_name_append = "",
   print_title = TRUE,
-  progress = NULL,
   printable_labels = 0,
   fill_nodes = TRUE,
   alpha_nodes = 0.5,
-  max_kradius = 0
+  max_kradius = 0,
+  progress = NULL
 )
 }
 \arguments{
-\item{red}{the name of the file of the interaction matrix}
+\item{datadir}{the directory where the \code{filename} file is stored}
 
-\item{directorystr}{the directory where the \code{red} file is stored}
+\item{filename}{the name of the file of the interaction matrix}
 
 \item{plotsdir}{the directory where the plot is stored}
 
@@ -58,8 +58,6 @@ polar_graph(
 
 \item{print_title}{show title and network parameters}
 
-\item{progress}{auxiliar for interactive apps, do not modify}
-
 \item{printable_labels}{range of labeled species}
 
 \item{fill_nodes}{if set to FALSE nodes are transparent}
@@ -67,11 +65,13 @@ polar_graph(
 \item{alpha_nodes}{fill transparency level}
 
 \item{max_kradius}{if bigger than 0 sets an upper limit different of the default. Useful for comparisons}
+
+\item{progress}{auxiliar for interactive apps, do not modify}
 }
 \description{
 This function plots the polar graph of a bipartite network and the histograms of kshell
 kradius and kdegree
 }
 \examples{
-polar_graph("M_PL_007.csv","data/",plotsdir="grafresults/",print_to_file = TRUE)
+polar_graph("data/","M_PL_007.csv",plotsdir="grafresults/",print_to_file = TRUE)
 }

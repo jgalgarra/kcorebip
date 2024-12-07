@@ -4,7 +4,13 @@
 \alias{SVG}
 \title{SVG aux function}
 \usage{
-SVG(scale_factor, style = "ziggurat", nnodes = 50, flip_coordinates = FALSE)
+SVG(
+  scale_factor,
+  style = "ziggurat",
+  nnodes = 50,
+  flip_coordinates = FALSE,
+  zoom_svgplot = 1
+)
 }
 \arguments{
 \item{love}{Do you love cats? Defaults to TRUE.}

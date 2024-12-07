@@ -120,8 +120,6 @@ matrix_graph <-function(datadir,filename,
     return(label)
   }
   
-  
-
   setkradiusorder <- function(dnodes){
     myord <- rev(order(10000*dnodes$kshell-(100*dnodes$kradius-dnodes$degree)))
     return(dnodes$num[myord])

@@ -7,23 +7,24 @@
 matrix_graph(
   datadir,
   filename,
+  style = "matrix",
   orderby = "kradius",
   label_strguilda = "Plant",
   label_strguildb = "Pollinator",
+  label_size = 18,
   color_guild_a = "#4169E1",
   color_guild_b = "#FF1808",
   color_links = "grey7",
   flip_matrix = FALSE,
   links_weight = FALSE,
-  show_species_names = FALSE,
+  show_species_names = TRUE,
   show_title = TRUE,
   show_legend = TRUE,
   print_to_file = FALSE,
   plotsdir = "plot_results/",
-  plot_size = 12,
-  fscale_height = 1,
-  fscale_width = 1,
-  ppi = 300
+  plot_size = 10,
+  ppi = 300,
+  progress = NULL
 )
 }
 \arguments{
@@ -34,6 +35,8 @@ matrix_graph(
 \item{label_strguilda}{string labels of guild a}
 
 \item{label_strguildb}{string labels of guild b}
+
+\item{label_size}{base label size}
 
 \item{color_guild_a}{default filling for nodes of guild_a}
 
@@ -57,11 +60,9 @@ matrix_graph(
 
 \item{plot_size}{in inches for printed plot,}
 
-\item{fscale_height}{scale plot height,}
-
-\item{fscale_width}{scale plot width,}
-
 \item{ppi}{dots per inch}
+
+\item{progress}{for interactive visualization}
 
 \item{orderkcoremaxby}{sets order of nodes, by kradius, kdegree or degree}
 }
