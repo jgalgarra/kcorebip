@@ -737,7 +737,6 @@ draw_coremax_triangle <- function(basex,topx,basey,topy,numboxes,fillcolor,strla
     ordvector <- setnodeorder(d1,orderby='kradius')
     
     d1$label <- d1[ordvector,]$label
-    print(d1$label)
     d1$kradius <- d1[ordvector,]$kradius
     d1$kdegree <- d1[ordvector,]$kdegree
     d1$name_species <- d1[ordvector,]$name_species
