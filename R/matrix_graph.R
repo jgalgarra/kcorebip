@@ -89,7 +89,7 @@ matrix_graph <-function(datadir,filename,
       mplots <- mplots+ggtitle(paste("Network:",mat$network_name))
     mplots <- mplots +  theme_void()+theme(legend.position=lposition,
                                            legend.title=element_blank(),
-                                           legend.text = element_text(size = lsize-1),
+                                           legend.text = element_text(size = lsize),
                                            axis.text.x = element_text(size=lsize,hjust=0,vjust=1,angle=90,color=ifelse(!flip_matrix,colorA,colorB)),
                                            axis.text.y = element_text(size = lsize,hjust=1,vjust=0.5,color=ifelse(!flip_matrix,colorB,colorA)),
                                            plot.title = element_text(size=lsize+3,hjust=0.5),
@@ -202,6 +202,8 @@ matrix_graph <-function(datadir,filename,
   for (i in 1:length(rownames(M)))
     longData[longData$speciesB==rownames(M)[i],]$numB = create_labels(M,num_b,i,species_b,show_species=show_species_names,flip_matrix=flip_matrix,guild="B")
   lsize <- label_size - round(log10(sqrt(nrow(longData))))
+  if (!show_species_names)
+    lsize <- lsize + 6
   if ( max(nrow(species_a),nrow(species_b)>25) && (min(nrow(species_a),nrow(species_b))>15)){
     lsize <- lsize-5
   }
@@ -212,7 +214,10 @@ matrix_graph <-function(datadir,filename,
               show_legend=show_legend)
   plsize = plot_size
   dppi = ppi
-  aspect = (nrow(species_a)+10)/(nrow(species_b)+10) 
+  if (show_species_names)
+    aspect = (nrow(species_a)+10)/(nrow(species_b)+10) 
+  else
+    aspect = (nrow(species_a)+1)/(nrow(species_b)+1) 
   imw = plsize*dppi
   imh = plsize*dppi/aspect
   # User decides to plot the file
@@ -228,8 +233,9 @@ matrix_graph <-function(datadir,filename,
   }
   if (!is.null(progress)){
     ppi = 300
-    dir.create("tmp", showWarnings = FALSE)
-    nfile <- paste0("tmp/",mat$network_name,"MATRIX_orderby_",orderby,".png")
+    dir.create("www", showWarnings = FALSE)
+    dir.create("www/reports/", showWarnings = FALSE)
+    nfile <- paste0("www/reports/",mat$network_name,"_MATRIX.png")
     if (!flip_matrix)
       png(nfile,width=imw,height=imh,res=dppi)
     else
