@@ -27,7 +27,7 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
   fontscale = ifelse (style=="ziggurat", 3+(nnodes<50), max(25,50-(nnodes/5)))
   flinkscale = ifelse (style=="ziggurat", 1, 100)
   # crea el objeto SVG
-  this<-list(content=c(""), minx=0, miny=0, maxx=0, maxy=0, scale_factor=scale_factor, font_scale_factor=fontscale)
+  this<-list(content=c(""), minx=0, miny=0, maxx=0, maxy=0, scale_factor=scale_factor, font_scale_factor=1.5*fontscale)
   
   # guarda el contenido del svg en un fichero
   this$save <- function(fileName, svg) {

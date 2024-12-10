@@ -492,7 +492,7 @@ draw_edge_tails <- function(p,svg,point_x,point_y,kcoreother,long_tail,list_dfs,
     list_spec <- rev(list_spec)
   llspec <- length(list_spec)
   m <- 0
-  separacion <- 0.035*zgg$tot_width
+  separacion <- 0.08*zgg$tot_width
   for (i in list_spec)
   {
     conn_species <- which(long_tail$partner == i)
@@ -679,7 +679,7 @@ handle_outsiders <- function(p,svg,outsiders,df_chains) {
       py <- y_inf
     }
     p <- p +annotate(geom="text", x=px, y=py, label=corelabel, colour = divcolor,
-                     size=zgg$lsize_core_box, hjust = 0, vjust = 0, angle = 0)
+                     size=round(0.8*zgg$lsize_core_box), hjust = 0, vjust = 0, angle = 0)
 
     svg$text("corelabel", data=data.frame(x=c(px), y=c(py)), mapping=aes(x=x, y=y), color=divcolor, label=corelabel, size=zgg$lsize_core_box)
   }

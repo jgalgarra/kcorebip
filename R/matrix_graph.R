@@ -87,10 +87,11 @@ matrix_graph <-function(datadir,filename,
       mplots <- mplots+labs(caption=legends_text)
     if (show_title)
       mplots <- mplots+ggtitle(paste("Network:",mat$network_name))
+    angulo <- ifelse(show_species_names,90,0)
     mplots <- mplots +  theme_void()+theme(legend.position=lposition,
                                            legend.title=element_blank(),
                                            legend.text = element_text(size = lsize),
-                                           axis.text.x = element_text(size=lsize,hjust=0,vjust=1,angle=90,color=ifelse(!flip_matrix,colorA,colorB)),
+                                           axis.text.x = element_text(size=lsize,hjust=ifelse(show_species_names,0,0.5),vjust=ifelse(show_species_names,1,0),angle=angulo,color=ifelse(!flip_matrix,colorA,colorB)),
                                            axis.text.y = element_text(size = lsize,hjust=1,vjust=0.5,color=ifelse(!flip_matrix,colorB,colorA)),
                                            plot.title = element_text(size=lsize+3,hjust=0.5),
                                            axis.title.x=element_text(size=18,face="bold",color="grey40",
