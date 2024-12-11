@@ -24,10 +24,10 @@ library(rlang)
 
 SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
   plottype = style
-  fontscale = ifelse (style=="ziggurat", 3+(nnodes<50), max(25,50-(nnodes/5)))
+  fontscale = ifelse (style=="ziggurat", (3+(nnodes<50)), 30)
   flinkscale = ifelse (style=="ziggurat", 1, 100)
   # crea el objeto SVG
-  this<-list(content=c(""), minx=0, miny=0, maxx=0, maxy=0, scale_factor=scale_factor, font_scale_factor=1.5*fontscale)
+  this<-list(content=c(""), minx=0, miny=0, maxx=0, maxy=0, scale_factor=scale_factor, font_scale_factor=fontscale)
   
   # guarda el contenido del svg en un fichero
   this$save <- function(fileName, svg) {
@@ -36,7 +36,6 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
     writeLines(paste0(header, this$html()), fileConn)
     close(fileConn)
   }
-  
   
   # devuelve el HTML correspondiente al objeto
   zr <- 1
@@ -80,12 +79,12 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
         viewBox<-paste0(tleftx, " ", ceiling(adjustleft+1.2*(tleftx-tlefty)/10)*10, " ", 1.2*swidth, " ", 1.2*swidth)
       } else {
         if (style=="chilopod")
-          viewBox<-paste0(tleftx, " ", (tleftx-tlefty)+2*bpp$xstep, " ", 1.2*swidth, " ", 1.2*swidth)
+          viewBox<-paste0(tleftx, " ", (tleftx-tlefty)+2*bpp$xstep, " ", 1.2*swidth, " ", 1.3*swidth)
         else
           viewBox<-paste0(tleftx, " ", (tleftx-tlefty)+bpp$xstep, " ", 1.2*swidth, " ", 1.2*swidth)
       }
       #svg0<-paste0("<svg transform='rotate(90)' transform=\"scale(",zoom_svgplot,")\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"", viewBox, "\">\n")
-      svg0<-paste0("<svg transform='rotate(90)' xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"", viewBox, "\">\n")
+      svg0<-paste0("<svg transform='rotate(90)' xmlns=\"http://www.w3.org/2000/svg\" preserveAspectRatio=\"xMidYMid meet\" viewBox=\"", viewBox, "\">\n")
     }
     else{
       if (style!='ziggurat'){
