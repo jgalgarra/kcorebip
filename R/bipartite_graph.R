@@ -342,20 +342,20 @@ draw_parallel_guilds <- function(basex,topx,basey,topy,numboxes,nnodes,fillcolor
   col_row <- c()
   name_species <- c()
   pbasex <- bpp$coremax_triangle_width_factor*( basex - (nnodes %/%8) * abs(topx-basex)/3)
-  xstep <- bpp$square_nodes_size_scale*(topx-pbasex)/max(12,nnodes)
+  xstep <- (topx-pbasex)/max(12,nnodes)
   if (!exists("bpp$xstep"))
     bpp$xstep <- xstep
   if (nnodes < 30)
     round(xstep <- xstep * 0.5)
   bpp$xstep <- min(bpp$xstep,xstep)
   vertsep <- 3
-  if ((xstep>2000) && (guild=="A")) {
-    bpp$lsize_kcoremax <-  bpp$lsize_kcoremax + 1
-  }
-  if ((xstep<1000) && (guild=="A")) {
-    vertsep <- 2
-    bpp$lsize_kcoremax <-  min(2,bpp$lsize_kcoremax)
-  }
+  # if ((xstep>2000) && (guild=="A")) {
+  #   bpp$lsize_kcoremax <-  bpp$lsize_kcoremax + 1
+  # }
+  # if ((xstep<1000) && (guild=="A")) {
+  #   vertsep <- 2
+  #   bpp$lsize_kcoremax <-  min(2,bpp$lsize_kcoremax)
+  # }
   ptopy <- vertsep*basey+ifelse(basey>0,1,-1)*xstep
   bpp$landmark_bottom <- min(bpp$landmark_bottom,-ptopy)
   bpp$landmark_top <- max(bpp$landmark_top,ptopy)
