@@ -323,7 +323,18 @@ polar_graph <- function( datadir, filename, plotsdir = "plot_results/polar/", pr
   }
 
   if (!is.null(progress)) progress$inc(1/4, detail=strings$value("MESSAGE_POLAR_PROGRESS_ANALYZING_NETWORK"))
-  result_analysis <- analyze_network(filename, directory = datadir, guild_a = sguild_a, guild_b = sguild_b, only_NODF = TRUE)
+  # Analyze network
+  if (exists("an")){
+    mysep=an$sep
+    myspinheader=an$speciesinheader
+  } else {
+    mysep=","
+    myspinheader=TRUE
+  }
+  result_analysis <- analyze_network(filename, directory = datadir, 
+                                     guild_a = sguild_a, guild_b = sguild_b, 
+                                     only_NODF = TRUE, sep=an$sep,
+                                     speciesinheader = an$speciesinheader)
   strip_isolated_nodes()
   numlinks <- result_analysis$links
   an$result_analysis <<- result_analysis

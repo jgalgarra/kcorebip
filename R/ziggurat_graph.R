@@ -123,7 +123,14 @@ ziggurat_graph <- function(datadir,filename, style='ziggurat',
   zgg <<- new.env()
   if (!is.null(progress)) progress$inc(1/11, detail=strings$value("MESSAGE_ZIGGURAT_PROGRESS_ANALYZING_NETWORK"))
   # Analyze network
-  f <- kcorebip:::read_and_analyze(datadir,filename,label_strguilda, label_strguildb)
+  if (exists("an")){
+    mysep=an$sep
+    myspinheader=an$speciesinheader
+  } else {
+    mysep=","
+    myspinheader=TRUE
+  }
+  f <- kcorebip:::read_and_analyze(datadir,filename,label_strguilda, label_strguildb, sep = mysep, speciesinheader = myspinheader )
   zgg$result_analysis <- f["result_analysis"][[1]]
   zgg$str_guild_a <- f["str_guild_a"][[1]]
   zgg$str_guild_b <- f["str_guild_b"][[1]]

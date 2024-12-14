@@ -138,8 +138,15 @@ matrix_graph <-function(datadir,filename,
   
   mat_argg <- c(as.list(environment()))
   # Create global environment
-
-  f<-read_and_analyze(datadir,filename,label_strguilda, label_strguildb)
+  # Analyze network
+  if (exists("an")){
+    mysep=an$sep
+    myspinheader=an$speciesinheader
+  } else {
+    mysep=","
+    myspinheader=TRUE
+  }
+  f <- kcorebip:::read_and_analyze(datadir,filename,label_strguilda, label_strguildb, sep = mysep, speciesinheader = myspinheader )
   mat <<- new.env()
   mat$result_analysis <- f["result_analysis"][[1]]
   mat$str_guild_a <- f["str_guild_a"][[1]]

@@ -33,13 +33,17 @@ library(ggplot2)
 #'  \item{\code{"modularity_measure"}}{ value of \code{igraph::modularity} function}
 #'  }
 #' @export
-#' @examples result_analysis <- analyze_network("M_PL_007.csv", directory = "data/", guild_a = "Plant", guild_b = "Pollinator")
+#' @examples result_analysis <- analyze_network("M_SD_001.csv", directory = "../data/", plot_graphs = FALSE,sep=",",speciesinheader=TRUE)
 
 
 analyze_network <- function(namenetwork, directory="", guild_a = "pl", guild_b = "pol", plot_graphs = FALSE, only_NODF = FALSE,
-                            weight_direction = "none")
+                            weight_direction = "none",sep=",",speciesinheader=TRUE)
 {
-  
+  if(!exists("an")){
+    an <<- new.env()  
+  }
+  an$sep <- sep
+  an$speciesinheader <- speciesinheader
   # K radius is the average distance to nodes of maximum k index of the opposite guild
   calc_kradius <- function(i)
   {
@@ -52,9 +56,9 @@ analyze_network <- function(namenetwork, directory="", guild_a = "pl", guild_b =
     V(an$g)[i]$guild <- an$guild
   }
   
-  an <<- new.env()
   # Read interaction matrix file
-  nread <- read_network(namenetwork, directory = directory, guild_astr = guild_a, guild_bstr = guild_b)
+  nread <- read_network(namenetwork, directory = directory, guild_astr = guild_a, guild_bstr = guild_b, sep=an$sep,
+                        speciesinheader = an$speciesinheader)
   # create empty graph
   #an$g <- as.undirected(nread$g)
   an$g <- as_undirected(nread$g)
@@ -209,7 +213,7 @@ analyze_network <- function(namenetwork, directory="", guild_a = "pl", guild_b =
 #'
 #' Add guild labels to a bipartite network
 #'
-#' @param g is the newtork in \code{igraph::graph} format
+#' @param g is the network in \code{igraph::graph} format
 #' @param strg_guild_a is a the label of the class of guild a nodes
 #' @param strg_guild_b is a the label of the class of guild b nodes
 #' @param plot_graphs set to FALSE, deprecated, kept for backwards compatibility
@@ -249,21 +253,29 @@ get_bipartite <- function(g, str_guild_a = "Plant", str_guild_b = "Pollinator", 
 #'   names_guild_a : names of nodes of guild_a
 #'   names_guild_b : names of species of guild_b
 
-read_network <- function(namenetwork, guild_astr = "pl", guild_bstr = "pol", directory="")
+read_network <- function(namenetwork, guild_astr = "pl", guild_bstr = "pol", directory="", sep=",", speciesinheader=TRUE)
 {
   # Reading species names
-  namesred <- read.csv(paste0(directory,namenetwork),header=FALSE,stringsAsFactors=FALSE)
-  names_guild_a <- unname(unlist(namesred[1,2:ncol(namesred)])) # JULY 2023 
-  names_guild_b <- namesred[2:nrow(namesred),1]
-  
-  #Reading matrix data
-  m <- read.csv(paste0(directory,namenetwork),header=TRUE,row.names=1)
+  if (speciesinheader){
+    namesred <- read.csv(paste0(directory,namenetwork),header=FALSE,stringsAsFactors=FALSE,sep = sep)
+    names_guild_a <- unname(unlist(namesred[1,2:ncol(namesred)])) # JULY 2023 
+    names_guild_b <- namesred[2:nrow(namesred),1]
+    m <- read.csv(paste0(directory,namenetwork),header=TRUE,row.names=1,sep=an$sep)
+  } else {
+    m <- read.csv(paste0(directory,namenetwork),header=FALSE,sep=an$sep)
+    for (i in 1:ncol(m))
+      colnames(m)[i] <- paste0("A",i)
+    for (i in 1:nrow(m))
+      rownames(m)[i] <- paste0("B",i)
+    names_guild_a <- colnames(m)
+    names_guild_b <- rownames(m)
+  }
   
   # Calc number of species of each guild
   num_guild_a <- ncol(m)
   num_guild_b <- nrow(m)
   # Create an graph object
-  g <- graph.empty()
+  g <- make_empty_graph()
   #g <- empty_graph()
   # Add one node for each species and name it
   for (i in 1:num_guild_a){
@@ -301,16 +313,22 @@ read_network <- function(namenetwork, guild_astr = "pl", guild_bstr = "pol", dir
 #'  \item{\code{"str_guild_b"}}{ list of nodes of Guild B}
 #'  \item{\code{"name_guild_a"}}{ name of Guild A}
 #'  \item{\code{"network_name"}}{ network name}
+#'  \item{\code{"spe"}}{ separator character}
+#'  \item{\code{"speciesinheader"}}{ species names in matrix header}
 #'  }
 #' @export
 #' @examples p <- read_and_analyze("../data","M_PL_003.csv","Plant","Pollinator")
-read_and_analyze <- function(directorystr,network_file,label_strguilda,label_strguildb)
+read_and_analyze <- function(directorystr,network_file,label_strguilda,label_strguildb,sep=",",speciesinheader=TRUE)
 {
-  
+  if (!exists("an")){
+    an <<- new.env() 
+    an$sep <- sep
+    an$speciesinheader <- speciesinheader
+  }
   str_guild_a <- "pl"
   str_guild_b <- "pol"
-  name_guild_a <- "Plants"
-  name_guild_b <- "Pollinators"
+  name_guild_a <- "GuildA"
+  name_guild_b <- "GuildB"
   network_name <- strsplit(network_file,".csv")[[1]][1]
   slabels <- c("Plant", "Pollinator")
   if (grepl("_SD_",network_name)){
@@ -325,7 +343,8 @@ read_and_analyze <- function(directorystr,network_file,label_strguilda,label_str
   }
   
   result_analysis <- analyze_network(network_file, directory = directorystr, guild_a = str_guild_a,
-                                     guild_b = str_guild_b, only_NODF = TRUE)
+                                     guild_b = str_guild_b, only_NODF = TRUE, sep=an$sep,
+                                     speciesinheader = an$speciesinheader)
   
   
   calc_vals <- list("result_analysis" = result_analysis, "str_guild_a" = str_guild_a, "str_guild_b" = str_guild_b,
@@ -336,5 +355,6 @@ read_and_analyze <- function(directorystr,network_file,label_strguilda,label_str
 
 
 
-# EXAMPLE. Cut and paste to test.
-#result_analysis <- analyze_network("M_PL_011.csv", directory = "../data/", guild_a = "Plant", guild_b = "Pollinator", plot_graphs = FALSE)
+# EXAMPLE. Copy and paste to test.
+#result_analysis <- analyze_network("M_SD_001.csv", directory = "../data/", plot_graphs = FALSE,sep=",",speciesinheader=TRUE)
+#result_analysis <- analyze_network("kaka.csv", directory = "../data/", plot_graphs = FALSE,sep=";",speciesinheader=FALSE)
