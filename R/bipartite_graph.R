@@ -14,6 +14,8 @@ if (debugging){
 #'
 #' @param datadir the name of the file of the interaction matrix
 #' @param filename the file with the interaction matrix
+#' @param sep data fie separator character
+#' @param speciesinheader species names included as header al row names
 #' @param print_to_file if set to FALSE the plot is displayed in the R session window
 #' @param plotsdir the directory where the plot is stored
 #' @param orderkcoremaxby sets order of kcoremax nodes, by kradius or kdegree
@@ -47,7 +49,7 @@ if (debugging){
 #' 
 #' @examples bipartite_graph("data/","M_PL_001.csv",plotsdir="grafresults/",print_to_file = TRUE)
 
-bipartite_graph <- function(datadir,filename,
+bipartite_graph <- function(datadir,filename,sep=",",speciesinheader=TRUE,
                             paintlinks = TRUE, print_to_file = FALSE, plotsdir ="plot_results/", 
                             orderkcoremaxby = "kradius", style="legacy", guild_gap_increase = 1, 
                             flip_results = FALSE, aspect_ratio = 1,
@@ -72,6 +74,8 @@ bipartite_graph <- function(datadir,filename,
   bipartite_argg <- c(as.list(environment()))
   # Create global environment
   bpp <<- new.env()
+  bpp$sep <- sep
+  bpp$speciesinheader <- speciesinheader
   fsvgtext <<- 5
   if (!is.null(progress)) 
     progress$inc(1/11, detail=strings$value("MESSAGE_ZIGGURAT_PROGRESS_ANALYZING_NETWORK"))
@@ -84,7 +88,7 @@ bipartite_graph <- function(datadir,filename,
     mysep=","
     myspinheader=TRUE
   }
-  f <- kcorebip:::read_and_analyze(datadir,filename,label_strguilda, label_strguildb, sep = mysep, speciesinheader = myspinheader )
+  f <- kcorebip:::read_and_analyze(datadir,filename,label_strguilda, label_strguildb, sep = bpp$sep, speciesinheader = bpp$speciesinheader )
   bpp$result_analysis <- f["result_analysis"][[1]]
   bpp$str_guild_a <- f["str_guild_a"][[1]]
   bpp$str_guild_b <- f["str_guild_b"][[1]]
@@ -106,7 +110,8 @@ bipartite_graph <- function(datadir,filename,
     return(bpp)
   }
   # Copy input parameters to the bpp environment
-  def_configuration_bip(paintlinks, print_to_file, plotsdir, orderkcoremaxby, style, 
+  def_configuration_bip(paintlinks, print_to_file, plotsdir,sep,speciesinheader, 
+                        orderkcoremaxby, style, 
                         guild_gap_increase, flip_results, aspect_ratio,
                         alpha_level, color_guild_a, color_guild_b,
                         color_link, alpha_link, size_link,
@@ -928,7 +933,8 @@ display_plot_bip <- function(p, printfile,  plwidth=14, ppi = 300, landscape = b
     dev.off()
 }
 
-def_configuration_bip <- function(paintlinks, print_to_file, plotsdir, orderkcoremaxby, style, 
+def_configuration_bip <- function(paintlinks, print_to_file, plotsdir, sep,speciesinheader,
+                                  orderkcoremaxby, style, 
                                   guild_gap_increase, flip_results, aspect_ratio,
                                   alpha_level, color_guild_a, color_guild_b,
                                   color_link, alpha_link, size_link,
