@@ -8,8 +8,8 @@ library(reshape2)
 #' 
 #' @param datadir the name of the file of the interaction matrix
 #' @param filename the file with the interaction matrix
-#' @param sep data fie separator character
-#' @param speciesinheader species names included as header al row names
+#' @param sep data file separator character
+#' @param speciesinheader species names included as header and row names
 #' @param orderkcoremaxby sets order of nodes, by kradius, kdegree or degree
 #' @param label_strguilda string labels of guild a
 #' @param label_strguildb string labels of guild b

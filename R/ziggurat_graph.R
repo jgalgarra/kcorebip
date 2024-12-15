@@ -22,8 +22,8 @@ source("SVG.R")
 #'
 #' @param datadir the name of the file of the interaction matrix
 #' @param filename the file with the interaction matrix
-#' @param sep data fie separator character
-#' @param speciesinheader species names included as header al row names
+#' @param sep data file separator character
+#' @param speciesinheader species names included as header and row names
 #' @param style equals 'ziggurat', do not modify
 #' @param print_to_file if set to FALSE the plot is displayed in the R session window
 #' @param plotsdir the directory where the plot is stored

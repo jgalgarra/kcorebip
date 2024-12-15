@@ -262,6 +262,8 @@ paint_kdegree_kradius <- function(graph, num_guild_a, num_guild_b,
 #'
 #' @param datadir the directory where the \code{filename} file is stored
 #' @param filename the name of the file of the interaction matrix
+#' @param sep data file separator character
+#' @param speciesinheader species names included as header and row names
 #' @param plotsdir the directory where the plot is stored
 #' @param print_to_file if set to FALSE the plot is displayed in the R session window
 #' @param pshowtext auxiliar for interactive apps, do not modify
@@ -283,13 +285,17 @@ paint_kdegree_kradius <- function(graph, num_guild_a, num_guild_b,
 #' @export
 #' @examples polar_graph("data/","M_PL_007.csv",plotsdir="grafresults/",print_to_file = TRUE)
 
-polar_graph <- function( datadir, filename, plotsdir = "plot_results/polar/", print_to_file = FALSE, pshowtext = FALSE,
+polar_graph <- function( datadir, filename, sep=",",speciesinheader=TRUE,
+                         plotsdir = "plot_results/polar/", print_to_file = FALSE, 
+                         pshowtext = FALSE,
                          show_histograms = TRUE, glabels = c("Plant", "Pollinator"),
                          gshortened = c("pl","pol"),
                          lsize_title = 22, lsize_axis = 16,
-                         lsize_legend = 16,lsize_axis_title = 16, lsize_legend_title = 16,
+                         lsize_legend = 16,lsize_axis_title = 16, 
+                         lsize_legend_title = 16,
                          file_name_append = "", print_title = TRUE,
-                         printable_labels = 0, fill_nodes = TRUE, alpha_nodes = 0.5,
+                         printable_labels = 0, fill_nodes = TRUE, 
+                         alpha_nodes = 0.5,
                          max_kradius = 0, progress=NULL)
 {
 
@@ -324,17 +330,10 @@ polar_graph <- function( datadir, filename, plotsdir = "plot_results/polar/", pr
 
   if (!is.null(progress)) progress$inc(1/4, detail=strings$value("MESSAGE_POLAR_PROGRESS_ANALYZING_NETWORK"))
   # Analyze network
-  if (exists("an")){
-    mysep=an$sep
-    myspinheader=an$speciesinheader
-  } else {
-    mysep=","
-    myspinheader=TRUE
-  }
   result_analysis <- analyze_network(filename, directory = datadir, 
                                      guild_a = sguild_a, guild_b = sguild_b, 
-                                     only_NODF = TRUE, sep=an$sep,
-                                     speciesinheader = an$speciesinheader)
+                                     only_NODF = TRUE, sep=polar_argg$sep,
+                                     speciesinheader = polar_argg$speciesinheader)
   strip_isolated_nodes()
   numlinks <- result_analysis$links
   an$result_analysis <<- result_analysis
