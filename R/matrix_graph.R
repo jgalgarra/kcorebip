@@ -8,6 +8,8 @@ library(reshape2)
 #' 
 #' @param datadir the name of the file of the interaction matrix
 #' @param filename the file with the interaction matrix
+#' @param sep data fie separator character
+#' @param speciesinheader species names included as header al row names
 #' @param orderkcoremaxby sets order of nodes, by kradius, kdegree or degree
 #' @param label_strguilda string labels of guild a
 #' @param label_strguildb string labels of guild b
@@ -26,7 +28,7 @@ library(reshape2)
 #' @param ppi dots per inch
 #' @param progress for interactive visualization
 #' @export
-matrix_graph <-function(datadir,filename,
+matrix_graph <-function(datadir,filename,sep=",",speciesinheader=TRUE,
                          style="matrix",
                          orderby = "kradius",
                          label_strguilda = "Plant",
@@ -139,14 +141,7 @@ matrix_graph <-function(datadir,filename,
   mat_argg <- c(as.list(environment()))
   # Create global environment
   # Analyze network
-  if (exists("an")){
-    mysep=an$sep
-    myspinheader=an$speciesinheader
-  } else {
-    mysep=","
-    myspinheader=TRUE
-  }
-  f <- kcorebip:::read_and_analyze(datadir,filename,label_strguilda, label_strguildb, sep = mysep, speciesinheader = myspinheader )
+  f <- kcorebip:::read_and_analyze(datadir,filename,label_strguilda, label_strguildb, sep = mat_argg$sep, speciesinheader = mat_argg$speciesinheader )
   mat <<- new.env()
   mat$result_analysis <- f["result_analysis"][[1]]
   mat$str_guild_a <- f["str_guild_a"][[1]]
