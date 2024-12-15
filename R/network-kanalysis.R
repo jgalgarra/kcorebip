@@ -256,20 +256,33 @@ get_bipartite <- function(g, str_guild_a = "Plant", str_guild_b = "Pollinator", 
 read_network <- function(namenetwork, guild_astr = "pl", guild_bstr = "pol", directory="", sep=",", speciesinheader=TRUE)
 {
   # Reading species names
-  if (speciesinheader){
-    namesred <- read.csv(paste0(directory,namenetwork),header=FALSE,stringsAsFactors=FALSE,sep = sep)
-    names_guild_a <- unname(unlist(namesred[1,2:ncol(namesred)])) # JULY 2023 
-    names_guild_b <- namesred[2:nrow(namesred),1]
-    m <- read.csv(paste0(directory,namenetwork),header=TRUE,row.names=1,sep=an$sep)
-  } else {
-    m <- read.csv(paste0(directory,namenetwork),header=FALSE,sep=an$sep)
-    for (i in 1:ncol(m))
-      colnames(m)[i] <- paste0("A",i)
-    for (i in 1:nrow(m))
-      rownames(m)[i] <- paste0("B",i)
-    names_guild_a <- colnames(m)
-    names_guild_b <- rownames(m)
-  }
+  tryCatch({
+    if (speciesinheader){
+      namesred <- read.csv(paste0(directory,namenetwork),header=FALSE,stringsAsFactors=FALSE,sep = sep)
+      names_guild_a <- unname(unlist(namesred[1,2:ncol(namesred)])) # JULY 2023 
+      names_guild_b <- namesred[2:nrow(namesred),1]
+      m <- read.csv(paste0(directory,namenetwork),header=TRUE,row.names=1,sep=an$sep)
+    }  else {
+      m <- read.csv(paste0(directory,namenetwork),header=FALSE,sep=an$sep)
+      for (i in 1:ncol(m))
+        colnames(m)[i] <- paste0("A",i)
+      for (i in 1:nrow(m))
+        rownames(m)[i] <- paste0("B",i)
+      names_guild_a <- colnames(m)
+      names_guild_b <- rownames(m)
+      }
+    },
+    error = function(cond) {
+      result_validation = "FATAL ERROR. Netwotk data file format mismatch. Check if separator character is correct and species names are included as column and row names."
+      message(result_validation)
+      stop()
+    },
+    warning = function(w) {
+      result_validation = "File format mismatch"
+      message(paste(result_validation,w))
+    }
+  ) 
+  
   
   # Calc number of species of each guild
   num_guild_a <- ncol(m)
@@ -313,18 +326,18 @@ read_network <- function(namenetwork, guild_astr = "pl", guild_bstr = "pol", dir
 #'  \item{\code{"str_guild_b"}}{ list of nodes of Guild B}
 #'  \item{\code{"name_guild_a"}}{ name of Guild A}
 #'  \item{\code{"network_name"}}{ network name}
-#'  \item{\code{"spe"}}{ separator character}
+#'  \item{\code{"sep"}}{ separator character}
 #'  \item{\code{"speciesinheader"}}{ species names in matrix header}
 #'  }
 #' @export
 #' @examples p <- read_and_analyze("../data","M_PL_003.csv","Plant","Pollinator")
 read_and_analyze <- function(directorystr,network_file,label_strguilda,label_strguildb,sep=",",speciesinheader=TRUE)
 {
-  if (!exists("an")){
-    an <<- new.env() 
-    an$sep <- sep
-    an$speciesinheader <- speciesinheader
-  }
+  # if (!exists("an")){
+  #   an <<- new.env() 
+  #   an$sep <- sep
+  #   an$speciesinheader <- speciesinheader
+  # }
   str_guild_a <- "pl"
   str_guild_b <- "pol"
   name_guild_a <- "GuildA"
@@ -341,11 +354,18 @@ read_and_analyze <- function(directorystr,network_file,label_strguilda,label_str
     name_guild_a <- label_strguilda
     name_guild_b <- label_strguildb
   }
-  
-  result_analysis <- analyze_network(network_file, directory = directorystr, guild_a = str_guild_a,
-                                     guild_b = str_guild_b, only_NODF = TRUE, sep=an$sep,
-                                     speciesinheader = an$speciesinheader)
-  
+  tryCatch(
+    {
+      result_analysis <- analyze_network(network_file, directory = directorystr, guild_a = str_guild_a,
+                                     guild_b = str_guild_b, only_NODF = TRUE, sep=sep,
+                                     speciesinheader = speciesinheader)
+    },
+    error = function(cond) {
+      result_validation = "FATAL ERROR. Netwotk data file format mismatch. Check if separator character is correct and species names are included as column and row names."
+      message(result_validation)
+      stop()
+    }
+  )
   
   calc_vals <- list("result_analysis" = result_analysis, "str_guild_a" = str_guild_a, "str_guild_b" = str_guild_b,
                     "name_guild_a" = name_guild_a, "name_guild_b" = name_guild_b,

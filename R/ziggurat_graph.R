@@ -22,6 +22,8 @@ source("SVG.R")
 #'
 #' @param datadir the name of the file of the interaction matrix
 #' @param filename the file with the interaction matrix
+#' @param sep data fie separator character
+#' @param speciesinheader species names included as header al row names
 #' @param style equals 'ziggurat', do not modify
 #' @param print_to_file if set to FALSE the plot is displayed in the R session window
 #' @param plotsdir the directory where the plot is stored
@@ -85,7 +87,7 @@ source("SVG.R")
 #' @export
 #' @examples ziggurat_graph("data/","M_PL_001.csv",plotsdir="grafresults/",print_to_file = TRUE)
 
-ziggurat_graph <- function(datadir,filename, style='ziggurat',
+ziggurat_graph <- function(datadir,filename, style='ziggurat',sep=",",speciesinheader=TRUE,
                            paintlinks = TRUE, print_to_file = FALSE, plotsdir ="plotresults/", 
                            orderkcoremaxby = "kradius", #isogonos= FALSE, 
                            flip_results = FALSE, aspect_ratio = 1,
@@ -121,16 +123,10 @@ ziggurat_graph <- function(datadir,filename, style='ziggurat',
 
   # Create global environment
   zgg <<- new.env()
+  zgg$sep <- sep
+  zgg$speciesinheader <- speciesinheader
   if (!is.null(progress)) progress$inc(1/11, detail=strings$value("MESSAGE_ZIGGURAT_PROGRESS_ANALYZING_NETWORK"))
-  # Analyze network
-  if (exists("an")){
-    mysep=an$sep
-    myspinheader=an$speciesinheader
-  } else {
-    mysep=","
-    myspinheader=TRUE
-  }
-  f <- kcorebip:::read_and_analyze(datadir,filename,label_strguilda, label_strguildb, sep = mysep, speciesinheader = myspinheader )
+  f <- kcorebip:::read_and_analyze(datadir,filename,label_strguilda, label_strguildb, sep = zgg$sep, speciesinheader = zgg$speciesinheader )
   zgg$result_analysis <- f["result_analysis"][[1]]
   zgg$str_guild_a <- f["str_guild_a"][[1]]
   zgg$str_guild_b <- f["str_guild_b"][[1]]
@@ -147,7 +143,8 @@ ziggurat_graph <- function(datadir,filename, style='ziggurat',
     return(zgg)
   }
   # Copy input parameters to the zgg environment
-  def_configuration(paintlinks, print_to_file, style, plotsdir, orderkcoremaxby, #isogonos, 
+  def_configuration(paintlinks, print_to_file, style, sep,speciesinheader,
+                    plotsdir, orderkcoremaxby, #isogonos, 
                     flip_results, aspect_ratio,
                     alpha_level, color_guild_a, color_guild_b,
                     color_link, alpha_link, size_link,
@@ -1996,7 +1993,8 @@ strip_isolated_nodes <- function(myenv)
 
 
 
-def_configuration <- function(paintlinks, print_to_file, style, plotsdir, orderkcoremaxby, #isogonos, 
+def_configuration <- function(paintlinks, print_to_file, sep,speciesinheader,
+                              style, plotsdir, orderkcoremaxby, #isogonos, 
                               flip_results, aspect_ratio,
                               alpha_level, color_guild_a, color_guild_b,
                               color_link, alpha_link, size_link,
