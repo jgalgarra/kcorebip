@@ -117,8 +117,8 @@ bipartite_graph <- function(datadir,filename,sep=",",speciesinheader=TRUE,
   )
   # Removes nodes without any tie. This is not usual in input files but happens
   # when performing destruction simulations
-  strip_isolated_nodes(bpp)
-  init_working_values(bpp)
+  kcorebip:::strip_isolated_nodes(bpp)
+  kcorebip:::init_working_values(bpp)
   draw_bipartite_plot(svg_scale_factor, progress)
   bpp$bipartite_argg <- bipartite_argg
   return(bpp)
@@ -219,7 +219,7 @@ draw_tail_bip <- function(idPrefix, p,svg,fat_tail,lado,color,sqlabel,basex,base
     }
   }
   
-  f <- draw_square(idPrefix, p,svg, xx,yy,
+  f <- kcorebip:::draw_square(idPrefix, p,svg, xx,yy,
                    ifelse(bpp$style=="chilopod",lado,
                           paintsidex*sqrt(bpp$square_nodes_size_scale)),
                    bgcolor,palpha,labelcolor,langle,lhjust,lvjust,
@@ -232,7 +232,7 @@ draw_tail_bip <- function(idPrefix, p,svg,fat_tail,lado,color,sqlabel,basex,base
   if (bpp$paintlinks){
     if ((position == "North") |(position == "South"))
       posxx1 = posxx1+sidex/2
-    add_link(xx1=posxx1, xx2 = plxx2,
+    kcorebip:::add_link(xx1=posxx1, xx2 = plxx2,
              yy1 = posyy1, yy2 = plyy2,
              slink = bpp$size_link*wlink, clink = c(bpp$color_link),
              alpha_l = bpp$alpha_link, myenv=bpp)
@@ -270,6 +270,12 @@ draw_edge_tails_bip <- function(p,svg,point_x,point_y,kcoreother,long_tail,list_
       little_tail <- long_tail[long_tail$partner == i,]
       
       data_row <- list_dfs[[kcoreother]][which(list_dfs[[kcoreother]]$label == i),]
+      if (kcoreother==1)
+        for (k in 1:nrow(data_row)){
+          # Copy coordinates
+          rdata <- which(list_dfs[[bpp$kcoremax]]$label==data_row$label[k])
+          data_row[k,1:4] <- list_dfs[[bpp$kcoremax]][rdata,1:4]
+        }
       xx2 <- (data_row$x2+data_row$x1)/2
       rxx <- data_row$x1
       yy2 <- data_row$y2
@@ -285,7 +291,7 @@ draw_edge_tails_bip <- function(p,svg,point_x,point_y,kcoreother,long_tail,list_
       else
         tailweight <- tailweight + bpp$result_analysis$matrix[as.numeric(little_tail$orph[h]),
                                                               as.numeric(little_tail$partner[h])]
-      little_tail$weightlink <- get_link_weights(tailweight, myenv=bpp)
+      little_tail$weightlink <- kcorebip:::get_link_weights(tailweight, myenv=bpp)
       
       v<- draw_tail_bip(paste0(ifelse(is_guild_a, "edge-kcore1-a-", "edge-kcore1-b-"), i),
                         p,svg,little_tail,0.9*bpp$xstep,color_guild[2],
@@ -507,7 +513,7 @@ draw_fat_tail_bip<- function(p,svg,fat_tail,nrows,list_dfs,color_guild,pos_tail_
     plyy2 <-  (nodekcoremax$y1+nodekcoremax$y2)/2
     v<- draw_tail_bip(ifelse(is_guild_a, "edge-kcore1-a-fat", "edge-kcore1-b-fat"), p,svg,
                       fat_tail,ifelse(bpp$style=="chilopod",bpp$xstep,bpp$lado),
-                      color_guild,gen_sq_label(fat_tail$orph,is_guild_a = is_guild_a, myenv=bpp),
+                      color_guild,kcorebip:::gen_sq_label(fat_tail$orph,is_guild_a = is_guild_a, myenv=bpp),
                       ppos_tail_x,ppos_tail_y,fgap,
                       lxx2 = list_dfs[[bpp$kcoremax]][1,]$x1,
                       lyy2 = plyy2,
@@ -557,10 +563,10 @@ handle_orphans_bip <- function(vg)
   bpp$orphans_b <- bpp$df_cores$species_guild_b[[1]]
   if (!is.null(bpp$orphans_a))
     if (!is.na(bpp$orphans_a[1]))
-      bpp$df_orph_a <- find_orphans(bpp$mtxlinks,bpp$orphans_a,bpp$g,guild_a="yes",myenv=bpp)
+      bpp$df_orph_a <- kcorebip:::find_orphans(bpp$mtxlinks,bpp$orphans_a,bpp$g,guild_a="yes",myenv=bpp)
   if (!is.null(bpp$orphans_b))
     if (!is.na(bpp$orphans_b[1]))
-      bpp$df_orph_b <- find_orphans(bpp$mtxlinks,bpp$orphans_b,bpp$g,guild_a="no",myenv=bpp)
+      bpp$df_orph_b <- kcorebip:::find_orphans(bpp$mtxlinks,bpp$orphans_b,bpp$g,guild_a="no",myenv=bpp)
   calc_vals <- list("mtxlinks" = bpp$mtxlinks, "orphans_a" = bpp$orphans_a,
                     "orphans_b" = bpp$orphans_b, "df_orph_a" = bpp$df_orph_a, "df_orph_b" = bpp$df_orph_b )
   return(calc_vals)
@@ -570,17 +576,21 @@ handle_orphans_bip <- function(vg)
 draw_bipartite_leafs <- function(p, svg)
 {
   if (exists("df_orph_a", envir = bpp)){
-    w <- draw_innercores_tails_bip(p,svg,2,bpp$list_dfs_b,bpp$df_orph_a,bpp$color_guild_a, inverse="yes")
-    p <- w["p"][[1]]
-    svg <- w["svg"][[1]]
+    for (kcore in c(2,1)){
+      w <- draw_innercores_tails_bip(p,svg,kcore,bpp$list_dfs_b,bpp$df_orph_a,bpp$color_guild_a, inverse="yes")
+      p <- w["p"][[1]]
+      svg <- w["svg"][[1]]
+    }
     bpp$last_xtail_b[2] <- w["lastx"][[1]]
     bpp$last_ytail_b[2] <-w["lasty"][[1]]
   }
   
   if (exists("df_orph_b", envir = bpp)){
-    w <- draw_innercores_tails_bip(p,svg,2,bpp$list_dfs_a,bpp$df_orph_b,bpp$color_guild_b, inverse="no", is_guild_a = FALSE)
-    p <- w["p"][[1]]
-    svg <- w["svg"][[1]]
+    for (kcore in c(2,1)){
+      w <- draw_innercores_tails_bip(p,svg,kcore,bpp$list_dfs_a,bpp$df_orph_b,bpp$color_guild_b, inverse="no", is_guild_a = FALSE)
+      p <- w["p"][[1]]
+      svg <- w["svg"][[1]]
+    }
     bpp$last_xtail_a[2] <- w["lastx"][[1]]
     bpp$last_ytail_a[2] <- w["lasty"][[1]]
   }
@@ -590,27 +600,27 @@ draw_bipartite_leafs <- function(p, svg)
   return(calc_vals)
 }
 
-draw_bipartite_leafs <- function(p, svg)
-{
-  if (exists("df_orph_a", envir = bpp)){
-    w <- draw_innercores_tails_bip(p,svg,2,bpp$list_dfs_b,bpp$df_orph_a,bpp$color_guild_a, inverse="yes")
-    p <- w["p"][[1]]
-    svg <- w["svg"][[1]]
-    bpp$last_xtail_b[2] <- w["lastx"][[1]]
-    bpp$last_ytail_b[2] <-w["lasty"][[1]]
-  }
-  
-  if (exists("df_orph_b", envir = bpp)){
-    w <- draw_innercores_tails_bip(p,svg,2,bpp$list_dfs_a,bpp$df_orph_b,bpp$color_guild_b, inverse="no", is_guild_a = FALSE)
-    p <- w["p"][[1]]
-    svg <- w["svg"][[1]]
-    bpp$last_xtail_a[2] <- w["lastx"][[1]]
-    bpp$last_ytail_a[2] <- w["lasty"][[1]]
-  }
-  
-  calc_vals <- list("p" = p, "svg" = svg)
-  return(calc_vals)
-}
+# draw_bipartite_leafs <- function(p, svg)
+# {
+#   if (exists("df_orph_a", envir = bpp)){
+#     w <- draw_innercores_tails_bip(p,svg,2,bpp$list_dfs_b,bpp$df_orph_a,bpp$color_guild_a, inverse="yes")
+#     p <- w["p"][[1]]
+#     svg <- w["svg"][[1]]
+#     bpp$last_xtail_b[2] <- w["lastx"][[1]]
+#     bpp$last_ytail_b[2] <-w["lasty"][[1]]
+#   }
+#   
+#   if (exists("df_orph_b", envir = bpp)){
+#     w <- draw_innercores_tails_bip(p,svg,2,bpp$list_dfs_a,bpp$df_orph_b,bpp$color_guild_b, inverse="no", is_guild_a = FALSE)
+#     p <- w["p"][[1]]
+#     svg <- w["svg"][[1]]
+#     bpp$last_xtail_a[2] <- w["lastx"][[1]]
+#     bpp$last_ytail_a[2] <- w["lasty"][[1]]
+#   }
+#   
+#   calc_vals <- list("p" = p, "svg" = svg)
+#   return(calc_vals)
+# }
 
 # Manage fat tails
 handle_fat_tails_bip <- function(p, svg, style = "legacy")
@@ -637,7 +647,7 @@ handle_fat_tails_bip <- function(p, svg, style = "legacy")
       for (h in 1:nrow(fat_tail_a))
         tailweight <- tailweight + bpp$result_analysis$matrix[as.numeric(fat_tail_a$partner[h]),
                                                               as.numeric(fat_tail_a$orph[h])]
-      fat_tail_a$weightlink <- get_link_weights(tailweight, myenv=bpp)
+      fat_tail_a$weightlink <- kcorebip:::get_link_weights(tailweight, myenv=bpp)
     }
   }
   if (!exists("fat_tail_a"))
@@ -661,7 +671,7 @@ handle_fat_tails_bip <- function(p, svg, style = "legacy")
       for (h in 1:nrow(fat_tail_b))
         tailweight <- tailweight+bpp$result_analysis$matrix[as.numeric(fat_tail_b$orph[h]),
                                                             as.numeric(fat_tail_b$partner[h])]
-      fat_tail_b$weightlink <- get_link_weights(tailweight, myenv=bpp)
+      fat_tail_b$weightlink <- kcorebip:::get_link_weights(tailweight, myenv=bpp)
     }
   }
   if (!exists("fat_tail_b"))
@@ -749,7 +759,7 @@ draw_maxcore_bip <- function(svg)
   
   paint_labels <- function(p,svg,guildstr,list_dfs){
     
-    nsp <- name_species_preprocess(bpp$kcoremax,list_dfs,bpp$kcore_species_name_display,
+    nsp <- kcorebip:::name_species_preprocess(bpp$kcoremax,list_dfs,bpp$kcore_species_name_display,
                                    bpp$kcore_species_name_break)
     labelszig <- nsp$labelszig
     kcoremaxlabel_angle <- nsp$kcoremaxlabel_angle
@@ -884,7 +894,7 @@ draw_maxcore_tails_bip <- function(p, svg)
       for (h in 1:nrow(long_tail_b))
         tailweight <- tailweight + bpp$result_analysis$matrix[as.numeric(long_tail_b$orph[h]),
                                                               as.numeric(long_tail_b$partner[h])]
-      long_tail_b$weightlink <- get_link_weights(tailweight, myenv=bpp)
+      long_tail_b$weightlink <- kcorebip:::get_link_weights(tailweight, myenv=bpp)
     }
     
     v <-  draw_edge_tails_bip(p,svg,point_x,point_y*bpp$aspect_ratio,
@@ -996,7 +1006,7 @@ draw_inner_links_bip <- function(p, svg)
           {
             foundlinksa <- foundlinksa + 1
             data_b <- bpp$list_dfs_b[[kcb]][i,]
-            weightlink <- get_link_weights(bpp$result_analysis$matrix[as.numeric(data_b$label),
+            weightlink <- kcorebip:::get_link_weights(bpp$result_analysis$matrix[as.numeric(data_b$label),
                                                                       as.numeric(data_a$label)],myenv=bpp)
             bend_line = "no"
             if (((kc == 2) & (kcb == bpp$kcoremax)) | ((kc == bpp$kcoremax) & (kcb == 2)))
@@ -1045,7 +1055,7 @@ draw_inner_links_bip <- function(p, svg)
                                  y1 = data_a$y1,  y2 = y_2)
               lcolor = "blue"
             }
-            add_link(xx1=link$x1, xx2 = link$x2,
+            kcorebip:::add_link(xx1=link$x1, xx2 = link$x2,
                      yy1 = link$y1, yy2 = link$y2,
                      slink = bpp$size_link*weightlink, clink =  c(bpp$color_link),
                      alpha_l = bpp$alpha_link , myenv=bpp)
@@ -1139,9 +1149,9 @@ draw_bipartite_plot <- function(svg_scale_factor, progress)
     
     if (!is.null(bpp$df_cores[1,])){
       if (bpp$df_cores[1,]$num_species_guild_a > 0)
-        bpp$list_dfs_a[[1]] <- conf_kcore1_info(bpp$str_guild_a,myenv=bpp)
+        bpp$list_dfs_a[[1]] <- kcorebip:::conf_kcore1_info(bpp$str_guild_a,myenv=bpp)
       if (bpp$df_cores[1,]$num_species_guild_b > 0)
-        bpp$list_dfs_b[[1]] <- conf_kcore1_info(bpp$str_guild_b,myenv=bpp)
+        bpp$list_dfs_b[[1]] <- kcorebip:::conf_kcore1_info(bpp$str_guild_b,myenv=bpp)
     }
     
     # Fat tails - nodes of core 1  linked to most generalist of opposite guild. Left side of panel 
@@ -1172,7 +1182,7 @@ draw_bipartite_plot <- function(svg_scale_factor, progress)
     svg <- z["svg"][[1]]
   }
   #v <- write_annotations_bip(p, svg)
-  v <- write_final_annotations(p, svg, bpp$style, myenv=bpp)
+  v <- kcorebip:::write_final_annotations(p, svg, bpp$style, myenv=bpp)
   p <- v["p"][[1]]
   svg <- v["svg"][[1]]
   bpp$landmark_left <<- v["landmark_left"][[1]]

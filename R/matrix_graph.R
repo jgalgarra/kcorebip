@@ -10,7 +10,7 @@ library(reshape2)
 #' @param filename the file with the interaction matrix
 #' @param sep data file separator character
 #' @param speciesinheader species names included as header and row names
-#' @param orderkcoremaxby sets order of nodes, by kradius, kdegree or degree
+#' @param orderby sets order of nodes, by kradius, kdegree or degree
 #' @param label_strguilda string labels of guild a
 #' @param label_strguildb string labels of guild b
 #' @param label_size base label size
@@ -124,7 +124,8 @@ matrix_graph <-function(datadir,filename,sep=",",speciesinheader=TRUE,
   }
   
   setkradiusorder <- function(dnodes){
-    myord <- rev(order(10000*dnodes$kshell-(100*dnodes$kradius-dnodes$degree)))
+
+    myord <- rev(order(10000*dnodes$kshell-(100*dnodes$kradius-dnodes$kdegree+0.001*dnodes$num)))
     return(dnodes$num[myord])
   }
   
