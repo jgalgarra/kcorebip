@@ -572,56 +572,6 @@ handle_orphans_bip <- function(vg)
   return(calc_vals)
 }
 
-# Draw specialist chains connected to inner ziggurats
-draw_bipartite_leafs <- function(p, svg)
-{
-  if (exists("df_orph_a", envir = bpp)){
-    for (kcore in c(2,1)){
-      w <- draw_innercores_tails_bip(p,svg,kcore,bpp$list_dfs_b,bpp$df_orph_a,bpp$color_guild_a, inverse="yes")
-      p <- w["p"][[1]]
-      svg <- w["svg"][[1]]
-    }
-    bpp$last_xtail_b[2] <- w["lastx"][[1]]
-    bpp$last_ytail_b[2] <-w["lasty"][[1]]
-  }
-  
-  if (exists("df_orph_b", envir = bpp)){
-    for (kcore in c(2,1)){
-      w <- draw_innercores_tails_bip(p,svg,kcore,bpp$list_dfs_a,bpp$df_orph_b,bpp$color_guild_b, inverse="no", is_guild_a = FALSE)
-      p <- w["p"][[1]]
-      svg <- w["svg"][[1]]
-    }
-    bpp$last_xtail_a[2] <- w["lastx"][[1]]
-    bpp$last_ytail_a[2] <- w["lasty"][[1]]
-  }
-  #}
-  
-  calc_vals <- list("p" = p, "svg" = svg)
-  return(calc_vals)
-}
-
-# draw_bipartite_leafs <- function(p, svg)
-# {
-#   if (exists("df_orph_a", envir = bpp)){
-#     w <- draw_innercores_tails_bip(p,svg,2,bpp$list_dfs_b,bpp$df_orph_a,bpp$color_guild_a, inverse="yes")
-#     p <- w["p"][[1]]
-#     svg <- w["svg"][[1]]
-#     bpp$last_xtail_b[2] <- w["lastx"][[1]]
-#     bpp$last_ytail_b[2] <-w["lasty"][[1]]
-#   }
-#   
-#   if (exists("df_orph_b", envir = bpp)){
-#     w <- draw_innercores_tails_bip(p,svg,2,bpp$list_dfs_a,bpp$df_orph_b,bpp$color_guild_b, inverse="no", is_guild_a = FALSE)
-#     p <- w["p"][[1]]
-#     svg <- w["svg"][[1]]
-#     bpp$last_xtail_a[2] <- w["lastx"][[1]]
-#     bpp$last_ytail_a[2] <- w["lasty"][[1]]
-#   }
-#   
-#   calc_vals <- list("p" = p, "svg" = svg)
-#   return(calc_vals)
-# }
-
 # Manage fat tails
 handle_fat_tails_bip <- function(p, svg, style = "legacy")
 {
@@ -1177,11 +1127,7 @@ draw_bipartite_plot <- function(svg_scale_factor, progress)
     # Nodes of core 1 linked to species in cores kcoremax-1 to core 2. 
     if (!is.null(progress)) 
       progress$inc(1/11,detail=strings$value("MESSAGE_ZIGGURAT_PROGRESS_DRAWING_INNER_ORPHANS")) 
-    z <- draw_bipartite_leafs(p, svg) 
-    p <- z["p"][[1]] 
-    svg <- z["svg"][[1]]
   }
-  #v <- write_annotations_bip(p, svg)
   v <- kcorebip:::write_final_annotations(p, svg, bpp$style, myenv=bpp)
   p <- v["p"][[1]]
   svg <- v["svg"][[1]]
