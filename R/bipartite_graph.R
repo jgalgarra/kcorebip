@@ -380,11 +380,12 @@ draw_parallel_guilds <- function(basex,topx,basey,topy,numboxes,nnodes,fillcolor
     y2 <- c(y2, ptopy)
     r <- c(r,j)
     col_row <- c(col_row,fillcolor[1+j%%2])
-    kdegree <- c(kdegree,0)
-    kradius <- c(kradius,1)
     name_species <- c(name_species,"")
   }
-  d1 <- data.frame(x1, x2, y1, y2, r, col_row, kdegree, kradius, name_species, stringsAsFactors=FALSE)
+  kdegree <- rep(0,numboxes)
+  degree <- kdegree
+  kradius <- rep(1,numboxes)
+  d1 <- data.frame(x1, x2, y1, y2, r, col_row, degree, kdegree, kradius, name_species, stringsAsFactors=FALSE)
   d1$label <- strlabels
   d1$kcorelabel = 0
   # Remove empty nodes
@@ -402,10 +403,11 @@ draw_parallel_guilds <- function(basex,topx,basey,topy,numboxes,nnodes,fillcolor
   d1 <- d1[!(d1$label %in% c("","NA")),]         # Remove empty kshell separator cells 
   d1 <- d1[!is.na(d1$x1),] 
   for (i in 1:nrow(d1)){
-    d1[i,]$kdegree <- igraphnet[paste0(strguild,d1[i,]$label)]$kdegree
-    d1[i,]$kradius <- igraphnet[paste0(strguild,d1[i,]$label)]$kradius
-    d1[i,]$kcorelabel <- igraphnet[paste0(strguild,d1[i,]$label)]$kcorenum
-    d1[i,]$name_species <- igraphnet[paste0(strguild,d1[i,]$label)]$name_species
+    rigraph <- igraphnet[paste0(strguild,d1[i,]$label)]
+    d1[i,]$kdegree <- rigraph$kdegree
+    d1[i,]$kradius <- rigraph$kradius
+    d1[i,]$kcorelabel <- rigraph$kcorenum
+    d1[i,]$name_species <- rigraph$name_species
   }
   
   if (style == "legacy"){
@@ -414,10 +416,11 @@ draw_parallel_guilds <- function(basex,topx,basey,topy,numboxes,nnodes,fillcolor
       degrees <- colSums(mlinks)
     else if (guild=="B")
       degrees <- rowSums(mlinks)
-    d1$degree <- 0
-    for (i in 1:nrow(d1))
-      if(sum(gsub("\\."," ",names(degrees))==d1$name_species[i])>0)
-        d1$degree[i]=degrees[which(gsub("\\."," ",names(degrees))==d1$name_species[i])]
+    for (i in 1:nrow(d1)){
+     coincid = (gsub("\\."," ",names(degrees))==gsub("\\."," ",d1$name_species[i]))
+     if(sum(coincid)>0)
+       d1$degree[i]=degrees[which(coincid)]
+    }
     
     ordvector <- rev(order(d1$degree))
     d1$label <- d1[ordvector,]$label
