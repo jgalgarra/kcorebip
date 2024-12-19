@@ -80,8 +80,11 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
       } else {
         if (style=="chilopod")
           viewBox<-paste0(tleftx, " ", (tleftx-tlefty)+2*bpp$xstep*max(1,3/bpp$lsize_core_box), " ", 1.2*swidth, " ", 1.3*swidth)
-        else
-          viewBox<-paste0(tleftx, " ", (tleftx-tlefty)+bpp$xstep*max(1,3/bpp$lsize_core_box), " ", 1.2*swidth, " ", 1.2*swidth)
+        else{
+          fmulth = 1.2
+          fmultw = 1.2
+          viewBox<-paste0(tleftx, " ", (tleftx-tlefty)+bpp$xstep*max(1,3/bpp$lsize_core_box), " ", fmultw*swidth, " ", fmulth*swidth)
+        }
       }
       #svg0<-paste0("<svg transform='rotate(90)' transform=\"scale(",zoom_svgplot,")\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"", viewBox, "\">\n")
       svg0<-paste0("<svg transform='rotate(90)' xmlns=\"http://www.w3.org/2000/svg\" preserveAspectRatio=\"xMidYMid meet\" viewBox=\"", viewBox, "\">\n")
@@ -94,7 +97,8 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
           vadjust <- -2*bpp$xstep
         }
         else{
-          h <-  swidth/4
+          fdivh = ifelse(min(bpp$num_a_coremax,bpp$num_b_coremax)<=6,3,4)
+          h <-  swidth/fdivh
           vadjust <- 0
         }
         viewBox<-paste0(tleftx, " ", (tlefty+vadjust), " ", (1.1+0.1*(nnodes%/%100))*swidth, " ", h)

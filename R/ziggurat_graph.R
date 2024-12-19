@@ -165,7 +165,7 @@ ziggurat_graph <- function(datadir,filename, style='ziggurat',sep=",",speciesinh
   )
   # Removes nodes without any tie. This is not usual in input files but happens
   # when performing destruction simulations
-  strip_isolated_nodes(zgg)
+  strip_isolated_nodes(myenv=zgg)
   init_working_values(zgg)
   draw_ziggurat_plot(svg_scale_factor, progress)
   # Copy input parameters as a string for reroducibility
@@ -1975,19 +1975,18 @@ display_plot <- function(p, printfile, flip, plwidth=14, plheight=11, ppi = 300,
     dev.off()
 }
 
-strip_isolated_nodes <- function(myenv)
+strip_isolated_nodes <- function(myenv=zgg)
 {
   lgrados <- igraph::degree(myenv$result_analysis$graph)
-  if (sum(lgrados == 0) > 0)
+  lgrados <- lgrados[lgrados == 0]
+  if (length(lgrados) > 0)
     for (k in 1:length(lgrados))
     {
-      if (lgrados[k] == 0){
         myenv$result_analysis$graph <- delete_vertices(myenv$result_analysis$graph,names(lgrados[k]))
         if ( length(grep(myenv$str_guild_b,names(lgrados[k]) )) >0 )
-          myenv$result_analysis$num_guild_b <<- myenv$result_analysis$num_guild_b -1
+          myenv$result_analysis$num_guild_b <- myenv$result_analysis$num_guild_b -1
         else
-          myenv$result_analysis$num_guild_a <<- myenv$result_analysis$num_guild_a -1
-      }
+          myenv$result_analysis$num_guild_a <- myenv$result_analysis$num_guild_a -1
     }
 }
 

@@ -117,7 +117,7 @@ bipartite_graph <- function(datadir,filename,sep=",",speciesinheader=TRUE,
   )
   # Removes nodes without any tie. This is not usual in input files but happens
   # when performing destruction simulations
-  kcorebip:::strip_isolated_nodes(bpp)
+  kcorebip:::strip_isolated_nodes(myenv=bpp)
   kcorebip:::init_working_values(bpp)
   draw_bipartite_plot(svg_scale_factor, progress)
   bpp$bipartite_argg <- bipartite_argg
