@@ -79,21 +79,20 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
         viewBox<-paste0(tleftx, " ", ceiling(adjustleft+1.2*(tleftx-tlefty)/10)*10, " ", 1.2*swidth, " ", 1.2*swidth)
       } else {
         if (style=="chilopod")
-          viewBox<-paste0(tleftx, " ", (tleftx-tlefty)+2*bpp$xstep*max(1,3/bpp$lsize_core_box), " ", 1.2*swidth, " ", 1.3*swidth)
+          viewBox<-paste0(tleftx, " ", (tleftx-tlefty)+2*bpp$xstep*max(1,3/bpp$lsize_core_box), " ", 1.2*swidth, " ", 1.4*swidth)
         else{
           fmulth = 1.2
           fmultw = 1.2
           viewBox<-paste0(tleftx, " ", (tleftx-tlefty)+bpp$xstep*max(1,3/bpp$lsize_core_box), " ", fmultw*swidth, " ", fmulth*swidth)
         }
       }
-      #svg0<-paste0("<svg transform='rotate(90)' transform=\"scale(",zoom_svgplot,")\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"", viewBox, "\">\n")
       svg0<-paste0("<svg transform='rotate(90)' xmlns=\"http://www.w3.org/2000/svg\" preserveAspectRatio=\"xMidYMid meet\" viewBox=\"", viewBox, "\">\n")
     }
     else{
       if (style!='ziggurat'){
         if (style=='chilopod'){
           tleftx <- tleftx-bpp$xstep
-          h <-  swidth*2/3
+          h <-  swidth*0.75
           vadjust <- -2*bpp$xstep
         }
         else{

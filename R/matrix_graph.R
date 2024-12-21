@@ -93,7 +93,7 @@ matrix_graph <-function(datadir,filename,sep=",",speciesinheader=TRUE,
     mplots <- mplots +  theme_void()+theme(legend.position=lposition,
                                            legend.title=element_blank(),
                                            legend.text = element_text(size = lsize),
-                                           axis.text.x = element_text(size=lsize,hjust=0.5,vjust=ifelse(show_species_names,1,0),angle=angulo,color=ifelse(!flip_matrix,colorA,colorB)),
+                                           axis.text.x = element_text(size=lsize,hjust=ifelse(show_species_names,0,0.5),vjust=ifelse(show_species_names,1,0),angle=angulo,color=ifelse(!flip_matrix,colorA,colorB)),
                                            axis.text.y = element_text(size = lsize,hjust=1,vjust=0.5,color=ifelse(!flip_matrix,colorB,colorA)),
                                            plot.title = element_text(size=lsize+3,hjust=0.5),
                                            axis.title.x=element_text(size=18,face="bold",color="grey40",
@@ -116,7 +116,7 @@ matrix_graph <-function(datadir,filename,sep=",",speciesinheader=TRUE,
         label <- (paste0(" ",mn," ",ifelse(show_species,paste0(rownames(M)[i],""),""),"    "))
     } else {
       if (guild=="A")
-        label <- (paste0(" ",mn," ",ifelse(show_species,colnames(M)[i],""),"    "))
+        label <- (paste0("  ",mn," ",ifelse(show_species,colnames(M)[i],""),"    "))
       else
         label <- (paste0(" ",mn," ",ifelse(show_species,paste0(rownames(M)[i],"  "),"    ")))
     }
