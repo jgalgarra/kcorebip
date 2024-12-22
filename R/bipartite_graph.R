@@ -220,12 +220,12 @@ draw_tail_bip <- function(idPrefix, p,svg,fat_tail,lado,color,sqlabel,basex,base
   }
   
   f <- kcorebip:::draw_square(idPrefix, p,svg, xx,yy,
-                   ifelse(bpp$style=="chilopod",lado,
-                          paintsidex*sqrt(bpp$square_nodes_size_scale)),
-                   bgcolor,palpha,labelcolor,langle,lhjust,lvjust,
-                   slabel=sqlabel,lbsize = 0.8*bpp$lsize_kcoremax,
-                   SVGtextfactor=fsvgtext, inverse = sqinverse,
-                   adjustoxy = adjust, edgescolor = ecolor)
+                              ifelse(bpp$style=="chilopod",lado,
+                                     paintsidex*sqrt(bpp$square_nodes_size_scale)),
+                              bgcolor,palpha,labelcolor,langle,lhjust,lvjust,
+                              slabel=sqlabel,lbsize = 0.8*bpp$lsize_kcoremax,
+                              SVGtextfactor=fsvgtext, inverse = sqinverse,
+                              adjustoxy = adjust, edgescolor = ecolor)
   p <- f["p"][[1]]
   svg <- f["svg"][[1]]
   # Add tail link
@@ -233,9 +233,9 @@ draw_tail_bip <- function(idPrefix, p,svg,fat_tail,lado,color,sqlabel,basex,base
     if ((position == "North") |(position == "South"))
       posxx1 = posxx1+sidex/2
     kcorebip:::add_link(xx1=posxx1, xx2 = plxx2,
-             yy1 = posyy1, yy2 = plyy2,
-             slink = bpp$size_link*wlink, clink = c(bpp$color_link),
-             alpha_l = bpp$alpha_link, myenv=bpp)
+                        yy1 = posyy1, yy2 = plyy2,
+                        slink = bpp$size_link*wlink, clink = c(bpp$color_link),
+                        alpha_l = bpp$alpha_link, myenv=bpp)
   }
   calc_vals <- list("p" = p, "svg" = svg, "sidex" = sidex, "xx" = posxx1, "yy" = posyy1)
   return(calc_vals)
@@ -354,19 +354,18 @@ draw_parallel_guilds <- function(basex,topx,basey,topy,numboxes,nnodes,fillcolor
   name_species <- c()
   pbasex <- bpp$coremax_triangle_width_factor*( basex - (nnodes %/%8) * abs(topx-basex)/3)
   xstep <- (topx-pbasex)/max(12,nnodes)
-  if (!exists("bpp$xstep"))
+  if (!exists("bpp$xstep")){
     bpp$xstep <- xstep
+    if (guild=="A")
+      bpp$lsize_kcoremax <- 1.5*bpp$xstep*bpp$lsize_kcoremax/2000
+  }
   if (nnodes < 30)
     round(xstep <- xstep * 0.5)
   bpp$xstep <- min(bpp$xstep,xstep)
-  vertsep <- 3
-  # if ((xstep>2000) && (guild=="A")) {
-  #   bpp$lsize_kcoremax <-  bpp$lsize_kcoremax + 1
-  # }
-  # if ((xstep<1000) && (guild=="A")) {
-  #   vertsep <- 2
-  #   bpp$lsize_kcoremax <-  min(2,bpp$lsize_kcoremax)
-  # }
+
+  vertsep <- max(3.5,min(5,nnodes/9))
+  if (nnodes>40)
+    vertsep <- 1.5*vertsep
   ptopy <- vertsep*basey+ifelse(basey>0,1,-1)*xstep
   bpp$landmark_bottom <- min(bpp$landmark_bottom,-ptopy)
   bpp$landmark_top <- max(bpp$landmark_top,ptopy)
@@ -417,9 +416,9 @@ draw_parallel_guilds <- function(basex,topx,basey,topy,numboxes,nnodes,fillcolor
     else if (guild=="B")
       degrees <- rowSums(mlinks)
     for (i in 1:nrow(d1)){
-     coincid = (gsub("\\."," ",names(degrees))==gsub("\\."," ",d1$name_species[i]))
-     if(sum(coincid)>0)
-       d1$degree[i]=degrees[which(coincid)]
+      coincid = (gsub("\\."," ",names(degrees))==gsub("\\."," ",d1$name_species[i]))
+      if(sum(coincid)>0)
+        d1$degree[i]=degrees[which(coincid)]
     }
     
     ordvector <- rev(order(d1$degree))
@@ -634,8 +633,7 @@ handle_fat_tails_bip <- function(p, svg, style = "legacy")
     fgap <- 0.7*bpp$hop_x
   else
     fgap <- 0.7*bpp$hop_x + (1+sum(nrows_fat>40))*bpp$lado
-  bpp$pos_tail_x <- min(bpp$list_dfs_b[[bpp$kcoremax]][1,]$x1-bpp$xstep,
-                        bpp$list_dfs_a[[bpp$kcoremax]][1,]$x1-bpp$xstep)
+  bpp$pos_tail_x <- min(bpp$list_dfs_b[[bpp$kcoremax]][1,]$x1-0.5*bpp$xstep)
   if (exists("fat_tail_a")) {
     f <- draw_fat_tail_bip(p,svg,fat_tail_a,nrows_fat,bpp$list_dfs_b,bpp$color_guild_a[2],
                            bpp$pos_tail_x,pos_tail_y,fgap,inverse="yes")
@@ -713,7 +711,7 @@ draw_maxcore_bip <- function(svg)
   paint_labels <- function(p,svg,guildstr,list_dfs){
     
     nsp <- kcorebip:::name_species_preprocess(bpp$kcoremax,list_dfs,bpp$kcore_species_name_display,
-                                   bpp$kcore_species_name_break)
+                                              bpp$kcore_species_name_break)
     labelszig <- nsp$labelszig
     kcoremaxlabel_angle <- nsp$kcoremaxlabel_angle
     p <- p + paint_rect_core(list_dfs,alpha=bpp$alpha_level)
@@ -960,7 +958,7 @@ draw_inner_links_bip <- function(p, svg)
             foundlinksa <- foundlinksa + 1
             data_b <- bpp$list_dfs_b[[kcb]][i,]
             weightlink <- kcorebip:::get_link_weights(bpp$result_analysis$matrix[as.numeric(data_b$label),
-                                                                      as.numeric(data_a$label)],myenv=bpp)
+                                                                                 as.numeric(data_a$label)],myenv=bpp)
             bend_line = "no"
             if (((kc == 2) & (kcb == bpp$kcoremax)) | ((kc == bpp$kcoremax) & (kcb == 2)))
               bend_line = "horizontal"
@@ -1009,9 +1007,9 @@ draw_inner_links_bip <- function(p, svg)
               lcolor = "blue"
             }
             kcorebip:::add_link(xx1=link$x1, xx2 = link$x2,
-                     yy1 = link$y1, yy2 = link$y2,
-                     slink = bpp$size_link*weightlink, clink =  c(bpp$color_link),
-                     alpha_l = bpp$alpha_link , myenv=bpp)
+                                yy1 = link$y1, yy2 = link$y2,
+                                slink = bpp$size_link*weightlink, clink =  c(bpp$color_link),
+                                alpha_l = bpp$alpha_link , myenv=bpp)
           }
           if (foundlinksa >= numberlinksa )
             break
@@ -1047,7 +1045,10 @@ draw_bipartite_plot <- function(svg_scale_factor, progress)
   bpp$ymax <- bpp$ymax * 1.1
   bpp$hop_x <- (bpp$tot_width)/max(1,(bpp$kcoremax-2))
   bpp$lado <- min(0.05*bpp$tot_width,bpp$height_y * bpp$aspect_ratio)
-  bpp$basey <- 2.5*bpp$lado
+  if (bpp$lado>200)
+    bpp$basey <- 2.5*bpp$lado
+  else
+    bpp$basey <- 2*bpp$lado
   wcormax <- 1.2*bpp$hop_x*bpp$coremax_triangle_width_factor
   bpp$topxa <- 0.65*bpp$hop_x
   bpp$basex <- bpp$topxa - wcormax
