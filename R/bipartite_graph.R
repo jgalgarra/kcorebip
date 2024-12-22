@@ -43,7 +43,6 @@ if (debugging){
 #' @param file_name_append a label that the user may append to the plot file name for convenience
 #' @param svg_scale_factor only for interactive apps, do not modify
 #' @param weighted_links function to add link weight: 'none', 'log10' , 'ln', 'sqrt'
-#' @param square_nodes_size_scale scale nodes area of kcore1 and outsiders
 #' @param progress only for interactive apps, do not modifiy
 #' @export
 #' 
@@ -63,7 +62,6 @@ bipartite_graph <- function(datadir,filename,sep=",",speciesinheader=TRUE,
                             label_strguildb = "", landscape_plot = TRUE,
                             backg_color = "white", show_title = TRUE, show_legend = 'TOP',
                             file_name_append = "", svg_scale_factor= 10, weighted_links = "none",
-                            square_nodes_size_scale = 1,
                             progress=NULL
 )
 {
@@ -112,7 +110,7 @@ bipartite_graph <- function(datadir,filename,sep=",",speciesinheader=TRUE,
                         hide_plot_border,
                         corebox_border_size,
                         label_strguilda, label_strguildb, landscape_plot, backg_color, show_title, show_legend,
-                        file_name_append, svg_scale_factor, weighted_links, square_nodes_size_scale,
+                        file_name_append, svg_scale_factor, weighted_links,
                         progress
   )
   # Removes nodes without any tie. This is not usual in input files but happens
@@ -221,7 +219,7 @@ draw_tail_bip <- function(idPrefix, p,svg,fat_tail,lado,color,sqlabel,basex,base
   
   f <- kcorebip:::draw_square(idPrefix, p,svg, xx,yy,
                               ifelse(bpp$style=="chilopod",lado,
-                                     paintsidex*sqrt(bpp$square_nodes_size_scale)),
+                                     paintsidex),
                               bgcolor,palpha,labelcolor,langle,lhjust,lvjust,
                               slabel=sqlabel,lbsize = 0.8*bpp$lsize_kcoremax,
                               SVGtextfactor=fsvgtext, inverse = sqinverse,
@@ -896,7 +894,7 @@ def_configuration_bip <- function(paintlinks, print_to_file, plotsdir, sep,speci
                                   hide_plot_border,
                                   corebox_border_size,
                                   label_strguilda, label_strguildb, landscape_plot, backg_color, show_title, show_legend,
-                                  file_name_append, svg_scale_factor, weighted_links, square_nodes_size_scale,
+                                  file_name_append, svg_scale_factor, weighted_links, 
                                   progress
 )
 {
@@ -934,7 +932,6 @@ def_configuration_bip <- function(paintlinks, print_to_file, plotsdir, sep,speci
   bpp$file_name_append <- file_name_append
   bpp$svg_scale_factor <- svg_scale_factor
   bpp$weighted_links <- weighted_links
-  bpp$square_nodes_size_scale <- square_nodes_size_scale
   bpp$progress <- progress
 }
 
@@ -1173,7 +1170,7 @@ draw_bipartite_plot <- function(svg_scale_factor, progress)
   
 }
 if (debugging)
-  bipartite_graph("../data/","M_SD_015.csv",square_nodes_size_scale = 2,show_title = TRUE,
+  bipartite_graph("../data/","M_SD_015.csv",show_title = TRUE,
                   style="chilopod",orderkcoremaxby = "kdegree",
                   guild_gap_increase = 1,weighted_links = "none",
                   svg_scale_factor = 1,color_link = "#6d6d6e",
