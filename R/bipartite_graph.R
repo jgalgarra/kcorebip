@@ -355,15 +355,15 @@ draw_parallel_guilds <- function(basex,topx,basey,topy,numboxes,nnodes,fillcolor
   if (!exists("bpp$xstep")){
     bpp$xstep <- xstep
     if (guild=="A")
-      bpp$lsize_kcoremax <- 1.5*bpp$xstep*bpp$lsize_kcoremax/2000
+      bpp$lsize_kcoremax <- 1.4*bpp$xstep*bpp$lsize_kcoremax/2000
   }
   if (nnodes < 30)
     round(xstep <- xstep * 0.5)
   bpp$xstep <- min(bpp$xstep,xstep)
 
   vertsep <- max(3.5,min(5,nnodes/9))
-  if (nnodes>40)
-    vertsep <- 1.5*vertsep
+  if (nnodes>75)
+    vertsep <- min(5,1.2*vertsep)
   ptopy <- vertsep*basey+ifelse(basey>0,1,-1)*xstep
   bpp$landmark_bottom <- min(bpp$landmark_bottom,-ptopy)
   bpp$landmark_top <- max(bpp$landmark_top,ptopy)
