@@ -439,8 +439,6 @@ draw_parallel_guilds <- function(basex,topx,basey,topy,numboxes,nnodes,fillcolor
     }
   }
   # Fixed aspect ratio of bipartite plot
-  #bpp$landmark_right <- max(bpp$landmark_right,max(d1$x2))
-  
   bpp$tot_width <- max(max(d1$x2)+xstep,bpp$tot_width)
   bpp$tot_height <- (9/16)*bpp$tot_width
   bpp$landmark_top <- max(bpp$landmark_top,max(d1$y2)+xstep)
@@ -827,7 +825,7 @@ draw_maxcore_tails_bip <- function(p, svg)
     bpp$last_xtail_b[bpp$kcoremax] <- v["lastx"][[1]]
     if (length(v["lasty"][[1]])>0)
       bpp$last_ytail_b[bpp$kcoremax] <- v["lasty"][[1]]
-    else                                                   # only for degenerate networks with all nodes in kcoremax
+    else                # only for degenerate networks with all nodes in kcoremax
       bpp$last_ytail_b[bpp$kcoremax] <- bpp$toopy
   }
   leftjump <- (1.2-0.02*nrow(bpp$list_dfs_b[[bpp$kcoremax]]))* bpp$hop_x
@@ -857,7 +855,7 @@ draw_maxcore_tails_bip <- function(p, svg)
     bpp$last_xtail_a[bpp$kcoremax] <- v["lastx"][[1]]
     if (length(v["lasty"][[1]])>0)
       bpp$last_ytail_b[bpp$kcoremax] <- v["lasty"][[1]]
-    else                                                   # only for degenerate networks with all nodes in kcoremax
+    else                    # only for degenerate networks with all nodes in kcoremax
       bpp$last_ytail_b[bpp$kcoremax] <- bpp$toopy
   }
   calc_vals <- list("p" = p, "svg" = svg,
@@ -1163,9 +1161,6 @@ draw_bipartite_plot <- function(svg_scale_factor, progress)
   # Stores results
   bpp$plot  <- p
   bpp$svg   <- svg
-  # 
-  # html<-svg$html()
-  # cat(html, file = "tmp.svg")
   return(bpp)
   
 }

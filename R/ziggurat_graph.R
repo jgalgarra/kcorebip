@@ -1031,11 +1031,11 @@ store_specialist_species <- function (row_orph, df_store, strguild, lado, gap, o
     {
       if (strguild == zgg$str_guild_b){
         edge_row <- zgg$list_dfs_a[[zgg$kcoremax]][1,]
-        xbase <-  min(zgg$last_xtail_a[[zgg$kcoremax]],edge_row$x1 - 1.5*gap) - gap
+        xbase <-  min(zgg$last_xtail_a[[zgg$kcoremax]],edge_row$x1 - gap) - gap
       }
       else{
         edge_row <- zgg$list_dfs_b[[zgg$kcoremax]][1,]
-        xbase <-  min(zgg$last_xtail_b[[zgg$kcoremax]],edge_row$x1 - 1.5*gap)- gap
+        xbase <-  min(zgg$last_xtail_b[[zgg$kcoremax]],edge_row$x1 - gap)- gap
       }
       df_store$x1[index] <- xbase - 2 * gap
 
@@ -1935,7 +1935,6 @@ draw_coremax_tails <- function(p, svg)
                                                                     as.numeric(long_tail_b$partner[h])]
       long_tail_b$weightlink <- get_link_weights(tailweight)
     }
-
     v <-  draw_edge_tails(p,svg,point_x,point_y,zgg$kcoremax,long_tail_b,zgg$list_dfs_a,zgg$color_guild_b,
                          inverse = "no",
                          vertical = "no", orientation = "North", revanddrop = "yes",
