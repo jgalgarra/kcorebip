@@ -65,12 +65,10 @@ bipartite_graph <- function(datadir,filename,sep=",",speciesinheader=TRUE,
                             progress=NULL
 )
 {
-  # This assignment stores the call parameters in ziggurat_argg as a list. This list is useful
+  # This assignment stores the call parameters in bipartite_argg as a list. This list is useful
   # to save plotting parameters for a future simulation
-  
-  
   bipartite_argg <- c(as.list(environment()))
-  # Create global environment
+  # Create global bpp environment to store plot information
   bpp <<- new.env()
   bpp$sep <- sep
   bpp$speciesinheader <- speciesinheader
@@ -89,7 +87,6 @@ bipartite_graph <- function(datadir,filename,sep=",",speciesinheader=TRUE,
   bpp$bottom_tail <- FALSE
   bpp$mtxlinks <- data.frame(igraph::as_edgelist(bpp$result_analysis$graph))
   names(bpp$mtxlinks) <- c("guild_a","guild_b")
-  
   # Exit if kcore max == 1
   if (bpp$result_analysis$max_core == 1){
     msg = "Max core is 1. Ziggurat plot only works if max core is bigger than 1"
@@ -123,6 +120,8 @@ bipartite_graph <- function(datadir,filename,sep=",",speciesinheader=TRUE,
   
 }
 
+
+# Create vertical labels for groups of species
 gen_vert_label <- function(nodes, joinchars = "\n")
 {
   nnodes <- length(nodes)
@@ -136,16 +135,14 @@ gen_vert_label <- function(nodes, joinchars = "\n")
   return(ssal)
 }
 
-
 # Draw tail, species or set of species of 1-shell connected to higher k-index species
 draw_tail_bip <- function(idPrefix, p,svg,fat_tail,lado,color,sqlabel,basex,basey,gap,
                           lxx2=0,lyy2=0,sqinverse = "no",
                           position = "West", background = "no",
                           first_leaf = "yes", spline = "no",
                           psize = bpp$lsize_kcore1, is_guild_a = TRUE, wlink=1, 
-                          style = "ziggurat", lvp = 0)
+                          style = "chilopod", lvp = 0)
 {
-  
   adjust <- "yes"
   lvjust <- 0
   lhjust <- 0
@@ -160,11 +157,12 @@ draw_tail_bip <- function(idPrefix, p,svg,fat_tail,lado,color,sqlabel,basex,base
   yy <- abs(basey)
   plxx2 <- lxx2
   plyy2 <- lyy2
-  # Lower half plane of the ziggurat
+  # Lower half plane of the plot
   if (sqinverse=="yes")
     signo <- -1
-  # Tails connected eastwards to inner ziggurats. Fat tails
+  # Fat tails
   if (position == "West"){
+    print("West")
     adjust = "yes"
     lhjust <- ifelse(bpp$flip_results, 0, 0.5)
     lvjust = ifelse(bpp$flip_results, 1, 0.5)
@@ -180,13 +178,6 @@ draw_tail_bip <- function(idPrefix, p,svg,fat_tail,lado,color,sqlabel,basex,base
       posyy1 = signo*(yy)+signo*(0.5*gap/(bpp$aspect_ratio))
     }
   }
-  # Group of species linked to the highest kdegree species in max shell
-  else if (position == "East"){
-    gap <- bpp$hop_x/2
-    xx <- basex+gap
-    posxx1 <- xx
-    posyy1 = signo*(yy+sidex/(2*bpp$aspect_ratio))
-  }
   # Tails connected to other nodes of the max shell
   else if ((position == "North") |(position == "South")) {
     xx <- basex
@@ -198,25 +189,21 @@ draw_tail_bip <- function(idPrefix, p,svg,fat_tail,lado,color,sqlabel,basex,base
       lhjust = ifelse(bpp$flip_results, 0.5, 0)
     }
   }
-  
   if (background == "no")
   {
     ecolor <- "transparent"
     if (bpp$alpha_level != 1)
       palpha <- max(bpp$alpha_level-0.09,0)
     else if (position == "North")
-    {
       langle <- rot_angle
-    }
     else if (position == "South")
-    {
       langle <- -rot_angle
-    }
     else if (position == "West"){
       adjust <- "yes"
     }
   }
   
+  # Plot species or group of species
   f <- kcorebip:::draw_square(idPrefix, p,svg, xx,yy,
                               ifelse(bpp$style=="chilopod",lado,
                                      paintsidex),
@@ -239,12 +226,12 @@ draw_tail_bip <- function(idPrefix, p,svg,fat_tail,lado,color,sqlabel,basex,base
   return(calc_vals)
 }
 
+# Specialists chain
 draw_edge_tails_bip <- function(p,svg,point_x,point_y,kcoreother,long_tail,list_dfs,color_guild, inverse = "no",
                                 vertical = "yes", orientation = "South", revanddrop = "no",
                                 pbackground = "yes", joinchars = "\n", tspline = "no", 
                                 is_guild_a = TRUE, wlink = 1)
 {
-  
   rxx <- point_x
   ryy <- point_y
   bpp$joinstr <- joinchars
@@ -266,7 +253,6 @@ draw_edge_tails_bip <- function(p,svg,point_x,point_y,kcoreother,long_tail,list_
     if (length(conn_species)>0)
     {
       little_tail <- long_tail[long_tail$partner == i,]
-      
       data_row <- list_dfs[[kcoreother]][which(list_dfs[[kcoreother]]$label == i),]
       if (kcoreother==1)
         for (k in 1:nrow(data_row)){
@@ -311,7 +297,6 @@ draw_edge_tails_bip <- function(p,svg,point_x,point_y,kcoreother,long_tail,list_
         point_y <- point_y + 1.4*signo*salto
         rxx <- point_x
       }
-      
       # tails connected to kcoremax except first species
       else{
         if (orientation == "West")
@@ -368,7 +353,6 @@ draw_parallel_guilds <- function(basex,topx,basey,topy,numboxes,nnodes,fillcolor
   bpp$landmark_bottom <- min(bpp$landmark_bottom,-ptopy)
   bpp$landmark_top <- max(bpp$landmark_top,ptopy)
   ystep <- 0
-  
   for (j in (1:numboxes))
   {
     x1 <- c(x1, pbasex+(j-1)*xstep)
@@ -442,11 +426,8 @@ draw_parallel_guilds <- function(basex,topx,basey,topy,numboxes,nnodes,fillcolor
   bpp$tot_width <- max(max(d1$x2)+xstep,bpp$tot_width)
   bpp$tot_height <- (9/16)*bpp$tot_width
   bpp$landmark_top <- max(bpp$landmark_top,max(d1$y2)+xstep)
-  
   return(d1)
 }
-
-# Analysis of the chains of specialists
 
 swap_strguild <- function(strguild)
 {
@@ -457,49 +438,11 @@ swap_strguild <- function(strguild)
   return(strguild)
 }
 
-# Draw links among species of same k-index
-draw_innercores_tails_bip <- function(p,svg,kc,list_dfs,df_orph,color_guild, inverse="no", is_guild_a = TRUE)
-{
-  lastx <- 0
-  lasty <- 0
-  
-  lpoint_x <- 0
-  if (length(list_dfs[[kc]])>0)
-    if (kc>2)
-      lpoint_x <- list_dfs[[kc]][nrow(list_dfs[[kc]]),]$x2
-  else
-    lpoint_x <- list_dfs[[kc]][nrow(list_dfs[[kc]]),]$x2 + 4*bpp$lado
-  if (kc>2)
-    lpoint_y <- (list_dfs[[kc]][1,]$y1+list_dfs[[kc]][1,]$y2)/2
-  else{
-    if (bpp$kcoremax > 2)
-      lpoint_y <- (list_dfs[[kc]][1,]$y1+list_dfs[[kc]][1,]$y2)/4
-    else{
-      lpoint_y <- 1.5*max(list_dfs[[2]]$y2)
-    }
-  }
-  long_tail <- df_orph[(df_orph$kcore == kc) & (df_orph$repeated == "no"),]
-  if (length(long_tail)>0){
-    v<-  draw_edge_tails_bip(p,svg,lpoint_x,lpoint_y,kc,long_tail,list_dfs,color_guild,
-                             inverse = inverse, joinchars = bpp$joinstr,pbackground = "no",
-                             tspline = "lshaped", is_guild_a = is_guild_a)
-    p <- v["p"][[1]]
-    svg <- v["svg"][[1]]
-    if (length(v["lastx"][[1]])>0)
-      lastx <- v["lastx"][[1]]
-    if (length(v["lasty"][[1]])>0)
-      lasty <-v["lasty"][[1]]
-  }
-  calc_vals <- list("p" = p, "svg" = svg, "point_x" = lpoint_x, "point_y" = lpoint_y, "lastx" = lastx, "lasty" = lasty)
-  return(calc_vals)
-}
-
 # Draw tail connected to highest kdegree node
 draw_fat_tail_bip<- function(p,svg,fat_tail,nrows,list_dfs,color_guild,pos_tail_x,pos_tail_y,
                              fgap,
                              inverse="no", is_guild_a =TRUE, bipartite = FALSE, gstyle = "ziggurat")
 {
-  
   tailgap <- (1+min(4,nrows/8))*bpp$xstep
   ppos_tail_x <- pos_tail_x-tailgap
   pos_tail_y <-list_dfs[[bpp$kcoremax]][1,]$y1
@@ -1015,7 +958,6 @@ draw_inner_links_bip <- function(p, svg)
   calc_vals <- list("p" = p, "svg" = svg)
   return(calc_vals)
 }
-
 
 draw_bipartite_plot <- function(svg_scale_factor, progress)
 {
