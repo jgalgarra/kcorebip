@@ -51,7 +51,6 @@ matrix_graph <-function(datadir,filename,sep=",",speciesinheader=TRUE,
                      strA="",strB="",colorA="blue",colorB="red",lsize=8,show_title=TRUE,show_legend=TRUE)
   {
     legends_text <- paste0(
-      #"<span style = 'text-align: left; color:black'>Network: ",nname,
       "</span><span style = 'text-align: right; color:white'>....</span><span style = 'text-align: right; color:",colorA,"'>",paste('&#9632;',strA),
       "</span> <span style = 'text-align: right;color:",colorB,"'>",paste('&nbsp; &#9632;',strB),"</span>")
     
@@ -140,7 +139,6 @@ matrix_graph <-function(datadir,filename,sep=",",speciesinheader=TRUE,
   }
   
   mat_argg <- c(as.list(environment()))
-  # Create global environment
   # Analyze network
   f <- kcorebip:::read_and_analyze(datadir,filename,label_strguilda, label_strguildb, sep = mat_argg$sep, speciesinheader = mat_argg$speciesinheader )
   mat <<- new.env()
@@ -265,4 +263,3 @@ if (debugging)
                   show_species_names = TRUE,
                   show_title = TRUE,
                   show_legend = TRUE)
-

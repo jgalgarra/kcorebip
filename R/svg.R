@@ -1,9 +1,8 @@
 ###############################################################################
-# Universidad Politécnica de Madrid - EUITT
-#   PFC
+#   PFC Universidad Politécnica de Madrid - EUITT
 #   Representación gráfica de redes bipartitas basadas en descomposición k-core
 #
-# Autor         : Juan Manuel García Santi
+# Autor         : Juan Manuel García Santi / Javier Garcia Algarra
 # Módulo        : svg.R
 # Descricpción  : Funciones básicas para la generación de un gráfico en formato
 #                 SVG (Scalable Vectors Graphics). Contiene las funciones
@@ -280,8 +279,7 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
     
     # evalua las posiciones
     # cambia de signo las coordenadas y, ya que en SVG el eje y es al contrario de lo que trata R con ggplot
-    
-    
+
     x     <- this$round_coords(eval_tidy(mapping$x, data)/this$scale_factor)
     xend  <- this$round_coords(eval_tidy(mapping$xend, data)/this$scale_factor)
     y     <- -this$round_coords(eval_tidy(mapping$y, data)/this$scale_factor)
@@ -330,9 +328,7 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
     result <- paste0(result, "M", x, " ", y, " ")
     result <- paste0(result, "L", xend, " ", yend, "\"")
     result <- paste0(result, "/>\n")
-    
     result <- paste0(result, "</g>\n")
-    
     return(result)
   }
   

@@ -110,14 +110,13 @@ bipartite_graph <- function(datadir,filename,sep=",",speciesinheader=TRUE,
                         file_name_append, svg_scale_factor, weighted_links,
                         progress
   )
-  # Removes nodes without any tie. This is not usual in input files but happens
+  # Removes nodes without any tie. This is not usual in empirical files but happens
   # when performing destruction simulations
   kcorebip:::strip_isolated_nodes(myenv=bpp)
   kcorebip:::init_working_values(bpp)
   draw_bipartite_plot(svg_scale_factor, progress)
   bpp$bipartite_argg <- bipartite_argg
   return(bpp)
-  
 }
 
 
@@ -162,7 +161,6 @@ draw_tail_bip <- function(idPrefix, p,svg,fat_tail,lado,color,sqlabel,basex,base
     signo <- -1
   # Fat tails
   if (position == "West"){
-    print("West")
     adjust = "yes"
     lhjust <- ifelse(bpp$flip_results, 0, 0.5)
     lvjust = ifelse(bpp$flip_results, 1, 0.5)
@@ -226,7 +224,7 @@ draw_tail_bip <- function(idPrefix, p,svg,fat_tail,lado,color,sqlabel,basex,base
   return(calc_vals)
 }
 
-# Specialists chain
+# Specialists chains and fat tails
 draw_edge_tails_bip <- function(p,svg,point_x,point_y,kcoreother,long_tail,list_dfs,color_guild, inverse = "no",
                                 vertical = "yes", orientation = "South", revanddrop = "no",
                                 pbackground = "yes", joinchars = "\n", tspline = "no", 
@@ -776,6 +774,7 @@ draw_maxcore_tails_bip <- function(p, svg)
   point_y <- -bpp$xstep
   if (exists("df_orph_b", envir = bpp))
     long_tail_b <- bpp$df_orph_b[(bpp$df_orph_b$repeated == "no"),]
+  # Fat tail
   if ( (exists("long_tail_b")) & (bpp$kcoremax > 2) ){
     if (nrow(long_tail_b)>5)
       long_kcoremax_tail <- TRUE
@@ -786,7 +785,6 @@ draw_maxcore_tails_bip <- function(p, svg)
                                                               as.numeric(long_tail_b$partner[h])]
       long_tail_b$weightlink <- kcorebip:::get_link_weights(tailweight, myenv=bpp)
     }
-    
     v <-  draw_edge_tails_bip(p,svg,point_x,point_y*bpp$aspect_ratio,
                               bpp$kcoremax,long_tail_b,bpp$list_dfs_a,bpp$color_guild_b,
                               inverse = "no",
@@ -807,6 +805,7 @@ draw_maxcore_tails_bip <- function(p, svg)
   return(calc_vals)
 }
 
+# Print plot to file
 display_plot_bip <- function(p, printfile,  plwidth=14, ppi = 300, landscape = bpp$label_strguild, fname_append = "")
 {
   if (printfile){
@@ -825,6 +824,7 @@ display_plot_bip <- function(p, printfile,  plwidth=14, ppi = 300, landscape = b
     dev.off()
 }
 
+# Populate configuration parameters
 def_configuration_bip <- function(paintlinks, print_to_file, plotsdir, sep,speciesinheader,
                                   orderkcoremaxby, style, 
                                   guild_gap_increase, flip_results, aspect_ratio,
@@ -876,6 +876,7 @@ def_configuration_bip <- function(paintlinks, print_to_file, plotsdir, sep,speci
   bpp$progress <- progress
 }
 
+# Draw links among nodes of parallel guilds
 draw_inner_links_bip <- function(p, svg)
 {
   for (kcb in seq(bpp$kcoremax,2))
@@ -959,6 +960,7 @@ draw_inner_links_bip <- function(p, svg)
   return(calc_vals)
 }
 
+# Main pllotting function
 draw_bipartite_plot <- function(svg_scale_factor, progress)
 {
   if (!is.null(progress)) 
@@ -1009,9 +1011,7 @@ draw_bipartite_plot <- function(svg_scale_factor, progress)
   bpp$orphans_b <- f["orphans_b"][[1]]
   bpp$df_orph_a <- f["df_orph_a"][[1]]
   bpp$df_orph_b <- f["df_orph_b"][[1]]
-  
   sbip <- find_specialists_bip(specialists_a,specialists_b)
-  
   if (!is.null(progress))
     progress$inc(1/11, detail=strings$value("MESSAGE_ZIGGURAT_PROGRESS_DRAWING_MAXCORE"))
   f <- draw_maxcore_bip(svg)
@@ -1019,13 +1019,11 @@ draw_bipartite_plot <- function(svg_scale_factor, progress)
   svg <- f["svg"][[1]]
   if ((bpp$style=="legacy") || (bpp$style=="kcoreorder"))
     bpp$pos_tail_x <- min(bpp$list_dfs_a[[bpp$kcoremax]]$x1)  # Leftmost side of the leftmost node
-  
   if (bpp$paintlinks) {
     z <- draw_inner_links_bip(p, svg)
     p <- z["p"][[1]]
     svg <- z["svg"][[1]]
   }
-  
   if (bpp$style=="chilopod"){
     bpp$posic_zig <- f["posic_zig"][[1]] 
     bpp$list_dfs_a <- f["list_dfs_a"][[1]]
