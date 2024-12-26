@@ -16,6 +16,8 @@ library(ggplot2)
 #' @param guild_a prefix for the guild of nodes stored in rows
 #' @param guild_b prefix for the guild of nodes stored in columns
 #' @param plot_graphs plot kshell histogram and kamada kawai plots
+#' @param sep separator character
+#' @param speciesinheader TRUE if species names are stored as row and col names inside the file
 #' @param only_NODF just compute the NODF measurement of nestedness
 #' @return \code{calc_values} a list containing the following objects
 #' \itemize{
@@ -37,7 +39,7 @@ library(ggplot2)
 
 
 analyze_network <- function(namenetwork, directory="", guild_a = "pl", guild_b = "pol", plot_graphs = FALSE, only_NODF = FALSE,
-                            weight_direction = "none",sep=",",speciesinheader=TRUE)
+                            sep=",",speciesinheader=TRUE)
 {
   if(!exists("an")){
     an <<- new.env()  
@@ -60,7 +62,6 @@ analyze_network <- function(namenetwork, directory="", guild_a = "pl", guild_b =
   nread <- read_network(namenetwork, directory = directory, guild_astr = guild_a, guild_bstr = guild_b, sep=an$sep,
                         speciesinheader = an$speciesinheader)
   # create empty graph
-  #an$g <- as.undirected(nread$g)
   an$g <- as_undirected(nread$g)
   m <- nread$matrix
   names_guild_a <- nread$names_guild_a
@@ -70,19 +71,14 @@ analyze_network <- function(namenetwork, directory="", guild_a = "pl", guild_b =
   # Get egde matrix
   edge_matrix <- igraph::get.edges(an$g, E(an$g))
   # Compute all shortest paths in network
-  #spaths_mat <- shortest.paths(an$g)
   spaths_mat <- distances(an$g)
   # k-core decompose the network
-  #g_cores <- graph.coreness(an$g)
   g_cores <- coreness(an$g)
-  
-  #wtc <- walktrap.community(an$g)
   wtc <- cluster_walktrap(an$g)
-  #modularity(wtc)
   modularity_measure <- modularity(an$g, membership(wtc))
   
   # This option to plot graphs is only useful for a preliminary exam
-  # becasuse quality is not good enough
+  # becasuse quality is reduced
   if (plot_graphs){
     plot(an$g, vertex.size=8, layout=layout.kamada.kawai)
     hist(g_cores,right=FALSE)
@@ -345,8 +341,10 @@ read_and_analyze <- function(directorystr,network_file,label_strguilda,label_str
   network_name <- strsplit(network_file,".csv")[[1]][1]
   slabels <- c("Plant", "Pollinator")
   if (grepl("_SD_",network_name)){
+    str_guild_a <- "seed"
+    name_guild_a <- "Seed"
     str_guild_b <- "disp"
-    name_guild_b <- "Dispersers"
+    name_guild_b <- "Disperser"
   }
   
   if (nchar(label_strguilda)>0){
@@ -376,5 +374,4 @@ read_and_analyze <- function(directorystr,network_file,label_strguilda,label_str
 
 
 # EXAMPLE. Copy and paste to test.
-#result_analysis <- analyze_network("M_SD_001.csv", directory = "../data/", plot_graphs = FALSE,sep=",",speciesinheader=TRUE)
-#result_analysis <- analyze_network("kaka.csv", directory = "../data/", plot_graphs = FALSE,sep=";",speciesinheader=FALSE)
+# result_analysis <- analyze_network("M_SD_001.csv", directory = "../data/", plot_graphs = FALSE,sep=",",speciesinheader=TRUE)
