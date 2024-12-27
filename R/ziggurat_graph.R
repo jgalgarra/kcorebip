@@ -25,6 +25,7 @@ source("SVG.R")
 #' @param sep data file separator character
 #' @param speciesinheader species names included as header and row names
 #' @param style equals 'ziggurat', do not modify
+#' @param paint_links show or hide links
 #' @param print_to_file if set to FALSE the plot is displayed in the R session window
 #' @param plotsdir the directory where the plot is stored
 #' @param orderkcoremaxby sets order of kcoremax nodes, by kradius or kdegree
