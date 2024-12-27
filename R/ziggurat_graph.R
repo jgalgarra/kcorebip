@@ -89,7 +89,7 @@ source("SVG.R")
 
 ziggurat_graph <- function(datadir,filename, style='ziggurat',sep=",",speciesinheader=TRUE,
                            paintlinks = TRUE, print_to_file = FALSE, plotsdir ="plotresults/", 
-                           orderkcoremaxby = "kradius", #isogonos= FALSE, 
+                           orderkcoremaxby = "kradius",  
                            flip_results = FALSE, aspect_ratio = 1,
                            alpha_level = 0.2, color_guild_a = c("#4169E1","#00008B"), color_guild_b = c("#F08080","#FF0000"),
                            color_link = "slategray3", alpha_link = 0.5, size_link = 0.5,
