@@ -659,14 +659,56 @@ draw_maxcore_bip <- function(svg)
     return(f)
   }
   
+  equispace <- function(sA,sB){
+    lA <- length(sA)
+    lB <- length(sB)
+    if (abs(lA-lB)< 0.1*(lA+lB)/2){
+      calc_vals <- list("species_A" = sA, "species_B" = sB)
+      return(calc_vals)
+    }
+    difflen <- abs(lA-lB)
+    maxlen <- max(lA,lB)
+    if (lA > lB){
+      lshort <- lB
+      sshort <- sB
+    } else {
+      lshort <- lA
+      sshort <- sA
+    }
+    quot <- difflen %/% (lshort-1)
+    rem <- difflen %% (lshort-1)
+    lemptys <- c()
+    for (i in 1:lshort){
+      lemptys <- c(lemptys,paste(c(rep("EMPTY",quot),ifelse(i<=rem,"EMPTY"," ")),collapse=","))
+    }
+    lemptys <- gsub(", ","",lemptys)
+    lemptys <- lemptys[lemptys!=" "]
+    smod <- c()
+    for (i in 1:(lshort-1)){
+      if (i <= length(lemptys))
+        smod <- c(smod,sshort[i],lemptys[i])
+      else
+        smod <- c(smod,sshort[i])
+    }
+    smod <- c(smod,sshort[i+1])
+    smod <- paste(smod,collapse=",")
+    smod <- strsplit(smod,",")[[1]]
+    if (lA > lB)
+      sB = smod
+    else
+      sA = smod
+    calc_vals <- list("species_A" = sA, "species_B" = sB)
+    return(calc_vals)
+  }
   #Species outside the giant component
   outsiders_A <- gsub(bpp$str_guild_a,"",bpp$outsiders_a)
   outsiders_B <- gsub(bpp$str_guild_b,"",bpp$outsiders_b)
   if (bpp$style == "legacy"){
     species_A <- unlist(bpp$df_cores$species_guild_a)
     species_B <- unlist(bpp$df_cores$species_guild_b)
-    species_A <- c(species_A,outsiders_A,"EMPTY")
-    species_B <- c(species_B,outsiders_B,"EMPTY")
+    lspec <- equispace(species_A,species_B)
+    species_A <- c(lspec["species_A"][[1]],outsiders_A,"EMPTY")
+    species_B <- c(lspec["species_B"][[1]],outsiders_B,"EMPTY")
   }
   else if ((bpp$style == "kcoreorder") ||(bpp$style == "chilopod")) {
     species_A <- c()
