@@ -117,7 +117,7 @@ matrix_graph <-function(datadir,filename,sep=",",speciesinheader=TRUE,
       if (guild=="A")
         label <- (paste0("  ",mn," ",ifelse(show_species,colnames(M)[i],""),"    "))
       else
-        label <- (paste0(" ",mn," ",ifelse(show_species,paste0(rownames(M)[i],"  "),"    ")))
+        label <- (paste0("  ",mn," ",ifelse(show_species,paste0(rownames(M)[i],"  "),"    ")))
     }
     return(label)
   }
@@ -168,7 +168,8 @@ matrix_graph <-function(datadir,filename,sep=",",speciesinheader=TRUE,
   M<-mat$result_analysis$matrix
   binary_network = (sum(M>1)==0)
   mat$binary_network <- binary_network
-  mat$network_type <- ifelse(mat$binary_network,strings$value("LABEL_ZIGGURAT_INFO_BINARY"),strings$value("LABEL_ZIGGURAT_INFO_WEIGHTED"))
+  if(!is.null(progress))
+    mat$network_type <- ifelse(mat$binary_network,strings$value("LABEL_ZIGGURAT_INFO_BINARY"),strings$value("LABEL_ZIGGURAT_INFO_WEIGHTED"))
   DegM <- M
   DegM[DegM>1] <- 1
   species_a$degree <- colSums(DegM)

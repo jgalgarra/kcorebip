@@ -5,6 +5,4 @@
 .git
 mansrc
 R/plot_results/*
-www/reports/*.html
-www/reports/*.svg
-www/reports/*.png
+www/reports/*.*
