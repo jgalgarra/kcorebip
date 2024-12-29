@@ -22,7 +22,6 @@ if (debugging){
 #' @param style bipartite representation style: legacy, kcoreorder, chilopod
 #' @param guild_gap_increase controls the disptance between guild rows
 #' @param flip_results displays the graph in portrait configuration
-#' @param aspect_ratio ziggurat plot default aspect ratio
 #' @param alpha_level transparency for ziggurats' filling
 #' @param color_guild_a default filling for nodes of guild_a
 #' @param color_guild_b default filling for nodes of guild_b
@@ -33,7 +32,6 @@ if (debugging){
 #' @param lsize_legend legend label size
 #' @param labels_color default label colors
 #' @param hide_plot_border hide border around the plot
-#' @param corebox_border_size width of kshell boxes
 #' @param label_strguilda string labels of guild a
 #' @param label_strguildb string labels of guild b
 #' @param landscape_plot paper landscape configuration
@@ -51,13 +49,12 @@ if (debugging){
 bipartite_graph <- function(datadir,filename,sep=",",speciesinheader=TRUE,
                             paintlinks = TRUE, print_to_file = FALSE, plotsdir ="plot_results/", 
                             orderkcoremaxby = "kradius", style="legacy", guild_gap_increase = 1, 
-                            flip_results = FALSE, aspect_ratio = 1,
+                            flip_results = FALSE,
                             alpha_level = 0.2, color_guild_a = c("#4169E1","#00008B"), color_guild_b = c("#F08080","#FF0000"),
                             color_link = "slategray3", alpha_link = 0.5, size_link = 0.5,
-                            lsize_kcoremax = 3, lsize_kcore1 = 2.5, lsize_legend = 4, lsize_core_box = 2.5,
+                            lsize_kcoremax = 3, lsize_legend = 4, lsize_core_box = 2.5,
                             labels_color = c(),
                             hide_plot_border = TRUE,
-                            corebox_border_size = 0.2,
                             label_strguilda = "",
                             label_strguildb = "", landscape_plot = TRUE,
                             backg_color = "white", show_title = TRUE, show_legend = 'TOP',
@@ -72,6 +69,7 @@ bipartite_graph <- function(datadir,filename,sep=",",speciesinheader=TRUE,
   bpp <<- new.env()
   bpp$sep <- sep
   bpp$speciesinheader <- speciesinheader
+  bpp$aspect_ratio <- 1
   fsvgtext <<- 5
   if (!is.null(progress)) 
     progress$inc(1/11, detail=strings$value("MESSAGE_ZIGGURAT_PROGRESS_ANALYZING_NETWORK"))
@@ -99,13 +97,12 @@ bipartite_graph <- function(datadir,filename,sep=",",speciesinheader=TRUE,
   # Copy input parameters to the bpp environment
   def_configuration_bip(paintlinks, print_to_file, plotsdir,sep,speciesinheader, 
                         orderkcoremaxby, style, 
-                        guild_gap_increase, flip_results, aspect_ratio,
+                        guild_gap_increase, flip_results,
                         alpha_level, color_guild_a, color_guild_b,
                         color_link, alpha_link, size_link,
-                        lsize_kcoremax, lsize_kcore1,
-                        lsize_legend, lsize_core_box, labels_color,
+                        lsize_kcoremax, 
+                        lsize_legend, labels_color,
                         hide_plot_border,
-                        corebox_border_size,
                         label_strguilda, label_strguildb, landscape_plot, backg_color, show_title, show_legend,
                         file_name_append, svg_scale_factor, weighted_links,
                         progress
@@ -869,13 +866,12 @@ display_plot_bip <- function(p, printfile,  plwidth=14, ppi = 300, landscape = b
 # Populate configuration parameters
 def_configuration_bip <- function(paintlinks, print_to_file, plotsdir, sep,speciesinheader,
                                   orderkcoremaxby, style, 
-                                  guild_gap_increase, flip_results, aspect_ratio,
+                                  guild_gap_increase, flip_results, 
                                   alpha_level, color_guild_a, color_guild_b,
                                   color_link, alpha_link, size_link,
-                                  lsize_kcoremax, lsize_kcore1,
-                                  lsize_legend, lsize_core_box, labels_color,
+                                  lsize_kcoremax, 
+                                  lsize_legend, labels_color,
                                   hide_plot_border,
-                                  corebox_border_size,
                                   label_strguilda, label_strguildb, landscape_plot, backg_color, show_title, show_legend,
                                   file_name_append, svg_scale_factor, weighted_links, 
                                   progress
@@ -895,18 +891,17 @@ def_configuration_bip <- function(paintlinks, print_to_file, plotsdir, sep,speci
   bpp$color_link <- color_link
   bpp$alpha_link <- alpha_link
   bpp$size_link <- size_link
-  bpp$aspect_ratio <- aspect_ratio
+  bpp$aspect_ratio <- 1
   bpp$labels_size <- 4
   bpp$rescale_plot_area = c(1,1)
   bpp$lsize_kcoremax <- lsize_kcoremax
   bpp$lsize_kcore1 <- 0.8*lsize_kcoremax
   bpp$lsize_legend <- lsize_legend
-  bpp$lsize_core_box <- lsize_core_box
-  bpp$labels_color <- labels_color                           # Horizontal & Vertical distances of edge/specialist tails linked to core 1 North & South
+  bpp$lsize_core_box <- 0
+  bpp$labels_color <- labels_color                          
   bpp$coremax_triangle_height_factor <- 3
   bpp$coremax_triangle_width_factor <- 3
   bpp$hide_plot_border <- hide_plot_border
-  bpp$corebox_border_size <- corebox_border_size
   bpp$landscape_plot <- landscape_plot
   bpp$backg_color <- backg_color
   bpp$show_title <- show_title

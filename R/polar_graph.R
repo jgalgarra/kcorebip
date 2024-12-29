@@ -294,7 +294,7 @@ polar_graph <- function( datadir, filename, sep=",",speciesinheader=TRUE,
                          lsize_legend = 16,lsize_axis_title = 16, 
                          lsize_legend_title = 16,
                          file_name_append = "", print_title = TRUE,
-                         c, fill_nodes = TRUE, 
+                         fill_nodes = TRUE, printable_labels = 100,
                          alpha_nodes = 0.5,
                          max_kradius = 0, progress=NULL)
 {
