@@ -76,13 +76,14 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
       if (style=='ziggurat'){
         adjustleft <- ifelse(style=='chilopod',0.2*bpp$xstep,0)
         viewBox<-paste0(tleftx, " ", ceiling(adjustleft+1.2*(tleftx-tlefty)/10)*10, " ", 1.2*swidth, " ", 1.2*swidth)
+  
       } else {
         if (style=="chilopod")
-          viewBox<-paste0(tleftx, " ", (tleftx-tlefty)+2*bpp$xstep*max(1,3/bpp$lsize_core_box), " ", 1.2*swidth, " ", 1.4*swidth)
+          viewBox<-paste0(tleftx, " ", (tleftx-tlefty)+bpp$xstep*1.3, " ", 1.2*swidth, " ", 1.4*swidth)
         else{
           fmulth = 1.2
           fmultw = 1.2
-          viewBox<-paste0(tleftx, " ", (tleftx-tlefty)+bpp$xstep*max(1,3/bpp$lsize_core_box), " ", fmultw*swidth, " ", fmulth*swidth)
+          viewBox<-paste0(tleftx, " ", (tleftx-tlefty)+bpp$xstep*1.3, " ", fmultw*swidth, " ", fmulth*swidth)
         }
       }
       svg0<-paste0("<svg transform='rotate(90)' xmlns=\"http://www.w3.org/2000/svg\" preserveAspectRatio=\"xMidYMid meet\" viewBox=\"", viewBox, "\">\n")
