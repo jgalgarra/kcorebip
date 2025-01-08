@@ -100,7 +100,7 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
           h <-  swidth/fdivh
           vadjust <- 0
         }
-        viewBox<-paste0(tleftx, " ", (tlefty+vadjust), " ", (1.1+0.1*(nnodes%/%100))*swidth, " ", h)
+        viewBox<-paste0(1.02*tleftx, " ", (tlefty+vadjust), " ", (1.1+0.1*(nnodes%/%100))*swidth, " ", h)
       }
       else{
         viewBox<-paste0(tleftx, " ", tlefty, " ", swidth, " ", swidth)
