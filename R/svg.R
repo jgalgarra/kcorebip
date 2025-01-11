@@ -74,9 +74,7 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
     sheight <- ceiling((maxy-miny)/10)*10
     if (flip_coordinates){
       if (style=='ziggurat'){
-        adjustleft <- ifelse(style=='chilopod',0.2*bpp$xstep,0)
         viewBox<-paste0(tleftx, " ", ceiling(adjustleft+1.2*(tleftx-tlefty)/10)*10, " ", 1.2*swidth, " ", 1.2*swidth)
-  
       } else {
         if (style=="chilopod")
           viewBox<-paste0(tleftx, " ", (tleftx-tlefty)+bpp$xstep*1.3, " ", 1.2*swidth, " ", 1.4*swidth)
@@ -90,17 +88,18 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
     }
     else{
       if (style!='ziggurat'){
+        wv <- (1.1+0.1*(nnodes%/%100))*swidth
         if (style=='chilopod'){
           tleftx <- tleftx-bpp$xstep
-          h <-  swidth*0.75
+          h <-  wv*0.5
           vadjust <- -2*bpp$xstep
         }
         else{
-          fdivh = ifelse(min(bpp$num_a_coremax,bpp$num_b_coremax)<=6,3,4)
-          h <-  swidth/fdivh
+          fdivh = ifelse(min(bpp$num_a_coremax,bpp$num_b_coremax)<=9,3,5)
+          h <-  wv/fdivh
           vadjust <- 0
         }
-        viewBox<-paste0(1.02*tleftx, " ", (tlefty+vadjust), " ", (1.1+0.1*(nnodes%/%100))*swidth, " ", h)
+        viewBox<-paste0(1.02*tleftx, " ", (tlefty+vadjust), " ", wv, " ", h)
       }
       else{
         viewBox<-paste0(tleftx, " ", tlefty, " ", swidth, " ", swidth)
