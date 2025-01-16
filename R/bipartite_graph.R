@@ -792,7 +792,7 @@ draw_maxcore_tails_bip <- function(p, svg)
   point_y <- bpp$xstep
   if (exists("df_orph_a", envir = bpp))
     long_tail_a <- bpp$df_orph_a[(bpp$df_orph_a$repeated == "no"),]
-  if ((exists("long_tail_a")) & (bpp$kcoremax > 2))
+  if ((exists("long_tail_a"))  )# & (bpp$kcoremax > 2))
   {
     if (length(long_tail_a)>5)
       long_kcoremax_tail <- TRUE
@@ -814,7 +814,8 @@ draw_maxcore_tails_bip <- function(p, svg)
   if (exists("df_orph_b", envir = bpp))
     long_tail_b <- bpp$df_orph_b[(bpp$df_orph_b$repeated == "no"),]
   # Fat tail
-  if ( (exists("long_tail_b")) & (bpp$kcoremax > 2) ){
+  if ( (exists("long_tail_b")) )#& (bpp$kcoremax > 2) )
+    {
     if (nrow(long_tail_b)>5)
       long_kcoremax_tail <- TRUE
     tailweight <- 0
