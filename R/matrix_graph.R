@@ -51,8 +51,8 @@ matrix_graph <-function(datadir,filename,sep=",",speciesinheader=TRUE,
                      strA="",strB="",colorA="blue",colorB="red",lsize=8,show_title=TRUE,show_legend=TRUE)
   {
     legends_text <- paste0(
-      "</span><span style = 'text-align: right; color:white'>....</span><span style = 'text-align: right; color:",colorA,"'>",paste('&#9632;',strA),
-      "</span> <span style = 'text-align: right;color:",colorB,"'>",paste('&nbsp; &#9632;',strB),"</span>")
+      "</span><span style = 'text-align: right; color:white'>....</span><span style = 'text-align: right; color:",colorA,"'>",paste('&#9632; &nbsp;',strA),
+      "</span> <span style = 'text-align: right;color:",colorB,"'>",paste('&nbsp; &#9632; &nbsp;',strB),"</span>")
     
     if (!flip_matrix){
       if (!links_weight)
