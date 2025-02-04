@@ -165,8 +165,8 @@ draw_tail_bip <- function(idPrefix, p,svg,fat_tail,lado,color,sqlabel,basex,base
       xx <- basex-gap
       posxx1 <- xx+bpp$xstep
       posyy1 = plyy2
-      lvjust = ifelse(bpp$flip_results, 1, 0)
-      lhjust = ifelse(bpp$flip_results, 0.5, 0)
+      lvjust = ifelse(bpp$flip_results, 1, 0.5)
+      lhjust = ifelse(bpp$flip_results, 0.5, 0.5)
     } else {
       xx <- basex-gap
       posxx1 <- xx+sidex
@@ -180,8 +180,14 @@ draw_tail_bip <- function(idPrefix, p,svg,fat_tail,lado,color,sqlabel,basex,base
     posyy1 = signo*(yy)
     if (style=="chilopod"){
       adjust = "yes"
-      lvjust = ifelse(bpp$flip_results, 1, 0)
-      lhjust = ifelse(bpp$flip_results, 0.5, 0)
+      if (bpp$flip_results)
+        lvjust = 1
+      else if (length(strsplit(trimws(sqlabel)," ")[[1]])==1)
+        lvjust = 0.5
+      else
+        lvjust = 0.5
+      lhjust = 0.5
+        
     }
   }
   if (background == "no")
@@ -197,7 +203,10 @@ draw_tail_bip <- function(idPrefix, p,svg,fat_tail,lado,color,sqlabel,basex,base
       adjust <- "yes"
     }
   }
-  
+  if (bpp$flip_results)
+    lhjust = 0.5
+  else
+    lhjust=0
   # Plot species or group of species
   f <- kcorebip:::draw_square(idPrefix, p,svg, xx,yy,
                               ifelse(bpp$style=="chilopod",lado,
@@ -340,7 +349,7 @@ draw_parallel_guilds <- function(basex,topx,basey,topy,numboxes,nnodes,fillcolor
   if (nnodes < 30)
     round(xstep <- xstep * 0.5)
   bpp$xstep <- min(bpp$xstep,xstep)
-
+  
   vertsep <- max(3.5,min(5,nnodes/9))
   if (nnodes>75)
     vertsep <- min(5,1.2*vertsep)
@@ -815,7 +824,7 @@ draw_maxcore_tails_bip <- function(p, svg)
     long_tail_b <- bpp$df_orph_b[(bpp$df_orph_b$repeated == "no"),]
   # Fat tail
   if ( (exists("long_tail_b")) )#& (bpp$kcoremax > 2) )
-    {
+  {
     if (nrow(long_tail_b)>5)
       long_kcoremax_tail <- TRUE
     tailweight <- 0

@@ -23,10 +23,13 @@ library(rlang)
 
 SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
   plottype = style
-  fontscale = ifelse (style=="ziggurat", (3+(nnodes<50)), 30)
+  fontscale = ifelse (style=="ziggurat", (3+(nnodes<50)), 15*(1+nnodes/50))
   if (style=="ziggurat")
     if (zgg$kcoremax==3)
       fontscale = 2 * fontscale
+  # if (style=="bipartite")
+  #   if (length(bpp$rg)<=35)
+  #     fontscale = 0.8 * fontscale
   flinkscale = ifelse (style=="ziggurat", 1, 100)
   # crea el objeto SVG
   this<-list(content=c(""), minx=0, miny=0, maxx=0, maxy=0, scale_factor=scale_factor, font_scale_factor=fontscale)
