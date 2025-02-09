@@ -30,7 +30,7 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
   # if (style=="bipartite")
   #   if (length(bpp$rg)<=35)
   #     fontscale = 0.8 * fontscale
-  flinkscale = ifelse (style=="ziggurat", 1, 100)
+  flinkscale = ifelse (style=="ziggurat", 4, 100)
   # crea el objeto SVG
   this<-list(content=c(""), minx=0, miny=0, maxx=0, maxy=0, scale_factor=scale_factor, font_scale_factor=fontscale)
   
@@ -355,7 +355,8 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
       g <- data[data[quo_text(mapping$group)]==i,]
       x <- this$round_coords(g[,c(quo_text(mapping$x))]/this$scale_factor)
       y <- -this$round_coords(g[,c(quo_text(mapping$y))]/this$scale_factor)
-      path2<-this$path2(id=paste0(plottype,idPrefix, "-", i, "-path"), x=x, y=y, alpha=alpha, color=color[i], size=size, linetype=linetype)
+      path2<-this$path2(id=paste0(plottype,idPrefix, "-", i, "-path"), x=x, y=y, alpha=alpha, 
+                        color=color[i], size=size, linetype=linetype)
       result<-paste0(result, path2)
     }
     
@@ -389,7 +390,7 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
     if (linetype>0 && linetype<7) {
       result <- paste0(result, "stroke-dasharray=\"", this$stroke_dasharray(linetype), "\" ")
     }
-    result <- paste0(result, "stroke-width=\"", size , "\" ")
+    result <- paste0(result, "stroke-width=\"", size*flinkscale , "\" ")
     result <- paste0(result, "stroke-opacity=\"", alpha , "\"")
     result <- paste0(result, ">\n")
     
@@ -400,7 +401,6 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
     }
     result <- paste0(result, "\"/>\n")
     result <- paste0(result, "</g>\n")
-    
     return(result)
   }
   
