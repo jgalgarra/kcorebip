@@ -341,7 +341,7 @@ draw_parallel_guilds <- function(basex,topx,basey,topy,numboxes,nnodes,fillcolor
   name_species <- c()
   pbasex <- bpp$coremax_triangle_width_factor*( basex - (nnodes %/% 16) * abs(topx-basex)/3)
   xstep <- (topx-pbasex)/max(12,nnodes)
-  xstep <- max(xstep,1000)
+  xstep <- max(xstep,900)
   if (!exists("bpp$xstep")){
     bpp$xstep <- xstep
   }
@@ -1044,11 +1044,11 @@ draw_bipartite_plot <- function(svg_scale_factor, progress)
   bpp$exists_fat_tail <- FALSE
   bpp$landmark_left <- 0
   bpp$landmark_right <- 0
-  
+  numnodes <- bpp$result_analysis$num_guild_a+
+    bpp$result_analysis$num_guild_b
   # Draw max core 
   svg <-SVG(svg_scale_factor, style = bpp$style, 
-            nnodes=bpp$result_analysis$num_guild_a+
-              bpp$result_analysis$num_guild_b,
+            nnodes=numnodes,
             flip_coordinates=bpp$flip_results)
   
   f <- handle_orphans_bip(bpp$result_analysis$graph)

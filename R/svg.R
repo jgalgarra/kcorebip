@@ -26,7 +26,7 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
   if (style=="ziggurat")
     fontscale = (3+(nnodes<50))
   else 
-    fontscale = 18*(1+(nnodes>30)*nnodes/250)
+    fontscale = 18*(0.7+0.2*(nnodes/250))
   if (style=="ziggurat")
     if (zgg$kcoremax==3)
       fontscale = 2 * fontscale
@@ -94,7 +94,7 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
     }
     else{
       if (style!='ziggurat'){
-        wv <- (1.1+0.1*(nnodes%/%100))*swidth
+        wv <- (1.3+0.1*(nnodes%/%100))*swidth
         if (style=='chilopod'){
           tleftx <- tleftx-bpp$xstep
           h <-  wv*0.5
