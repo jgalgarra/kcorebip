@@ -23,7 +23,10 @@ library(rlang)
 
 SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
   plottype = style
-  fontscale = ifelse (style=="ziggurat", (3+(nnodes<50)), 13*(1+nnodes/100))
+  if (style=="ziggurat")
+    fontscale = (3+(nnodes<50))
+  else 
+    fontscale = 18*(1+(nnodes>30)*nnodes/250)
   if (style=="ziggurat")
     if (zgg$kcoremax==3)
       fontscale = 2 * fontscale

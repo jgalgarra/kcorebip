@@ -339,12 +339,11 @@ draw_parallel_guilds <- function(basex,topx,basey,topy,numboxes,nnodes,fillcolor
   kradius <- c()
   col_row <- c()
   name_species <- c()
-  pbasex <- bpp$coremax_triangle_width_factor*( basex - (nnodes %/%8) * abs(topx-basex)/3)
+  pbasex <- bpp$coremax_triangle_width_factor*( basex - (nnodes %/% 16) * abs(topx-basex)/3)
   xstep <- (topx-pbasex)/max(12,nnodes)
+  xstep <- max(xstep,1000)
   if (!exists("bpp$xstep")){
     bpp$xstep <- xstep
-    if (guild=="A")
-      bpp$lsize_kcoremax <- 1.4*bpp$xstep*bpp$lsize_kcoremax/2000
   }
   if (nnodes < 30)
     round(xstep <- xstep * 0.5)
