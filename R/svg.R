@@ -22,11 +22,12 @@ library(rlang)
 #' SVG()
 
 SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
+  MWIDTH <- 40000
   plottype = style
   if (style=="ziggurat")
     fontscale = (3+(nnodes<50))
   else 
-    fontscale = 18*(0.7+0.2*(nnodes/250))
+    fontscale = 18*(0.8+0.15*(nnodes/250))
   if (style=="ziggurat")
     if (zgg$kcoremax==3)
       fontscale = 2 * fontscale
@@ -76,18 +77,26 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
     fzcale <- 1.05
     tleftx <- minx
     tlefty <- miny
-    swidth <- ceiling((maxx-minx)/10)*10
-    sheight <- ceiling((maxy-miny)/10)*10
+    swidth <- ((maxx-minx)/10)*10
+    if (style!="ziggurat"){
+      if (!flip_coordinates){
+        if (max(bpp$ind_cores)>4)
+          swidth=swidth*(1+max(bpp$ind_cores)/15)
+      }
+    }    
+
     if (flip_coordinates){
       if (style=='ziggurat'){
         viewBox<-paste0(tleftx, " ", ceiling(adjustleft+1.2*(tleftx-tlefty)/10)*10, " ", 1.2*swidth, " ", 1.2*swidth)
       } else {
         if (style=="chilopod")
-          viewBox<-paste0(tleftx, " ", (tleftx-tlefty)+bpp$xstep*1.3, " ", 1.2*swidth, " ", 1.4*swidth)
+          viewBox<-paste0(tleftx, " ", tleftx-tlefty-5*bpp$xstep, " ", 1.4*swidth, " ", 1.4*swidth)
+          #viewBox<-paste0(tleftx, " ", (tleftx)+bpp$xstep*3, " ", 1.4*swidth, " ", 1.4*swidth)
+        
         else{
-          fmulth = 1.2
-          fmultw = 1.2
-          viewBox<-paste0(tleftx, " ", (tleftx-tlefty)+bpp$xstep*1.3, " ", fmultw*swidth, " ", fmulth*swidth)
+          fmulth = 1.8
+          fmultw = 1.4
+          viewBox<-paste0(tleftx, " ", tleftx-tlefty-5*bpp$xstep, " ", fmultw*swidth, " ", fmulth*swidth)
         }
       }
       svg0<-paste0("<svg transform='rotate(90)' xmlns=\"http://www.w3.org/2000/svg\" preserveAspectRatio=\"xMidYMid meet\" viewBox=\"", viewBox, "\">\n")
@@ -95,9 +104,9 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
     else{
       if (style!='ziggurat'){
         wv <- (1.3+0.1*(nnodes%/%100))*swidth
+        h <-  wv*0.5*ifelse(swidth ==MWIDTH,0.75,1)
         if (style=='chilopod'){
           tleftx <- tleftx-bpp$xstep
-          h <-  wv*0.5
           vadjust <- -2*bpp$xstep
         }
         else{
@@ -199,7 +208,6 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
     # evalua las posiciones
     # cambia de signo las coordenadas y, ya que en SVG el eje y es al contrario de lo que trata R con ggplot
     
-    
     x <- this$round_coords(eval_tidy(mapping$x, data)/this$scale_factor)
     y <- -this$round_coords(eval_tidy(mapping$y, data)/this$scale_factor)
     # itera para cada texto
@@ -265,10 +273,8 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
         }
       }
     }
-    
     # fin de la agrupacion de texto
     result <- paste0(result, "</text>\n")
-    
     return(result)
   }
   
@@ -276,7 +282,6 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
   # a ggplot2::geom_segment
   this$segment <- function(idPrefix, data, mapping, alpha, color, size=0, linetype=1) {
     result <- ""
-    
     # si solo se ha pasado un color lo utiliza para todos los datos
     if (length(color)==1) {
       color<-rep(color, nrow(data))
@@ -298,7 +303,6 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
                               linetype=linetype)
       result<-paste0(result, segment2)
     }
-    
     # incorpora el resultado al contenido del SVG
     this$content<<-cbind(this$content,c(result))
   }
