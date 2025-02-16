@@ -27,13 +27,17 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
   if (style=="ziggurat")
     fontscale = (3+(nnodes<50))
   else 
-    fontscale = 18*(0.8+0.15*(nnodes/250))
+    fontscale = 18*(0.8+0.25*(nnodes/250))+3*(nnodes<50)
   if (style=="ziggurat")
     if (zgg$kcoremax==3)
       fontscale = 2 * fontscale
   flinkscale = ifelse (style=="ziggurat", 4, 100)
-  # crea el objeto SVG
-  this<-list(content=c(""), minx=0, miny=0, maxx=0, maxy=0, scale_factor=scale_factor, font_scale_factor=fontscale)
+  # crea el objeto 
+  if (style=="ziggurat")
+    fscale = fontscale
+  else
+    fscale = (1+(nnodes>50)*nnodes/100)*fontscale
+  this<-list(content=c(""), minx=0, miny=0, maxx=0, maxy=0, scale_factor=scale_factor, font_scale_factor=fscale)
   
   # guarda el contenido del svg en un fichero
   this$save <- function(fileName, svg) {
@@ -77,7 +81,10 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
     fzcale <- 1.05
     tleftx <- minx
     tlefty <- miny
-    swidth <- ((maxx-minx)/10)*10
+    if (!flip_coordinates)
+      swidth <- (maxx-minx)
+    else
+      swidth <- (maxy-miny)
     if (style!="ziggurat"){
       if (!flip_coordinates){
         if (max(bpp$ind_cores)>4)
@@ -85,41 +92,31 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
       }
     }    
 
-    if (flip_coordinates){
-      if (style=='ziggurat'){
-        viewBox<-paste0(tleftx, " ", ceiling(adjustleft+1.2*(tleftx-tlefty)/10)*10, " ", 1.2*swidth, " ", 1.2*swidth)
-      } else {
-        if (style=="chilopod")
-          viewBox<-paste0(tleftx, " ", tleftx-tlefty-5*bpp$xstep, " ", 1.4*swidth, " ", 1.4*swidth)
-          #viewBox<-paste0(tleftx, " ", (tleftx)+bpp$xstep*3, " ", 1.4*swidth, " ", 1.4*swidth)
-        
-        else{
-          fmulth = 1.8
-          fmultw = 1.4
-          viewBox<-paste0(tleftx, " ", tleftx-tlefty-5*bpp$xstep, " ", fmultw*swidth, " ", fmulth*swidth)
-        }
-      }
-      svg0<-paste0("<svg transform='rotate(90)' xmlns=\"http://www.w3.org/2000/svg\" preserveAspectRatio=\"xMidYMid meet\" viewBox=\"", viewBox, "\">\n")
+    if (style!='ziggurat'){
+      wv <- (1.3+0.1*(nnodes%/%100))*swidth
+      h <-  wv*2/3
+      vadjust <- ifelse(style=="chilopod",-2*bpp$xstep,0)
+
     }
-    else{
+    
+    if (!flip_coordinates){
       if (style!='ziggurat'){
-        wv <- (1.3+0.1*(nnodes%/%100))*swidth
-        h <-  wv*0.5*ifelse(swidth ==MWIDTH,0.75,1)
-        if (style=='chilopod'){
-          tleftx <- tleftx-bpp$xstep
-          vadjust <- -2*bpp$xstep
-        }
-        else{
-          fdivh = ifelse(min(bpp$num_a_coremax,bpp$num_b_coremax)<=9,3,5)
-          h <-  wv/fdivh
-          vadjust <- 0
-        }
         viewBox<-paste0(1.02*tleftx, " ", (tlefty+vadjust), " ", wv, " ", h)
       }
       else{
         viewBox<-paste0(tleftx, " ", tlefty, " ", swidth, " ", swidth)
-      }
+      }      
       svg0<-paste0("<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"", viewBox, "\">\n")
+    }
+    
+    
+    else {
+      if (style=='ziggurat'){
+        viewBox<-paste0(tleftx, " ", ceiling(adjustleft+1.2*(tleftx-tlefty)/10)*10, " ", 1.2*swidth, " ", 1.2*swidth)
+      } else {
+          viewBox<-paste0(1.02*tleftx, " ", -0.75*wv," ", 1.3*wv, " ", 1.3*wv)
+      }
+      svg0<-paste0("<svg transform='rotate(90,50,50),translate(0,150)' xmlns=\"http://www.w3.org/2000/svg\" preserveAspectRatio=\"xMidYMid meet\" viewBox=\"", viewBox, "\">\n")
     }
     
     svg1<-paste0("</svg>")
