@@ -93,12 +93,12 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
     }    
 
     if (style!='ziggurat'){
-      wv <- (1.3+0.1*(nnodes%/%100))*swidth
+      wv <- (1+0.2*(max(bpp$ind_cores)>4)+0.2*(nnodes/100))*swidth
       h <-  wv*2/3
       vadjust <- ifelse(style=="chilopod",-2*bpp$xstep,0)
 
     }
-    
+    lstyle = ifelse(style=='ziggurat','ziggurat','bipartite')    
     if (!flip_coordinates){
       if (style!='ziggurat'){
         viewBox<-paste0(1.02*tleftx, " ", (tlefty+vadjust), " ", wv, " ", h)
@@ -106,17 +106,15 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
       else{
         viewBox<-paste0(tleftx, " ", tlefty, " ", swidth, " ", swidth)
       }      
-      svg0<-paste0("<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"", viewBox, "\">\n")
+      svg0<-paste0("<svg id='svgplot",lstyle,"' transform='translate(0,0)' xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"", viewBox, "\">\n")
     }
-    
-    
     else {
       if (style=='ziggurat'){
         viewBox<-paste0(tleftx, " ", ceiling(adjustleft+1.2*(tleftx-tlefty)/10)*10, " ", 1.2*swidth, " ", 1.2*swidth)
       } else {
           viewBox<-paste0(1.02*tleftx, " ", -0.75*wv," ", 1.3*wv, " ", 1.3*wv)
       }
-      svg0<-paste0("<svg transform='rotate(90,50,50),translate(0,150)' xmlns=\"http://www.w3.org/2000/svg\" preserveAspectRatio=\"xMidYMid meet\" viewBox=\"", viewBox, "\">\n")
+      svg0<-paste0("<svg id='svgplot",lstyle,"' transform='rotate(90,50,50),translate(0,150)' xmlns=\"http://www.w3.org/2000/svg\" preserveAspectRatio=\"xMidYMid meet\" viewBox=\"", viewBox, "\">\n")
     }
     
     svg1<-paste0("</svg>")
