@@ -26,8 +26,11 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
   plottype = style
   if (style=="ziggurat")
     fontscale = (3+(nnodes<50))
-  else 
-    fontscale = 18*(0.8+0.25*(nnodes/250))+3*(nnodes<50)
+  else {
+    fontscale = 20*(0.7+0.35*(nnodes/250))+3*(nnodes<50)
+    if ((bpp$df_cores$num_species_guild_a[1]+bpp$df_cores$num_species_guild_b[1]) < 3)
+      fontscale = fontscale*2/3
+  }
   if (style=="ziggurat")
     if (zgg$kcoremax==3)
       fontscale = 2 * fontscale
@@ -104,7 +107,7 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
         viewBox<-paste0(1.02*tleftx, " ", (tlefty+vadjust), " ", wv, " ", h)
       }
       else{
-        viewBox<-paste0(tleftx, " ", tlefty, " ", swidth, " ", swidth)
+        viewBox<-paste0(tleftx, " ", tlefty, " ", swidth, " ", ifelse(nnodes <50, 1.2*swidth, swidth))
       }      
       svg0<-paste0("<svg id='svgplot",lstyle,"' transform='translate(0,0)' xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"", viewBox, "\">\n")
     }
