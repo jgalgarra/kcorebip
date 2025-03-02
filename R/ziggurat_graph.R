@@ -1559,17 +1559,17 @@ write_final_annotations <- function(p, svg, plottype, myenv=zgg)
   if (plottype=='ziggurat') 
     landmark_bottom <- min(myenv$last_ytail_a[!is.na(myenv$last_ytail_b)],1.2*zgg$ymin)*myenv$rescale_plot_area[2]
   
-  f <- draw_square("annotation",p,svg,landmark_right,0,1,"transparent",0.5,
+  f <- draw_square("landmark_right_square",p,svg,landmark_right,0,1,"transparent",0.5,
                    "transparent",0,0,0,slabel="")
   p <- f["p"][[1]]
   svg <- f["svg"][[1]]
-  dotsize <- 8
+  dotsize <- 1
   mlabel <- "."
   # Replace to see the landmarks when debugging mlabelcolor <- "red"
   mlabelcolor <- "transparent"
   p <- p +annotate(geom="text", x= landmark_right, y=0, label=mlabel,
                    colour = mlabelcolor, size=dotsize, hjust = 0, vjust = 0, angle = 0)
-  svg$text("annotation", data=data.frame(x=landmark_right, y=0),
+  svg$text("landmark_right_text", data=data.frame(x=landmark_right, y=0),
            mapping=aes(x=x, y=y), color=mlabelcolor, label=mlabel, size=10 * dotsize, angle=0)
   
   
@@ -1577,13 +1577,13 @@ write_final_annotations <- function(p, svg, plottype, myenv=zgg)
   ypunto <- ifelse(plottype=='ziggurat',0,landmark_top)
   p <- p +annotate(geom="text", x=landmark_left, y=landmark_top, label=mlabel,
                    colour = mlabelcolor, size=dotsize, hjust = 0, vjust = 0, angle = 0)
-  svg$text("annotation", data=data.frame(x=landmark_left, y=ypunto), 
+  svg$text("landmark_left_text", data=data.frame(x=landmark_left, y=ypunto), 
            mapping=aes(x=x, y=y), color=mlabelcolor, label=mlabel, size= 10 * dotsize, angle=0)
   p <- p +annotate(geom="text", x=landmark_left, y=landmark_bottom, label=mlabel,
                    colour = mlabelcolor, size=dotsize, hjust = 0, vjust = 0, angle = 0)
   ypunto <- ifelse(plottype=='ziggurat',0,landmark_bottom)
   
-  svg$text("annotation", data=data.frame(x=landmark_left, 
+  svg$text("landmark_bottom_text", data=data.frame(x=landmark_left, 
                                          y=ypunto), mapping=aes(x=x, y=y), color=mlabelcolor, label=mlabel, 
            size=    10* dotsize, angle=0)
   
