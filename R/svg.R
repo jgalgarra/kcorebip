@@ -54,8 +54,8 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
   zr <- 1
   zl <- 1
   zu <- 1
-  imgwidthhoriz <- 1200
-  imgwidthvert <- 1500
+  imgwidthhoriz <- 1000
+  imgwidthvert <- 1200
   this$html<-function() {
     if (style=='ziggurat'){
       zr <- zgg$move_all_SVG_right
@@ -122,7 +122,7 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
         svg0<-paste0("<svg id='svgplot",lstyle,"' transform='rotate(90,50,50)' xmlns=\"http://www.w3.org/2000/svg\" preserveAspectRatio=\"xMidYMid meet\" viewBox=\"", viewBox, "\">\n")
       } else {
         viewBox<-paste0(1.02*tleftx, " ", -0.75*wv," ", 1.3*wv, " ", 1.3*wv)
-        svg0<-paste0("<svg id='svgplot",lstyle,"' transform='rotate(90,50,50),translate(0,350)' width='",imgwidthvert," 'xmlns=\"http://www.w3.org/2000/svg\" preserveAspectRatio=\"xMidYMid meet\" viewBox=\"", viewBox, "\">\n")
+        svg0<-paste0("<svg id='svgplot",lstyle,"' transform='rotate(90,50,50),translate(0,250)' width='",imgwidthvert," 'xmlns=\"http://www.w3.org/2000/svg\" preserveAspectRatio=\"xMidYMid meet\" viewBox=\"", viewBox, "\">\n")
       }
       
     }
@@ -251,14 +251,12 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
       # cambia de signo el angulo, ya que se interpreta distinto que en ggplot
       result <- paste0(result, "transform=\"rotate(", -angle , " ", x, " ", y , ")\" ")
     }
-    if (len < 4){
-      halignstr = "middle"
-      valignstr = "middle"
-    }
-    else {
-      halignstr = "start"
-      valignstr = "middle"
-    }
+    valignstr <- "middle"
+    halignstr <- "middle"
+    if (style=="ziggurat")
+      if ((len > 4) && (!grepl("fattail",id)))
+        halignstr <- "start"
+
     result <- paste0(result, "style=\"text-anchor:",halignstr,";dominant-baseline:",valignstr,
                      ";font-family:Arial;font-size:", size*this$font_scale_factor, "px;fill:", color, "\"")
     result <- paste0(result, ">\n")
