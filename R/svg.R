@@ -54,6 +54,7 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
   zr <- 1
   zl <- 1
   zu <- 1
+  imgwidth <- 1200
   this$html<-function() {
     if (style=='ziggurat'){
       zr <- zgg$move_all_SVG_right
@@ -84,6 +85,7 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
     fzcale <- 1.05
     tleftx <- minx
     tlefty <- miny
+
     if (!flip_coordinates)
       swidth <- (maxx-minx)
     else
@@ -92,32 +94,36 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
       if (!flip_coordinates){
         if (max(bpp$ind_cores)>4)
           swidth=swidth*(1+max(bpp$ind_cores)/15)
+        if (style!="chilopod")
+          swidth=1.2*swidth
       }
     }    
 
     if (style!='ziggurat'){
       wv <- (1+0.2*(max(bpp$ind_cores)>4)+0.2*(nnodes/100))*swidth
-      h <-  wv*2/3
+      h <- ifelse(style=="chilopod",wv*2/3,wv*1/3)
       vadjust <- ifelse(style=="chilopod",-2*bpp$xstep,0)
-
     }
     lstyle = ifelse(style=='ziggurat','ziggurat','bipartite')    
     if (!flip_coordinates){
       if (style!='ziggurat'){
         viewBox<-paste0(1.02*tleftx, " ", (tlefty+vadjust), " ", wv, " ", h)
+        svg0<-paste0("<svg id='svgplot",lstyle,"' transform='translate(0,0)' width='",imgwidth,"' xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"", viewBox, "\">\n")
       }
       else{
         viewBox<-paste0(tleftx, " ", tlefty, " ", swidth, " ", ifelse(nnodes <50, 1.2*swidth, swidth))
+        svg0<-paste0("<svg id='svgplot",lstyle,"' transform='translate(0,0)' xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"", viewBox, "\">\n")
       }      
-      svg0<-paste0("<svg id='svgplot",lstyle,"' transform='translate(0,0)' xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"", viewBox, "\">\n")
     }
     else {
       if (style=='ziggurat'){
         viewBox<-paste0(tleftx, " ", ceiling(adjustleft+1.2*(tleftx-tlefty)/10)*10, " ", 1.2*swidth, " ", 1.2*swidth)
+        svg0<-paste0("<svg id='svgplot",lstyle,"' transform='rotate(90,50,50),translate(0,150)' xmlns=\"http://www.w3.org/2000/svg\" preserveAspectRatio=\"xMidYMid meet\" viewBox=\"", viewBox, "\">\n")
       } else {
-          viewBox<-paste0(1.02*tleftx, " ", -0.75*wv," ", 1.3*wv, " ", 1.3*wv)
+        viewBox<-paste0(1.02*tleftx, " ", -0.75*wv," ", 1.3*wv, " ", 1.3*wv)
+        svg0<-paste0("<svg id='svgplot",lstyle,"' transform='rotate(90,50,50),translate(0,150)' width='",imgwidth,"'xmlns=\"http://www.w3.org/2000/svg\" preserveAspectRatio=\"xMidYMid meet\" viewBox=\"", viewBox, "\">\n")
       }
-      svg0<-paste0("<svg id='svgplot",lstyle,"' transform='rotate(90,50,50),translate(0,150)' xmlns=\"http://www.w3.org/2000/svg\" preserveAspectRatio=\"xMidYMid meet\" viewBox=\"", viewBox, "\">\n")
+      
     }
     
     svg1<-paste0("</svg>")

@@ -1563,24 +1563,30 @@ write_final_annotations <- function(p, svg, plottype, myenv=zgg)
                    "transparent",0,0,0,slabel="")
   p <- f["p"][[1]]
   svg <- f["svg"][[1]]
+  dotsize <- 8
+  mlabel <- "."
+  # Replace to see the landmarks when debugging mlabelcolor <- "red"
+  mlabelcolor <- "transparent"
   p <- p +annotate(geom="text", x= landmark_right, y=0, label=mlabel,
-                   colour = "red", size=1, hjust = 0, vjust = 0, angle = 0)
+                   colour = mlabelcolor, size=dotsize, hjust = 0, vjust = 0, angle = 0)
   svg$text("annotation", data=data.frame(x=landmark_right, y=0),
-           mapping=aes(x=x, y=y), color="red", label=mlabel, size=1, angle=0)
+           mapping=aes(x=x, y=y), color=mlabelcolor, label=mlabel, size=10 * dotsize, angle=0)
   
   
   
   ypunto <- ifelse(plottype=='ziggurat',0,landmark_top)
-  mlabel <- "."
   p <- p +annotate(geom="text", x=landmark_left, y=landmark_top, label=mlabel,
-                   colour = "red", size=1, hjust = 0, vjust = 0, angle = 0)
+                   colour = mlabelcolor, size=dotsize, hjust = 0, vjust = 0, angle = 0)
   svg$text("annotation", data=data.frame(x=landmark_left, y=ypunto), 
-           mapping=aes(x=x, y=y), color="red", label=mlabel, size=1, angle=0)
+           mapping=aes(x=x, y=y), color=mlabelcolor, label=mlabel, size= 10 * dotsize, angle=0)
   p <- p +annotate(geom="text", x=landmark_left, y=landmark_bottom, label=mlabel,
-                   colour = "red", size=1, hjust = 0, vjust = 0, angle = 0)
+                   colour = mlabelcolor, size=dotsize, hjust = 0, vjust = 0, angle = 0)
   ypunto <- ifelse(plottype=='ziggurat',0,landmark_bottom)
+  
   svg$text("annotation", data=data.frame(x=landmark_left, 
-                                         y=ypunto), mapping=aes(x=x, y=y), color="red", label=mlabel, size=1, angle=0)
+                                         y=ypunto), mapping=aes(x=x, y=y), color=mlabelcolor, label=mlabel, 
+           size=    10* dotsize, angle=0)
+  
   
   x_span <- landmark_right - landmark_left
   

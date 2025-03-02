@@ -1113,6 +1113,8 @@ draw_bipartite_plot <- function(svg_scale_factor, progress)
     if (!is.null(progress)) 
       progress$inc(1/11,detail=strings$value("MESSAGE_ZIGGURAT_PROGRESS_DRAWING_INNER_ORPHANS")) 
   }
+  if (bpp$style=="chilopod")
+    bpp$landmark_top <- bpp$landmark_top + 2* bpp$xstep
   v <- kcorebip:::write_final_annotations(p, svg, bpp$style, myenv=bpp)
   p <- v["p"][[1]]
   svg <- v["svg"][[1]]
