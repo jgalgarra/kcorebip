@@ -1,15 +1,10 @@
 ###############################################################################
-#   PFC Universidad Politécnica de Madrid - EUITT
-#   Representación gráfica de redes bipartitas basadas en descomposición k-core
 #
-# Autor         : Juan Manuel García Santi / Javier Garcia Algarra
-# Módulo        : svg.R
-# Descricpción  : Funciones básicas para la generación de un gráfico en formato
-#                 SVG (Scalable Vectors Graphics). Contiene las funciones
-#                 necesarias para generar un SVG con rectángulos, rutas y
-#                 segmentos, y proporcionar o almacenar el XML correspondiente
-#                 al SVG generado
+# Authors         : Juan Manuel García Santi / Javier Garcia Algarra
+# Description     :  Functions to create SVG plots of ziggurat and bipartite graphs
+#                  
 ###############################################################################
+
 library(ggplot2)
 library(rlang)
 #' SVG aux function
@@ -109,7 +104,7 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
     if (!flip_coordinates){
       if (style!='ziggurat'){
         viewBox<-paste0(1.02*tleftx, " ", (tlefty+vadjust), " ", wv, " ", h)
-        svg0<-paste0("<svg id='svgplot",lstyle,"' transform='translate(0,0)' width='",imgwidthhoriz," 'xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"", viewBox, "\">\n")
+        svg0<-paste0("<svg id='svgplot",lstyle,"' transform='translate(0,0)' width='",imgwidthhoriz,"' xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"", viewBox, "\">\n")
       }
       else{
         viewBox<-paste0(tleftx, " ", tlefty, " ", swidth, " ", ifelse(nnodes <50, 1.2*swidth, swidth))
@@ -253,9 +248,18 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
     }
     valignstr <- "middle"
     halignstr <- "middle"
-    if (style=="ziggurat")
+    
+    if (grepl("fat",id))   
+      if (len > 4)
+        valignstr <- "Ideographic"
+    
+    if (style=="ziggurat"){
       if ((len > 4) && (!grepl("fattail",id)))
         halignstr <- "start"
+      }
+    else
+      if (len > 5)
+        valignstr <- "Ideographic"
 
     result <- paste0(result, "style=\"text-anchor:",halignstr,";dominant-baseline:",valignstr,
                      ";font-family:Arial;font-size:", size*this$font_scale_factor, "px;fill:", color, "\"")
