@@ -50,7 +50,7 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
   zl <- 1
   zu <- 1
   imgwidthhoriz <- 1000
-  imgwidthvert <- 1200
+  imgheightvert <- 1200
   this$html<-function() {
     if (style=='ziggurat'){
       zr <- zgg$move_all_SVG_right
@@ -117,7 +117,7 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
         svg0<-paste0("<svg id='svgplot",lstyle,"' transform='rotate(90,50,50)' xmlns=\"http://www.w3.org/2000/svg\" preserveAspectRatio=\"xMidYMid meet\" viewBox=\"", viewBox, "\">\n")
       } else {
         viewBox<-paste0(1.02*tleftx, " ", -0.75*wv," ", 1.3*wv, " ", 1.3*wv)
-        svg0<-paste0("<svg id='svgplot",lstyle,"' transform='rotate(90,50,50),translate(0,250)' width='",imgwidthvert," 'xmlns=\"http://www.w3.org/2000/svg\" preserveAspectRatio=\"xMidYMid meet\" viewBox=\"", viewBox, "\">\n")
+        svg0<-paste0("<svg id='svgplot",lstyle,"' transform='rotate(90,50,50),translate(0,250)' height='",imgheightvert,"' xmlns=\"http://www.w3.org/2000/svg\" preserveAspectRatio=\"xMidYMid meet\" viewBox=\"", viewBox, "\">\n")
       }
       
     }
