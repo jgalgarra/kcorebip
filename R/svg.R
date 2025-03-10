@@ -47,7 +47,7 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
   
   # devuelve el HTML correspondiente al objeto
 
-  imgwidthhoriz <- 1000
+  imgwidthhoriz <- 1200
   imgheightvert <- 1200
   this$html<-function() {
     if (style=='ziggurat'){

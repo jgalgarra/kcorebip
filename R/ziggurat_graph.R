@@ -2307,10 +2307,8 @@ draw_ziggurat_plot <- function(svg_scale_factor, progress)
   
   #html<-svg$html()
   #cat(html, file = "tmp.svg")
-  
   if (!is.null(progress)) 
     progress$inc(0, detail=strings$value("MESSAGE_ZIGGURAT_PROGRESS_DONE"))
-  
   return(zgg)
 }
 if (debugging)

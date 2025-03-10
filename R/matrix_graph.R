@@ -53,7 +53,6 @@ matrix_graph <-function(datadir,filename,sep=",",speciesinheader=TRUE,
     legends_text <- paste0(
       "</span><span style = 'text-align: right; color:white'>....</span><span style = 'text-align: right; color:",colorA,"'>",paste('&#9632; &nbsp;',strA),
       "</span> <span style = 'text-align: right;color:",colorB,"'>",paste('&nbsp; &#9632; &nbsp;',strB),"</span>")
-    
     if (!flip_matrix){
       if (!links_weight)
         mplots<- ggplot(longData, aes(x = speciesA, y = speciesB,fill=as.factor(value)))
@@ -205,13 +204,15 @@ matrix_graph <-function(datadir,filename,sep=",",speciesinheader=TRUE,
     longData[longData$speciesA==colnames(M)[i],]$numA = create_labels(M,num_a,i,species_a,show_species=show_species_names,flip_matrix=flip_matrix,guild="A")
   for (i in 1:length(rownames(M)))
     longData[longData$speciesB==rownames(M)[i],]$numB = create_labels(M,num_b,i,species_b,show_species=show_species_names,flip_matrix=flip_matrix,guild="B")
-  lsize <- label_size * (1 - min(0.3,1/num_species))
+  lsize <- label_size 
   if (!show_species_names)
-    lsize <- lsize + 6
-  if ( max(nrow(species_a),nrow(species_b)>25) && (min(nrow(species_a),nrow(species_b))>15)){
-    lsize <- lsize-5
-  }
-  
+    lsize <- lsize*1.2
+  if (min(num_a,num_b)<10)
+    lsize <- lsize*0.4
+  else if (min(num_a,num_b)<25)
+      lsize <- lsize*0.7
+
+
   p <- plot_m(longData,flip_matrix=flip_matrix,nname=mat$network_name,
               strA=mat$name_guild_a,strB=mat$name_guild_b,links_weight = (links_weight && !binary_network),
               colorA=color_guild_a,colorB=color_guild_b,lsize=lsize,ncolor=color_links,show_title = show_title,
