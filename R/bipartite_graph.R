@@ -1139,7 +1139,8 @@ draw_bipartite_plot <- function(svg_scale_factor, progress)
   
   if (is.null(progress))
     display_plot_bip(p,bpp$print_to_file, landscape = bpp$landscape_plot, fname_append = bpp$file_name_append)
-  
+  if (!is.null(progress)) 
+    progress$inc(0, detail=strings$value("MESSAGE_ZIGGURAT_PROGRESS_DONE"))
   # Stores results
   bpp$plot  <- p
   bpp$svg   <- svg

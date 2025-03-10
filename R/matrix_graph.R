@@ -33,7 +33,7 @@ matrix_graph <-function(datadir,filename,sep=",",speciesinheader=TRUE,
                          orderby = "kradius",
                          label_strguilda = "Plant",
                          label_strguildb = "Pollinator",
-                         label_size = 18,
+                         label_size = 15,
                          color_guild_a = "#4169E1", 
                          color_guild_b = "#FF1808",
                          color_links = 'grey7',
@@ -42,7 +42,7 @@ matrix_graph <-function(datadir,filename,sep=",",speciesinheader=TRUE,
                          show_species_names = TRUE,
                          show_title = TRUE, show_legend = TRUE,
                          print_to_file = FALSE, plotsdir ="plot_results/", 
-                         plot_size = 10,
+                         plot_size = 8,
                          ppi = 300,
                          progress = NULL
                          )
@@ -157,7 +157,6 @@ matrix_graph <-function(datadir,filename,sep=",",speciesinheader=TRUE,
     species_a[species_a$kradius==Inf,]$kradius=100
   species_a$kshell <- lnodes$kcorenum[1:mat$result_analysis$num_guild_a]
   species_a$num <- seq(1:mat$result_analysis$num_guild_a)
-  #species_a$num <- species_a[order(species_a$name),]$num
   species_b <- data.frame("num"=seq(1:mat$result_analysis$num_guild_b),"name"=rownames(mat$result_analysis$matrix))
   species_b$kdegree <- lnodes$kdegree[seq(mat$result_analysis$num_guild_a+1,mat$result_analysis$num_guild_a+mat$result_analysis$num_guild_b)]
   species_b$kradius <- lnodes$kradius[seq(mat$result_analysis$num_guild_a+1,mat$result_analysis$num_guild_a+mat$result_analysis$num_guild_b)]
@@ -165,6 +164,8 @@ matrix_graph <-function(datadir,filename,sep=",",speciesinheader=TRUE,
     species_b[species_b$kradius==Inf,]$kradius=100
   species_b$kshell <- lnodes$kcorenum[seq(mat$result_analysis$num_guild_a+1,mat$result_analysis$num_guild_a+mat$result_analysis$num_guild_b)]
   species_b$num <- seq(1:mat$result_analysis$num_guild_b)
+  num_species <- species_b$num+species_a$num
+  
   M<-mat$result_analysis$matrix
   binary_network = (sum(M>1)==0)
   mat$binary_network <- binary_network
@@ -204,7 +205,7 @@ matrix_graph <-function(datadir,filename,sep=",",speciesinheader=TRUE,
     longData[longData$speciesA==colnames(M)[i],]$numA = create_labels(M,num_a,i,species_a,show_species=show_species_names,flip_matrix=flip_matrix,guild="A")
   for (i in 1:length(rownames(M)))
     longData[longData$speciesB==rownames(M)[i],]$numB = create_labels(M,num_b,i,species_b,show_species=show_species_names,flip_matrix=flip_matrix,guild="B")
-  lsize <- label_size - round(log10(sqrt(nrow(longData))))
+  lsize <- label_size * (1 - min(0.3,1/num_species))
   if (!show_species_names)
     lsize <- lsize + 6
   if ( max(nrow(species_a),nrow(species_b)>25) && (min(nrow(species_a),nrow(species_b))>15)){

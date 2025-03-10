@@ -46,16 +46,14 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
   }
   
   # devuelve el HTML correspondiente al objeto
-  zr <- 1
-  zl <- 1
-  zu <- 1
+
   imgwidthhoriz <- 1000
   imgheightvert <- 1200
   this$html<-function() {
     if (style=='ziggurat'){
-      zr <- zgg$move_all_SVG_right
+      zr <- 0
       zl <- zgg$landmark_right
-      zu <- zgg$move_all_SVG_up
+      zu <- 0
     }
     else{
       zr <- 0
