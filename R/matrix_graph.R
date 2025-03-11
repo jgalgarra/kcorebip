@@ -118,6 +118,7 @@ matrix_graph <-function(datadir,filename,sep=",",speciesinheader=TRUE,
       else
         label <- (paste0("  ",mn," ",ifelse(show_species,paste0(rownames(M)[i],"  "),"    ")))
     }
+    label <- gsub("\\."," ",label)
     return(label)
   }
   
@@ -207,12 +208,17 @@ matrix_graph <-function(datadir,filename,sep=",",speciesinheader=TRUE,
   lsize <- label_size 
   if (!show_species_names)
     lsize <- lsize*1.2
-  if (min(num_a,num_b)<10)
-    lsize <- lsize*0.4
-  else if (min(num_a,num_b)<25)
+  numberA <- mat$result_analysis$num_guild_a
+  numberB <- mat$result_analysis$num_guild_b
+  if (min(numberA,numberB)<10)
+    lsize <- lsize*0.5
+  else if (min(numberA,numberB)<20)
       lsize <- lsize*0.7
-
-
+  else if (min(numberA,numberB)<30)
+    lsize <- lsize*0.8
+  # By default, plot in landscape configuration
+  if (numberA < numberB)
+    flip_matrix <- !flip_matrix
   p <- plot_m(longData,flip_matrix=flip_matrix,nname=mat$network_name,
               strA=mat$name_guild_a,strB=mat$name_guild_b,links_weight = (links_weight && !binary_network),
               colorA=color_guild_a,colorB=color_guild_b,lsize=lsize,ncolor=color_links,show_title = show_title,
