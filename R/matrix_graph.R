@@ -91,6 +91,7 @@ matrix_graph <-function(datadir,filename,sep=",",speciesinheader=TRUE,
     mplots <- mplots +  theme_void()+theme(legend.position=lposition,
                                            legend.title=element_blank(),
                                            legend.text = element_text(size = lsize),
+                                           legend.key.size = unit(0.2, 'cm'),
                                            axis.text.x = element_text(size=lsize,hjust=ifelse(show_species_names,0,0.5),vjust=ifelse(show_species_names,1,0),angle=angulo,color=ifelse(!flip_matrix,colorA,colorB)),
                                            axis.text.y = element_text(size = lsize,hjust=1,vjust=0.5,color=ifelse(!flip_matrix,colorB,colorA)),
                                            plot.title = element_text(size=lsize+3,hjust=0.5),
@@ -164,8 +165,10 @@ matrix_graph <-function(datadir,filename,sep=",",speciesinheader=TRUE,
     species_b[species_b$kradius==Inf,]$kradius=100
   species_b$kshell <- lnodes$kcorenum[seq(mat$result_analysis$num_guild_a+1,mat$result_analysis$num_guild_a+mat$result_analysis$num_guild_b)]
   species_b$num <- seq(1:mat$result_analysis$num_guild_b)
-  num_species <- species_b$num+species_a$num
   
+  numberA <- mat$result_analysis$num_guild_a
+  numberB <- mat$result_analysis$num_guild_b
+  num_species <- numberA+numberB
   M<-mat$result_analysis$matrix
   binary_network = (sum(M>1)==0)
   mat$binary_network <- binary_network
@@ -208,17 +211,22 @@ matrix_graph <-function(datadir,filename,sep=",",speciesinheader=TRUE,
   lsize <- label_size 
   if (!show_species_names)
     lsize <- lsize*1.2
-  numberA <- mat$result_analysis$num_guild_a
-  numberB <- mat$result_analysis$num_guild_b
+
   if (min(numberA,numberB)<10)
     lsize <- lsize*0.5
   else if (min(numberA,numberB)<20)
       lsize <- lsize*0.7
   else if (min(numberA,numberB)<30)
     lsize <- lsize*0.8
+  
   # By default, plot in landscape configuration
-  if (numberA < numberB)
+  if (numberA < numberB){
     flip_matrix <- !flip_matrix
+    mat$landscape <- flip_matrix
+  } else {
+    mat$landscape <- !flip_matrix
+  }
+  
   p <- plot_m(longData,flip_matrix=flip_matrix,nname=mat$network_name,
               strA=mat$name_guild_a,strB=mat$name_guild_b,links_weight = (links_weight && !binary_network),
               colorA=color_guild_a,colorB=color_guild_b,lsize=lsize,ncolor=color_links,show_title = show_title,
