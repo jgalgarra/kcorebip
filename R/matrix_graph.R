@@ -212,8 +212,8 @@ matrix_graph <-function(datadir,filename,sep=",",speciesinheader=TRUE,
   if (!show_species_names)
     lsize <- lsize*1.2
 
-  if (min(numberA,numberB)<10)
-    lsize <- lsize*0.5
+  if (min(numberA,numberB)<12)
+    lsize <- lsize*0.4
   else if (min(numberA,numberB)<20)
       lsize <- lsize*0.7
   else if (min(numberA,numberB)<30)
