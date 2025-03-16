@@ -218,16 +218,17 @@ matrix_graph <-function(datadir,filename,sep=",",speciesinheader=TRUE,
       lsize <- lsize*0.7
   else if (min(numberA,numberB)<30)
     lsize <- lsize*0.8
-  
   # By default, plot in landscape configuration
   if (numberA < numberB){
-    flip_matrix <- !flip_matrix
-    mat$landscape <- flip_matrix
+    myflip_matrix <- !flip_matrix
+    mat$landscape <- !flip_matrix
   } else {
     mat$landscape <- !flip_matrix
+    myflip_matrix <- flip_matrix
   }
+  print(paste("numberA",numberA,"numberB",numberB,"output flip_matrix",myflip_matrix,"landscape",mat$landscape))
   
-  p <- plot_m(longData,flip_matrix=flip_matrix,nname=mat$network_name,
+  p <- plot_m(longData,flip_matrix=myflip_matrix,nname=mat$network_name,
               strA=mat$name_guild_a,strB=mat$name_guild_b,links_weight = (links_weight && !binary_network),
               colorA=color_guild_a,colorB=color_guild_b,lsize=lsize,ncolor=color_links,show_title = show_title,
               show_legend=show_legend)
@@ -255,7 +256,7 @@ matrix_graph <-function(datadir,filename,sep=",",speciesinheader=TRUE,
     dir.create("www", showWarnings = FALSE)
     dir.create("www/reports/", showWarnings = FALSE)
     nfile <- paste0("www/reports/",mat$network_name,"_MATRIX.png")
-    if (!flip_matrix)
+    if (!mat$landscape)
       png(nfile,width=imw,height=imh,res=dppi)
     else
       png(nfile,width=imh,height=imw,res=dppi)
