@@ -48,7 +48,8 @@ matrix_graph <-function(datadir,filename,sep=",",speciesinheader=TRUE,
                          )
 {
   plot_m <- function(longData,flip_matrix=FALSE,nname="",ncolor="green",links_weight=FALSE,
-                     strA="",strB="",colorA="blue",colorB="red",lsize=8,show_title=TRUE,show_legend=TRUE)
+                     strA="",strB="",colorA="blue",colorB="red",lsize=8,show_title=TRUE,
+                     show_legend=TRUE)
   {
     legends_text <- paste0(
       "</span><span style = 'text-align: right; color:white'>....</span><span style = 'text-align: right; color:",colorA,"'>",paste('&#9632; &nbsp;',strA),
@@ -91,15 +92,16 @@ matrix_graph <-function(datadir,filename,sep=",",speciesinheader=TRUE,
     mplots <- mplots +  theme_void()+theme(legend.position=lposition,
                                            legend.title=element_blank(),
                                            legend.text = element_text(size = lsize),
-                                           legend.key.size = unit(0.2, 'cm'),
-                                           axis.text.x = element_text(size=lsize,hjust=ifelse(show_species_names,0,0.5),vjust=ifelse(show_species_names,1,0),angle=angulo,color=ifelse(!flip_matrix,colorA,colorB)),
+                                           legend.key.size = unit(0.3, 'cm'),
+                                           axis.text.x = element_text(size=lsize,hjust=ifelse(show_species_names,0,0.5),vjust=ifelse(show_species_names,0.5,0),
+                                                                      angle=angulo,color=ifelse(!flip_matrix,colorA,colorB)),
                                            axis.text.y = element_text(size = lsize,hjust=1,vjust=0.5,color=ifelse(!flip_matrix,colorB,colorA)),
                                            plot.title = element_text(size=lsize+3,hjust=0.5),
                                            axis.title.x=element_text(size=18,face="bold",color="grey40",
                                                                      hjust=0.5),
                                            plot.subtitle = ggtext::element_markdown(hjust=0,vjust=0),
                                            plot.margin = unit(c(0.1,0.1,0.1,0.1), "cm"),
-                                           plot.caption = ggtext::element_markdown(size=lsize+2,hjust=1,vjust=0))
+                                           plot.caption = ggtext::element_markdown(size=lsize*1.2,hjust=1,vjust=0))
     return(mplots)
   }
   
@@ -211,14 +213,12 @@ matrix_graph <-function(datadir,filename,sep=",",speciesinheader=TRUE,
   lsize <- label_size 
   if (!show_species_names)
     lsize <- lsize*1.2
-
-  if (min(numberA,numberB)<12)
-    lsize <- lsize*0.4
-  else if (min(numberA,numberB)<20)
-      lsize <- lsize*0.7
-  else if (min(numberA,numberB)<30)
-    lsize <- lsize*0.8
-  # By default, plot in landscape configuration
+  lsizeantes <- lsize
+  maxnum <- max(numberA,numberB)
+  minnum <- min(numberA,numberB)
+  lsize <- lsize * (1-(0.0025 *(150-min(140,maxnum)))) * (maxnum+minnum)/(2*maxnum)
+  lsize <- lsize * (1-(nchar(max(species_a$name,species_b$name))/50)^3)
+  lsize <- min(lsize,ifelse((maxnum+minnum)>100,0.66,1)*lsizeantes/2)
   if (numberA < numberB){
     myflip_matrix <- !flip_matrix
     mat$landscape <- !flip_matrix
@@ -226,11 +226,11 @@ matrix_graph <-function(datadir,filename,sep=",",speciesinheader=TRUE,
     mat$landscape <- !flip_matrix
     myflip_matrix <- flip_matrix
   }
-  print(paste("numberA",numberA,"numberB",numberB,"output flip_matrix",myflip_matrix,"landscape",mat$landscape))
-  
   p <- plot_m(longData,flip_matrix=myflip_matrix,nname=mat$network_name,
-              strA=mat$name_guild_a,strB=mat$name_guild_b,links_weight = (links_weight && !binary_network),
-              colorA=color_guild_a,colorB=color_guild_b,lsize=lsize,ncolor=color_links,show_title = show_title,
+              strA=mat$name_guild_a,strB=mat$name_guild_b,
+              links_weight = (links_weight && !binary_network),
+              colorA=color_guild_a,colorB=color_guild_b,lsize=lsize,
+              ncolor=color_links,show_title = show_title,
               show_legend=show_legend)
   plsize = plot_size
   dppi = ppi
@@ -256,10 +256,15 @@ matrix_graph <-function(datadir,filename,sep=",",speciesinheader=TRUE,
     dir.create("www", showWarnings = FALSE)
     dir.create("www/reports/", showWarnings = FALSE)
     nfile <- paste0("www/reports/",mat$network_name,"_MATRIX.png")
-    if (!mat$landscape)
-      png(nfile,width=imw,height=imh,res=dppi)
-    else
-      png(nfile,width=imh,height=imw,res=dppi)
+    if (mat$landscape){
+      plot_width <- max(imw,imh)
+      plot_height <- min(imw,imh)
+    }
+    else{
+      plot_width <- min(imw,imh)
+      plot_height <- max(imw,imh)
+    }
+    png(nfile,width=plot_width,height=plot_height,res=dppi)
     print(p)
     dev.off()
     mat$matrix_file <- nfile
@@ -267,8 +272,8 @@ matrix_graph <-function(datadir,filename,sep=",",speciesinheader=TRUE,
   mat$aspect <- aspect
   mat$plot <- p
   mat$flip_results <- flip_matrix
-  mat$plot_width = plsize
-  mat$plot_height = plsize/aspect
+  mat$plot_width <- plot_width * dppi #= plsize
+  mat$plot_height <- plot_height * dppi #plsize/aspect
   return(mat)
 }
 
