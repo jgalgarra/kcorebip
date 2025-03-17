@@ -216,9 +216,13 @@ matrix_graph <-function(datadir,filename,sep=",",speciesinheader=TRUE,
   lsizeantes <- lsize
   maxnum <- max(numberA,numberB)
   minnum <- min(numberA,numberB)
-  lsize <- lsize * (1-(0.0025 *(150-min(140,maxnum)))) * (maxnum+minnum)/(2*maxnum)
-  lsize <- lsize * (1-(nchar(max(species_a$name,species_b$name))/50)^3)
-  lsize <- min(lsize,ifelse((maxnum+minnum)>100,0.66,1)*lsizeantes/2)
+  if ((maxnum+minnum)<40)
+    lsize <-lsize/2
+  else {
+    lsize <- lsize * (1-(0.0025 *(150-min(140,maxnum)))) * (maxnum+minnum)/(2*maxnum)
+    lsize <- lsize * (1-(nchar(max(species_a$name,species_b$name))/50)^3)
+    lsize <- min(lsize,ifelse((maxnum+minnum)>100,0.66,1)*lsizeantes/2)
+  }
   if (numberA < numberB){
     myflip_matrix <- !flip_matrix
     mat$landscape <- !flip_matrix
@@ -238,16 +242,27 @@ matrix_graph <-function(datadir,filename,sep=",",speciesinheader=TRUE,
     aspect = (nrow(species_a)+10)/(nrow(species_b)+10) 
   else
     aspect = (nrow(species_a)+1)/(nrow(species_b)+1) 
-  imw = plsize*dppi
-  imh = plsize*dppi/aspect
+  imw <- plsize*dppi
+  imh <- plsize*dppi/aspect
+  if (mat$landscape){
+   plot_width <- max(imw,imh)
+   plot_height <- min(imw,imh)
+  } else {
+   plot_width <- min(imw,imh)
+   plot_height <- max(imw,imh)
+  }
+  
+  print(paste(plot_width,plot_height))
   # User decides to plot the file
   if (print_to_file){
     dir.create(mat$mat_argg$plotsdir, showWarnings = FALSE)
     nfile <- paste0(plotsdir,mat$network_name,"_MATRIX_orderby_",orderby,".png")
-    if (!flip_matrix)
-      png(nfile,width=imw,height=imh,res=dppi)
-    else
-      png(nfile,width=imh,height=imw,res=dppi)
+    # if (mat$landscape)
+    #   png(nfile,width=imw,height=imh,res=dppi)
+    # else
+    #   png(nfile,width=imh,height=imw,res=dppi)
+    
+    png(nfile,width=plot_width,height=plot_height,res=dppi)
     print(p)
     dev.off()    
   }
