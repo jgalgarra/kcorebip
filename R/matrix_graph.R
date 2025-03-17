@@ -251,17 +251,9 @@ matrix_graph <-function(datadir,filename,sep=",",speciesinheader=TRUE,
    plot_width <- min(imw,imh)
    plot_height <- max(imw,imh)
   }
-  
-  print(paste(plot_width,plot_height))
-  # User decides to plot the file
   if (print_to_file){
     dir.create(mat$mat_argg$plotsdir, showWarnings = FALSE)
     nfile <- paste0(plotsdir,mat$network_name,"_MATRIX_orderby_",orderby,".png")
-    # if (mat$landscape)
-    #   png(nfile,width=imw,height=imh,res=dppi)
-    # else
-    #   png(nfile,width=imh,height=imw,res=dppi)
-    
     png(nfile,width=plot_width,height=plot_height,res=dppi)
     print(p)
     dev.off()    
