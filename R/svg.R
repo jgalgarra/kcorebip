@@ -365,7 +365,7 @@ SVG<-function(scale_factor,style="ziggurat",nnodes=50,flip_coordinates=FALSE) {
       x <- this$round_coords(g[,c(quo_text(mapping$x))]/this$scale_factor)
       y <- -this$round_coords(g[,c(quo_text(mapping$y))]/this$scale_factor)
       path2<-this$path2(id=paste0(plottype,idPrefix, "-", i, "-path"), x=x, y=y, alpha=alpha, 
-                        color=color[i], size=size, linetype=linetype)
+                        color=color[i], size=g$weightlink, linetype=linetype)
       result<-paste0(result, path2)
     }
     

@@ -1198,7 +1198,7 @@ draw_specialist_chains <- function(grafo, svg, df_chains, ladosq)
       else
         splineshape = "arc"
       tailweight <- 0
-      # for (h in 1:nrow(df_chains))
+
       if (df_chains$guild[i] == zgg$str_guild_a)
         tailweight <- tailweight + zgg$result_analysis$matrix[as.numeric(df_chains$partner[i]),
                                                               as.numeric(df_chains$orph[i])]
@@ -2292,9 +2292,11 @@ draw_ziggurat_plot <- function(svg_scale_factor, progress)
                   alpha=zgg$alpha_link, color=zgg$color_link, size=zgg$straight_links$weightlink)
     }
     if (nrow(zgg$bent_links)>0) {
-      p <- p + geom_path(data =zgg$bent_links,aes(x,y,group=number), linewidth=zgg$bent_links$weightlink,
+      p <- p + geom_path(data =zgg$bent_links,aes(x,y,group=number), 
+                         linewidth=zgg$bent_links$weightlink,
                          color=zgg$color_link ,alpha=zgg$alpha_link)
-      svg$path(idPrefix="link", data=zgg$bent_links, mapping=aes(x, y, group=number), alpha=zgg$alpha_link,
+      svg$path(idPrefix="link", data=zgg$bent_links, mapping=aes(x, y, group=number), 
+               alpha=zgg$alpha_link,
                color=zgg$color_link,size=zgg$bent_links$weightlink)
     }
   }
@@ -2305,8 +2307,6 @@ draw_ziggurat_plot <- function(svg_scale_factor, progress)
   zgg$plot  <- p
   zgg$svg   <- svg
   
-  #html<-svg$html()
-  #cat(html, file = "tmp.svg")
   if (!is.null(progress)) 
     progress$inc(0, detail=strings$value("MESSAGE_ZIGGURAT_PROGRESS_DONE"))
   return(zgg)
