@@ -52,8 +52,8 @@ matrix_graph <-function(datadir,filename,sep=",",speciesinheader=TRUE,
                      show_legend=TRUE)
   {
     legends_text <- paste0(
-      "</span><span style = 'text-align: right; color:white'>....</span><span style = 'text-align: right; color:",colorA,"'>",paste('&#9632; &nbsp;',strA),
-      "</span> <span style = 'text-align: right;color:",colorB,"'>",paste('&nbsp; &#9632; &nbsp;',strB),"</span>")
+      "</span><span style = 'text-align: right; color:white'>&nbsp;</span><span style = 'text-align: right; color:",colorA,"'>",paste('&#9632; &nbsp;',strA, '&nbsp;'),
+      "</span><span style = 'text-align: right; color:",colorB,"'>",paste('&nbsp;&nbsp; &#9632;&nbsp;',strB),"</span>")
     if (!flip_matrix){
       if (!links_weight)
         mplots<- ggplot(longData, aes(x = speciesA, y = speciesB,fill=as.factor(value)))
