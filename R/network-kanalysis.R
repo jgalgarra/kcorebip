@@ -329,11 +329,6 @@ read_network <- function(namenetwork, guild_astr = "pl", guild_bstr = "pol", dir
 #' @examples p <- read_and_analyze("../data","M_PL_003.csv","Plant","Pollinator")
 read_and_analyze <- function(directorystr,network_file,label_strguilda,label_strguildb,sep=",",speciesinheader=TRUE)
 {
-  # if (!exists("an")){
-  #   an <<- new.env() 
-  #   an$sep <- sep
-  #   an$speciesinheader <- speciesinheader
-  # }
   str_guild_a <- "pl"
   str_guild_b <- "pol"
   name_guild_a <- "GuildA"
