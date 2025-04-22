@@ -196,6 +196,7 @@ gen_sq_label <- function(nodes, joinchars = "\n", is_guild_a = TRUE, myenv=zgg)
     if ((i %% lrow == 0) & (nnodes > 1) & (i<nnodes))
       ssal <- gsub("  "," ",paste(ssal,joinchars))
   }
+  ssal <- trimws(ssal)
   return(ssal)
 }
 
