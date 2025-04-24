@@ -1487,9 +1487,14 @@ write_final_annotations <- function(p, svg, plottype, myenv=zgg)
   lzcf <- 3
   myvjust <- 0
   legsize <- round(lzcf*(myenv$lsize_legend-1))
+  # legends_text <- paste0(
+  #   "<span style = 'text-align: left; color:",myenv$color_guild_a[1],"; font-size:",legsize,"pt'>",paste('&#9632;',myenv$name_guild_a),
+  #   "</span> <span style = 'text-align: left;color:",myenv$color_guild_b[1],"; font-size:",legsize,"pt'>",paste('&nbsp; &#9632;',myenv$name_guild_b),"</span>")
   legends_text <- paste0(
-    "<span style = 'text-align: left; color:",myenv$color_guild_a[1],"; font-size:",legsize,"pt'>",paste('&#9632;',myenv$name_guild_a),
-    "</span> <span style = 'text-align: left;color:",myenv$color_guild_b[1],"; font-size:",legsize,"pt'>",paste('&nbsp; &#9632;',myenv$name_guild_b),"</span>")
+      "</span><span style = 'color:white'>&nbsp;</span><span style = 'text-align: center; padding-right: 20px; color:",myenv$color_guild_a[1],"'>",paste('#&nbsp;',myenv$name_guild_a,'&nbsp;'),
+      "</span><span style = 'color:white'>...</span><span style = 'text-align: right; margin-left:10px; color:",myenv$color_guild_b[1],"'>",paste('#',myenv$name_guild_b),"</span>")
+    
+  
   if (myenv$show_legend=="TOP"){
     stext = legends_text
     myvjust = -3

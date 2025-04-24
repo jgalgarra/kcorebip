@@ -200,7 +200,6 @@ draw_tail_bip <- function(idPrefix, p,svg,fat_tail,lado,color,sqlabel,basex,base
   if (bpp$flip_results)
     lhjust = 0.5
   else
-    #lhjust <- ifelse((nchar(sqlabel) <4), -0.5,0)
     lhjust <-0
   # Plot species or group of species
   f <- kcorebip:::draw_square(idPrefix, p,svg, xx,yy,
