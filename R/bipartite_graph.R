@@ -181,7 +181,7 @@ draw_tail_bip <- function(idPrefix, p,svg,fat_tail,lado,color,sqlabel,basex,base
     if (style=="chilopod"){
       adjust = "yes"
       lvjust = ifelse(bpp$flip_results, 1, 0.5)
-      lhjust = ifelse(bpp$flip_results, 0.5, 0.5)
+      lhjust = ifelse(bpp$flip_results, 0.5, 0)
     }
   }
   if (background == "no")
@@ -200,13 +200,14 @@ draw_tail_bip <- function(idPrefix, p,svg,fat_tail,lado,color,sqlabel,basex,base
   if (bpp$flip_results)
     lhjust = 0.5
   else
-    lhjust <- ifelse((nchar(sqlabel) <4), -0.5,0)
+    #lhjust <- ifelse((nchar(sqlabel) <4), -0.5,0)
+    lhjust <-0
   # Plot species or group of species
   f <- kcorebip:::draw_square(idPrefix, p,svg, xx,yy,
                               ifelse(bpp$style=="chilopod",lado,
                                      paintsidex),
                               bgcolor,palpha,labelcolor,langle,lhjust,lvjust,
-                              slabel=sqlabel,lbsize = 0.8*bpp$lsize_kcoremax,
+                              slabel=trimws(sqlabel),lbsize = 0.8*bpp$lsize_kcoremax,
                               SVGtextfactor=fsvgtext, inverse = sqinverse,
                               adjustoxy = adjust, edgescolor = ecolor)
   p <- f["p"][[1]]

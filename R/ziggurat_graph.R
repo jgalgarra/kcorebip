@@ -272,7 +272,7 @@ draw_square<- function(idPrefix, grafo,svg,basex,basey,side,fillcolor,alphasq,la
   svg$rect(idPrefix=idPrefix, data=ds, mapping=aes(xmin=x1, xmax=x2, ymin=y1, ymax=y2),
            fill = fillcolor, alpha=alphasq, size=0.5, color="transparent")
   if (grepl("fat-kcore1",idPrefix))
-    xf <- pxx#(x2+x1)/2
+    xf <- pxx
   else
     xf <- (x2+x1)/2
   svg$text(idPrefix=idPrefix, data=data.frame(x=xf,y=pyy),
