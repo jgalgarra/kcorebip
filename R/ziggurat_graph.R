@@ -1523,7 +1523,9 @@ write_final_annotations <- function(p, svg, plottype, myenv=zgg)
                                                                                                hjust = 0.5,
                                                                                                face="plain"),
                                                                      plot.subtitle = ggtext::element_markdown(size=lzcf*myenv$lsize_legend,hjust=0.9,vjust=myvjust),
-                                                                     plot.caption = ggtext::element_markdown(size=lzcf*myenv$lsize_legend,hjust=0.9,vjust=myvjust))
+                                                                     plot.caption = ggtext::element_markdown(size=lzcf*myenv$lsize_legend,hjust=0.9,vjust=myvjust),
+                                                                     plot.margin = margin(t = 0, r = 0, b = 0, l = 0)
+                                                                     )
   
   if (myenv$hide_plot_border)
     p <- p + theme(panel.border=element_blank())

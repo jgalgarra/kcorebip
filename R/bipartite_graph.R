@@ -848,7 +848,8 @@ draw_maxcore_tails_bip <- function(p, svg)
 }
 
 # Print plot to file
-display_plot_bip <- function(p, printfile,  plwidth=14, ppi = 300, landscape = bpp$label_strguild, fname_append = "")
+display_plot_bip <- function(p, printfile, style,  plwidth=14, ppi = 300, 
+                             landscape = bpp$label_strguild, fname_append = "")
 {
   if (printfile){
     if (fname_append != "")
@@ -856,10 +857,15 @@ display_plot_bip <- function(p, printfile,  plwidth=14, ppi = 300, landscape = b
     else
       ftname_append <- fname_append
     dir.create(bpp$plotsdir, showWarnings = FALSE)
+    hlands = (9/16)*plwidth*ppi
+    if (bpp$show_legend!="HIDE") 
+      hlands <- hlands * 0.9
+    if (style != "chilopod")
+      hlands <- hlands * 0.9
     if (landscape)
-      png(paste0(bpp$plotsdir,"/",bpp$network_name,"_",bpp$style,ftname_append,".png"), width=(plwidth*ppi), height=(9/16)*plwidth*ppi, res=ppi)
+      png(paste0(bpp$plotsdir,"/",bpp$network_name,"_",bpp$style,ftname_append,".png"), width=(plwidth*ppi), height=hlands, res=ppi)
     else
-      png(paste0(bpp$plotsdir,"/",bpp$network_name,"_",bpp$style,ftname_append,".png"), width=(9/16)*plwidth*ppi, height=(plwidth*ppi), res=ppi)
+      png(paste0(bpp$plotsdir,"/",bpp$network_name,"_",bpp$style,ftname_append,".png"), width=hlands, height=(plwidth*ppi), res=ppi)
   }
   print(p)
   if (printfile)
@@ -1134,11 +1140,13 @@ draw_bipartite_plot <- function(svg_scale_factor, progress)
                color=bpp$color_link,size=bpp$bent_links$weightlink)
     }
   }
+
   if (bpp$flip_results)
     p <- p+coord_flip()+scale_x_reverse()
   
   if (is.null(progress))
-    display_plot_bip(p,bpp$print_to_file, landscape = bpp$landscape_plot, fname_append = bpp$file_name_append)
+    display_plot_bip(p,bpp$print_to_file, bpp$style, 
+                     landscape = bpp$landscape_plot, fname_append = bpp$file_name_append)
   if (!is.null(progress)) 
     progress$inc(0, detail=strings$value("MESSAGE_ZIGGURAT_PROGRESS_DONE"))
   # Stores results
