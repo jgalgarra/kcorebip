@@ -1022,7 +1022,7 @@ draw_bipartite_plot <- function(svg_scale_factor, progress)
   }
   bpp$num_a_coremax <- bpp$df_cores[bpp$kcoremax,]$num_species_guild_a
   base_width <- 2000
-  bpp$ymax <- 1.75*base_width/bpp$aspect_ratio
+  bpp$ymax <- ifelse(bpp$style=="chilopod",1.75,1.5)*base_width/bpp$aspect_ratio
   bpp$tot_width <- bpp$ymax
   bpp$species_in_core2_a <- sum(bpp$df_cores[2,]$num_species_guild_a)
   bpp$species_in_core2_b <- sum(bpp$df_cores[2,]$num_species_guild_b)
