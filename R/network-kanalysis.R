@@ -63,7 +63,12 @@ analyze_network <- function(namenetwork, directory="", guild_a = "pl", guild_b =
                         speciesinheader = an$speciesinheader)
   # create empty graph
   an$g <- as_undirected(nread$g)
+
+  nn <- strsplit(namenetwork,"\\.")[[1]][1]
+  rownames(nread$matrix) <- clean_species_names( rownames(nread$matrix),nn)
+  colnames(nread$matrix) <- clean_species_names( colnames(nread$matrix),nn)
   m <- nread$matrix
+  
   names_guild_a <- nread$names_guild_a
   names_guild_b <- nread$names_guild_b
   num_guild_b <- nread$num_guild_b
@@ -232,6 +237,13 @@ get_bipartite <- function(g, str_guild_a = "Plant", str_guild_b = "Pollinator", 
   return(bg)
 }
 
+clean_species_names <- function(listspecies,nnetwork){
+  splabels <- gsub("\\."," ",listspecies)
+  splabels <- gsub(nnetwork,"",splabels)
+  splabels <- trimws(splabels)
+  return(splabels)
+}
+
 #' Functions for k-core decompose a bipartite graph and computing some newtork indexes
 #' Reads a network interaction matrix from a CSV file
 #'
@@ -302,6 +314,9 @@ read_network <- function(namenetwork, guild_astr = "pl", guild_bstr = "pol", dir
   listedgesn[,2] <- paste0(guild_astr,listedgesn[,2])
   g <- g + graph.edgelist(listedgesn)
   #g <- g + as_edgelist(listedgesn)
+  nn <- strsplit(namenetwork,"\\.")[[1]][1]
+  names_guild_a <- clean_species_names(names_guild_a,nn)
+  names_guild_b <- clean_species_names(names_guild_b,nn)
   # Return values
   calc_values <- list("graph" = g, "matrix" = m, "num_guild_b" = num_guild_b, "num_guild_a" = num_guild_a,
                       "names_guild_a" = names_guild_a, "names_guild_b"=names_guild_b)
@@ -359,7 +374,9 @@ read_and_analyze <- function(directorystr,network_file,label_strguilda,label_str
       stop()
     }
   )
-  
+  rownames(result_analysis$matrix) <- clean_species_names( rownames(result_analysis$matrix),network_name)
+  colnames(result_analysis$matrix) <- clean_species_names( colnames(result_analysis$matrix),network_name)
+
   calc_vals <- list("result_analysis" = result_analysis, "str_guild_a" = str_guild_a, "str_guild_b" = str_guild_b,
                     "name_guild_a" = name_guild_a, "name_guild_b" = name_guild_b,
                     "network_name" = network_name)
