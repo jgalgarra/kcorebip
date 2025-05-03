@@ -269,6 +269,9 @@ read_network <- function(namenetwork, guild_astr = "pl", guild_bstr = "pol", dir
       namesred <- read.csv(paste0(directory,namenetwork),header=FALSE,stringsAsFactors=FALSE,sep = sep)
       names_guild_a <- unname(unlist(namesred[1,2:ncol(namesred)])) # JULY 2023 
       names_guild_b <- namesred[2:nrow(namesred),1]
+      nn <- strsplit(namenetwork,"\\.")[[1]][1]
+      names_guild_a <- clean_species_names(names_guild_a,nn)
+      names_guild_b <- clean_species_names(names_guild_b,nn)
       m <- read.csv(paste0(directory,namenetwork),header=TRUE,row.names=1,sep=an$sep)
     }  else {
       m <- read.csv(paste0(directory,namenetwork),header=FALSE,sep=an$sep)
@@ -314,9 +317,7 @@ read_network <- function(namenetwork, guild_astr = "pl", guild_bstr = "pol", dir
   listedgesn[,2] <- paste0(guild_astr,listedgesn[,2])
   g <- g + graph.edgelist(listedgesn)
   #g <- g + as_edgelist(listedgesn)
-  nn <- strsplit(namenetwork,"\\.")[[1]][1]
-  names_guild_a <- clean_species_names(names_guild_a,nn)
-  names_guild_b <- clean_species_names(names_guild_b,nn)
+
   # Return values
   calc_values <- list("graph" = g, "matrix" = m, "num_guild_b" = num_guild_b, "num_guild_a" = num_guild_a,
                       "names_guild_a" = names_guild_a, "names_guild_b"=names_guild_b)
